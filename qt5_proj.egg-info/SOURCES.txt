@@ -1,0 +1,7 @@
+README.rst
+setup.py
+qt5_proj/__init__.py
+qt5_proj.egg-info/PKG-INFO
+qt5_proj.egg-info/SOURCES.txt
+qt5_proj.egg-info/dependency_links.txt
+qt5_proj.egg-info/top_level.txt
