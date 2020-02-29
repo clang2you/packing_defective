@@ -280,6 +280,17 @@ pyqt5 = "5.13.2"
 python-dotenv = "*"
 
 [[package]]
+category = "main"
+description = "Python bindings for the Qt Charts library"
+name = "pyqtchart"
+optional = false
+python-versions = "*"
+version = "5.13.0"
+
+[package.dependencies]
+PyQt5 = ">=5.13"
+
+[[package]]
 category = "dev"
 description = "pytest: simple powerful testing with Python"
 name = "pytest"
@@ -382,7 +393,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "dbb9ee38721097f1f721145440c4206cef70b3458053e3714010a2cf3eac9e80"
+content-hash = "93b8ab9bf18c0591016e1d0d72480877b7ec0840c74d3c70176bc3e028de048d"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -541,6 +552,12 @@ pyqt5-tools = [
     {file = "pyqt5_tools-5.13.2.1.6rc1-cp37-none-win_amd64.whl", hash = "sha256:fe1e7d576f8435fdfd600b6c99f47c408b11fa755a5ec7d75daffe2454c54cf2"},
     {file = "pyqt5_tools-5.13.2.1.6rc1-cp38-none-win32.whl", hash = "sha256:f81003afb1c94981095f6f0b95172418c863168cbeff0503db40c7a7bb1d4681"},
     {file = "pyqt5_tools-5.13.2.1.6rc1-cp38-none-win_amd64.whl", hash = "sha256:ecfad0704e3192da1b0d7a707938b8bb96954c3d120da9f922fdc349e964592e"},
+]
+pyqtchart = [
+    {file = "PyQtChart-5.13.0-5.13.1-cp35.cp36.cp37.cp38-abi3-macosx_10_6_intel.whl", hash = "sha256:c61ddcb2cc09404e2fd04dc63bd0094782fe3b4eeb731942df987cf31932e864"},
+    {file = "PyQtChart-5.13.0-5.13.1-cp35.cp36.cp37.cp38-abi3-manylinux1_x86_64.whl", hash = "sha256:ccdc3923cbd065ca5fe09b3a08eea32031f57b602574b60f3fd9da47c35eec71"},
+    {file = "PyQtChart-5.13.0-5.13.1-cp35.cp36.cp37.cp38-none-win32.whl", hash = "sha256:46fc05bd4f8e5c2a6f6a4508fd4682c1f79b7a5e031af8fad0346229727d3f92"},
+    {file = "PyQtChart-5.13.0-5.13.1-cp35.cp36.cp37.cp38-none-win_amd64.whl", hash = "sha256:da9deb94db6710e7cc1fe204e49096cebec5bd14878ded035993f1307b27c6ef"},
 ]
 pytest = [
     {file = "pytest-5.3.5-py3-none-any.whl", hash = "sha256:ff615c761e25eb25df19edddc0b970302d2a9091fbce0e7213298d85fb61fef6"},
