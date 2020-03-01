@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['call_ui_mainwindow.py'],
-             pathex=['C:\\Users\\Lex Chen\\py_proj\\qt5_proj\\qt5_proj'],
+             pathex=['C:\\Users\\lex\\py_proj\\packing_defective\\qt5_proj'],
              binaries=[],
              datas=[],
              hiddenimports=[],
