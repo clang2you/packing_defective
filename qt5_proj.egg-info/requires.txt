@@ -1,0 +1,6 @@
+PyQt5-tools<6.0.0,>=5.13.2
+pefile<2020.0.0,>=2019.4.18
+pyinstaller<4.0,>=3.6
+pyqtchart==5.13
+pywin32-ctypes<0.3.0,>=0.2.0
+qdarkstyle<3.0,>=2.8
