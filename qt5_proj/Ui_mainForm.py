@@ -64,7 +64,7 @@ class Ui_MainWindow(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.comboBox = QtWidgets.QComboBox(self.frame_3)
-        self.comboBox.setMinimumSize(QtCore.QSize(0, 20))
+        self.comboBox.setMinimumSize(QtCore.QSize(0, 30))
         self.comboBox.setMaximumSize(QtCore.QSize(16777215, 20))
         self.comboBox.setObjectName("comboBox")
         self.horizontalLayout_2.addWidget(self.comboBox)
@@ -250,7 +250,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_3.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

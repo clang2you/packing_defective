@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QTableWidget
+# from PyQt5.QtCore import Qt
 from mainForm import Ui_MainWindow
 import matplotlib
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -22,6 +23,9 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
 
     def SetTableWidgetColumnHeaderStretchMode(self):
         for header_item_index in range(self.tableWidget.columnCount()):
+            # 以下注释的内容为更改表头字体颜色，取消注释并更改 Qt.magenta 为指定颜色即可
+            # headItem = self.tableWidget.horizontalHeaderItem(header_item_index)
+            # headItem.setForeground(QtGui.QBrush(Qt.magenta))
             self.tableWidget.horizontalHeader().setSectionResizeMode(
                 header_item_index, QtWidgets.QHeaderView.Stretch)
 
@@ -52,10 +56,11 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         self.label_7.setStyleSheet("QLabel{color:purple}")
         # 从系统分辨率中提取桌面高度
         height = QApplication.desktop().screenGeometry().height()
-        # 高度小于 800，字体及高度都修改为20
-        if height <= 1070:
+        # 高度小于 1000，字体及高度都修改为20, 修改 frame 宽度为 150，高度为 530
+        if height <= 1000:
             self.resize(1000, 700)
-            self.frame.setMinimumSize(QtCore.QSize(230, 520))
+            self.frame.setMinimumSize(QtCore.QSize(150, 520))
+            self.frame.setMaximumWidth(150)
             font = QtGui.QFont()
             font.setFamily("微软雅黑")
             font.setPointSize(20)

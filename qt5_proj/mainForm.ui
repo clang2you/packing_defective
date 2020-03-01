@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1117</width>
+    <width>1113</width>
     <height>924</height>
    </rect>
   </property>
@@ -42,7 +42,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -81,7 +81,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>30</height>
+            <height>40</height>
            </size>
           </property>
           <property name="frameShape">
@@ -109,7 +109,7 @@
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>20</height>
+               <height>30</height>
               </size>
              </property>
              <property name="maximumSize">
@@ -510,7 +510,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1117</width>
+     <width>1113</width>
      <height>23</height>
     </rect>
    </property>

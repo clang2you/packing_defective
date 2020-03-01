@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1117, 924)
+        MainWindow.resize(1113, 924)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -55,7 +55,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addLayout(self.verticalLayout_5)
         self.verticalLayout_3.addWidget(self.frame_2)
         self.frame_3 = QtWidgets.QFrame(self.tab)
-        self.frame_3.setMinimumSize(QtCore.QSize(0, 30))
+        self.frame_3.setMinimumSize(QtCore.QSize(0, 40))
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_3.setObjectName("frame_3")
@@ -64,7 +64,7 @@ class Ui_MainWindow(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.comboBox = QtWidgets.QComboBox(self.frame_3)
-        self.comboBox.setMinimumSize(QtCore.QSize(0, 20))
+        self.comboBox.setMinimumSize(QtCore.QSize(0, 30))
         self.comboBox.setMaximumSize(QtCore.QSize(16777215, 20))
         self.comboBox.setObjectName("comboBox")
         self.horizontalLayout_2.addWidget(self.comboBox)
@@ -230,7 +230,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1117, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1113, 23))
         self.menubar.setObjectName("menubar")
         self.menu = QtWidgets.QMenu(self.menubar)
         self.menu.setObjectName("menu")
@@ -250,7 +250,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_3.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
