@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QTableWidget
@@ -85,6 +86,8 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
 
 
 if __name__ == "__main__":
+    # cfg = CfgHelper()
+    # print(cfg.cfg_dict)
     app = QApplication(sys.argv)
     mywin = MyMainForm()
     mywin.SetTableWidgetColumnHeaderStretchMode()
