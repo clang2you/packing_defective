@@ -1,7 +1,7 @@
 README.md
 setup.py
+qt5_proj/Ui_mainForm.py
 qt5_proj/__init__.py
-qt5_proj/box_layout_test.py
 qt5_proj/call_ui_mainwindow.py
 qt5_proj/call_ui_mainwindow.spec
 qt5_proj/mainForm.py
@@ -23,4 +23,3 @@ qt5_proj/build/call_ui_mainwindow/base_library.zip
 qt5_proj/build/call_ui_mainwindow/call_ui_mainwindow.exe.manifest
 qt5_proj/build/call_ui_mainwindow/warn-call_ui_mainwindow.txt
 qt5_proj/build/call_ui_mainwindow/xref-call_ui_mainwindow.html
-qt5_proj/dist/call_ui_mainwindow.exe

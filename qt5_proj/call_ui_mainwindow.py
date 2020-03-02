@@ -9,6 +9,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import numpy as np
+from ConfigHelper.config_helper import CfgHelper
 
 matplotlib.use("Qt5Agg")
 
@@ -84,6 +85,8 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
 
 
 if __name__ == "__main__":
+    # cfg = CfgHelper()
+    # print(cfg.test_dict)
     app = QApplication(sys.argv)
     mywin = MyMainForm()
     mywin.SetTableWidgetColumnHeaderStretchMode()

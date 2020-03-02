@@ -250,7 +250,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_3.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -261,11 +261,11 @@ class Ui_MainWindow(object):
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "序号"))
         item = self.tableWidget.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "回收原因"))
+        item.setText(_translate("MainWindow", "不良原因"))
         item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "回收数量"))
+        item.setText(_translate("MainWindow", "不良数量(双)"))
         item = self.tableWidget.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "回收比率"))
+        item.setText(_translate("MainWindow", "比例"))
         self.label.setText(_translate("MainWindow", "回收数量："))
         self.label_2.setText(_translate("MainWindow", "0"))
         self.label_3.setText(_translate("MainWindow", "加工投料："))

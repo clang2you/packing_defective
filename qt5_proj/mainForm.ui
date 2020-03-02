@@ -42,7 +42,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -166,17 +166,17 @@
           </column>
           <column>
            <property name="text">
-            <string>回收原因</string>
+            <string>不良原因</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>回收数量</string>
+            <string>不良数量(双)</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>回收比率</string>
+            <string>比例</string>
            </property>
           </column>
          </widget>
