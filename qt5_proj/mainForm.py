@@ -64,7 +64,8 @@ class Ui_MainWindow(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.comboBox_2 = QtWidgets.QComboBox(self.frame_3)
-        self.comboBox_2.setMinimumSize(QtCore.QSize(120, 0))
+        self.comboBox_2.setMinimumSize(QtCore.QSize(30, 30))
+        self.comboBox_2.setMaximumSize(QtCore.QSize(16777215, 30))
         self.comboBox_2.setObjectName("comboBox_2")
         self.comboBox_2.addItem("")
         self.comboBox_2.addItem("")
@@ -80,6 +81,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.comboBox)
         self.dateEdit = QtWidgets.QDateEdit(self.frame_3)
         self.dateEdit.setEnabled(False)
+        self.dateEdit.setMinimumSize(QtCore.QSize(0, 30))
+        self.dateEdit.setMaximumSize(QtCore.QSize(16777215, 30))
         self.dateEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2020, 3, 3), QtCore.QTime(0, 0, 0)))
         self.dateEdit.setObjectName("dateEdit")
         self.horizontalLayout_2.addWidget(self.dateEdit)
@@ -234,6 +237,8 @@ class Ui_MainWindow(object):
         self.pushButton_2.setObjectName("pushButton_2")
         self.gridLayout.addWidget(self.pushButton_2, 3, 0, 1, 1)
         self.pushButton = QtWidgets.QPushButton(self.frame)
+        self.pushButton.setMinimumSize(QtCore.QSize(0, 0))
+        self.pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.pushButton.setObjectName("pushButton")
         self.gridLayout.addWidget(self.pushButton, 0, 0, 1, 1)
         self.verticalLayout_2.addLayout(self.gridLayout)
@@ -362,7 +367,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_3.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

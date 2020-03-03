@@ -42,7 +42,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -108,8 +108,14 @@
             <widget class="QComboBox" name="comboBox_2">
              <property name="minimumSize">
               <size>
-               <width>120</width>
-               <height>0</height>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>30</height>
               </size>
              </property>
              <item>
@@ -164,6 +170,18 @@
             <widget class="QDateEdit" name="dateEdit">
              <property name="enabled">
               <bool>false</bool>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>30</height>
+              </size>
              </property>
              <property name="dateTime">
               <datetime>
@@ -544,6 +562,18 @@
              </item>
              <item row="0" column="0">
               <widget class="QPushButton" name="pushButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string>投料 / 包装数据修正</string>
                </property>
