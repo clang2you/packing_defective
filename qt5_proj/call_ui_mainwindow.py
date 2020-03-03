@@ -2,14 +2,14 @@ import sys
 import os
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtWidgets import QTableWidget
+from PyQt5.QtWidgets import QTableWidget, QProgressBar
 # from PyQt5.QtCore import Qt
 from mainForm import Ui_MainWindow
 import matplotlib
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
-import numpy as np
+# import numpy as np
 from ConfigHelper.config_helper import CfgHelper
 
 matplotlib.use("Qt5Agg")
@@ -19,6 +19,13 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(MyMainForm, self).__init__(parent)
         self.setupUi(self)
+        self.progressBar = QProgressBar()
+        self.progressBar.setMaximumHeight(20)
+        self.statusBar().addPermanentWidget(self.progressBar)
+        # self.statusBar().setStyleSheet('QStatusBar::item {border: none;}')
+        self.progressBar.hide()
+        self.progressBar.setRange(0, 500) # 设置进度条的范围
+        self.progressBar.setValue(20)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
@@ -30,16 +37,56 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
             # headItem.setForeground(QtGui.QBrush(Qt.magenta))
             self.tableWidget.horizontalHeader().setSectionResizeMode(
                 header_item_index, QtWidgets.QHeaderView.Stretch)
+        for header_item_index in range(self.tableWidget_2.columnCount()):
+            self.tableWidget_2.horizontalHeader().setSectionResizeMode(
+                header_item_index, QtWidgets.QHeaderView.Stretch)
 
     def plot_(self):
         ax = self.figure.add_axes([0.1, 0.1, 0.8, 0.8])
         x = ["08:00", '09:00', '10:00', '11:00', '12: 00',
              '13:00', '14:00', '15:00', '16:00', '17:00']
-        y = [105, 165, 143, 201, 225, 264, 285, 305, 270, 120]
-        ax.plot(x, y, marker='o')
-        for xy in zip(x, y):
-            plt.annotate("%s,回收：%s" % xy, xy=xy, xytext=(-20, 10),
-                         textcoords='offset points')
+        y = [0, 41, 27, 30, 19, 8, 12, 15, 17, 23]
+        z = [0, 11, 12, 6, 8, 34, 56, 2, 11, 34]
+        f = [0, 15, 34, 65, 6, 3, 4, 9, 23, 47]
+        g = [0, 24, 44, 50, 16, 4, 5, 11, 18, 27]
+        h = [0, 16, 23, 18, 22, 29, 11, 14, 18, 23]
+        i = [0, 12, 2, 5, 7, 5, 13, 7, 8, 10]
+        j = [0, 4, 3, 6, 8, 4, 5, 7, 8, 9]
+        ax.plot(x, y, color='red', lineWidth=1,
+                linestyle=":", label="脱胶", marker='.')
+        ax.plot(x, z, color="green", linewidth=1,
+                linestyle=':', label="高胶", marker=".")
+        ax.plot(x, j, color="magenta", linewidth=1,
+                linestyle=':', label="其他", marker=".")
+        ax.plot(x, f, color="blue", linewidth=1,
+                linestyle=':', label="清洁度", marker=".")
+        ax.plot(x, g, color="purple", linewidth=1,
+                linestyle=':', label="不对称", marker=".")
+        ax.plot(x, h, color="orange", linewidth=1,
+                linestyle=':', label="针车不良", marker=".")
+        ax.plot(x, i, color="navy", linewidth=1,
+                linestyle=':', label="研磨线外露", marker=".")
+        plt.style.use('Solarize_Light2')
+        # plt.style.use('seaborn')
+        plt.xlabel("时间段")
+        plt.ylabel("回收量")
+        ax.legend(loc=2)
+        ax.grid()
+        for x, y, z, f, g, h, i, j in list(zip(x, y, z, f, g, h, i, j)):
+            plt.annotate("%s" % y, (x, y), xytext=(-10, 13),
+                         ha='left', textcoords='offset points')
+            plt.annotate("%s" % z,  (x, z), xytext=(-10, 13),
+                         ha='left', textcoords='offset points')
+            plt.annotate("%s" % f,  (x, f), xytext=(-10, 13),
+                         ha='left', textcoords='offset points')
+            plt.annotate("%s" % g,  (x, g), xytext=(-10, 13),
+                         ha='left', textcoords='offset points')
+            plt.annotate("%s" % h,  (x, h), xytext=(-10, 13),
+                         ha='left', textcoords='offset points')
+            plt.annotate("%s" % i,  (x, i), xytext=(-10, 13),
+                         ha='left', textcoords='offset points')
+            plt.annotate("%s" % j,  (x, j), xytext=(-10, 13),
+                         ha='left', textcoords='offset points')
         ax.set_title('各时段回收量', fontsize='18', fontweight='bold',
                      color='black', loc='left')
         self.canvas.draw()
