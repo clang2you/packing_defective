@@ -22,7 +22,6 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         self.progressBar = QProgressBar()
         self.progressBar.setMaximumHeight(20)
         self.statusBar().addPermanentWidget(self.progressBar)
-        # self.statusBar().setStyleSheet('QStatusBar::item {border: none;}')
         self.progressBar.hide()
         self.progressBar.setRange(0, 500) # 设置进度条的范围
         self.progressBar.setValue(20)
@@ -87,7 +86,11 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
                          ha='left', textcoords='offset points')
             plt.annotate("%s" % j,  (x, j), xytext=(-10, 13),
                          ha='left', textcoords='offset points')
+<<<<<<< HEAD
         ax.set_title('各时段回收量', fontsize='20', 
+=======
+        ax.set_title('各时段回收量', fontsize='18', fontweight='bold',
+>>>>>>> f70d8d73c7ea7f742c24b80c7283c4423c9c718e
                      color='black', loc='center')
         self.canvas.draw()
 
@@ -108,8 +111,8 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         # 高度小于 1000，字体及高度都修改为20, 修改 frame 宽度为 150，高度为 530
         if height <= 1000:
             self.resize(1000, 700)
-            self.frame.setMinimumSize(QtCore.QSize(150, 520))
-            self.frame.setMaximumWidth(150)
+            self.frame.setMinimumSize(QtCore.QSize(200, 520))
+            self.frame.setMaximumWidth(200)
             font = QtGui.QFont()
             font.setFamily("微软雅黑")
             font.setPointSize(20)
