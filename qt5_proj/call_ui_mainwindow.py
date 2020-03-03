@@ -53,19 +53,19 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         i = [0, 12, 2, 5, 7, 5, 13, 7, 8, 10]
         j = [0, 4, 3, 6, 8, 4, 5, 7, 8, 9]
         ax.plot(x, y, color='red', lineWidth=1,
-                linestyle=":", label="脱胶", marker='.')
+                linestyle="-", label="脱胶", marker='.')
         ax.plot(x, z, color="green", linewidth=1,
-                linestyle=':', label="高胶", marker=".")
+                linestyle='-', label="高胶", marker=".")
         ax.plot(x, j, color="magenta", linewidth=1,
-                linestyle=':', label="其他", marker=".")
+                linestyle='-', label="其他", marker=".")
         ax.plot(x, f, color="blue", linewidth=1,
-                linestyle=':', label="清洁度", marker=".")
+                linestyle='-', label="清洁度", marker=".")
         ax.plot(x, g, color="purple", linewidth=1,
-                linestyle=':', label="不对称", marker=".")
+                linestyle='-', label="不对称", marker=".")
         ax.plot(x, h, color="orange", linewidth=1,
-                linestyle=':', label="针车不良", marker=".")
+                linestyle='-', label="针车不良", marker=".")
         ax.plot(x, i, color="navy", linewidth=1,
-                linestyle=':', label="研磨线外露", marker=".")
+                linestyle='-', label="研磨线外露", marker=".")
         plt.style.use('Solarize_Light2')
         # plt.style.use('seaborn')
         plt.xlabel("时间段")
@@ -87,8 +87,8 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
                          ha='left', textcoords='offset points')
             plt.annotate("%s" % j,  (x, j), xytext=(-10, 13),
                          ha='left', textcoords='offset points')
-        ax.set_title('各时段回收量', fontsize='18', fontweight='bold',
-                     color='black', loc='left')
+        ax.set_title('各时段回收量', fontsize='20', 
+                     color='black', loc='center')
         self.canvas.draw()
 
     def AddLineChartToForm(self):
