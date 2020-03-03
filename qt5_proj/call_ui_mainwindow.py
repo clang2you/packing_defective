@@ -86,11 +86,7 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
                          ha='left', textcoords='offset points')
             plt.annotate("%s" % j,  (x, j), xytext=(-10, 13),
                          ha='left', textcoords='offset points')
-<<<<<<< HEAD
-        ax.set_title('各时段回收量', fontsize='20', 
-=======
         ax.set_title('各时段回收量', fontsize='18', fontweight='bold',
->>>>>>> f70d8d73c7ea7f742c24b80c7283c4423c9c718e
                      color='black', loc='center')
         self.canvas.draw()
 
