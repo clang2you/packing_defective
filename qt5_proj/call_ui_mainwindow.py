@@ -87,7 +87,7 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
             plt.annotate("%s" % j,  (x, j), xytext=(-10, 13),
                          ha='left', textcoords='offset points')
         ax.set_title('各时段回收量', fontsize='18', fontweight='bold',
-                     color='black', loc='left')
+                     color='black', loc='center')
         self.canvas.draw()
 
     def AddLineChartToForm(self):
