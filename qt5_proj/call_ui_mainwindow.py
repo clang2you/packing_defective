@@ -10,7 +10,7 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 # import numpy as np
 from ConfigHelper.config_helper import CfgHelper
-from Ui_sectionSettings import Ui_Dialog as section_Ui
+from sectionSettings import Ui_Dialog as section_Ui
 from Ui_dailyDefStasticForm import Ui_MainWindow as dailyDef_Ui
 from dbSettings import Ui_Dialog as dbSettings_ui
 from adminAuthorization import Ui_Dialog as adminPassowrd_ui
@@ -30,29 +30,30 @@ class DbSettingsWindow(QDialog):
         self.child.pushButton_3.clicked.connect(self.ChangeDbSettings)
         self.child.pushButton.clicked.connect(self.SaveDbSettings)
         self.lineEdits = ['lineEdit', 'lineEdit_2', 'lineEdit_3', 'lineEdit_4']
-        self.ChangeLineEditBackgoundColor()
+        self.font = QtGui.QFont()
+        self.font.setFamily("微软雅黑 Light")
+        self.font.setPointSize(14)
+        self.font.setWeight(50)
+
+        self.ChangeInterfaceComponent(True)
         self.SetLineEditText()
+        
 
     def SaveDbSettings(self):
         self.configJson["MySQL"] = {'address': self.child.lineEdit.text(), 'user': self.child.lineEdit_2.text(),
                                     'password': self.child.lineEdit_3.text(), 'dbName': self.child.lineEdit_4.text()}
         self.config.SaveConfigToJson(self.configJson)
-        self.child.pushButton_3.setEnabled(True)
-        self.child.pushButton.setEnabled(False)
-        for lineEdit in self.lineEdits:
-            edit = self.child.frame.findChild((QtWidgets.QLineEdit), lineEdit)
-            edit.setStyleSheet("QLineEdit{background-color:silver}")
-            font = QtGui.QFont()
-            font.setFamily("微软雅黑 Light")
-            font.setPointSize(14)
-            font.setWeight(50)
-            edit.setFont(font)
-            edit.setReadOnly(True)
+        self.ChangeInterfaceComponent(True)
 
-    def ChangeLineEditBackgoundColor(self):
+    def ChangeInterfaceComponent(self, saveOrNotAuthorization):
+        self.child.pushButton_3.setEnabled(saveOrNotAuthorization)
+        self.child.pushButton.setEnabled(not saveOrNotAuthorization)
+        qss = "QLineEdit{background-color:silver}" if saveOrNotAuthorization  else "QLineEdit{background-color:white}"
         for lineEdit in self.lineEdits:
             edit = self.child.frame.findChild((QtWidgets.QLineEdit), lineEdit)
-            edit.setStyleSheet("QLineEdit{background-color:silver}")
+            edit.setStyleSheet(qss)
+            edit.setFont(self.font)
+            edit.setReadOnly(saveOrNotAuthorization)
 
     def SetLineEditText(self):
         try:
@@ -80,32 +81,10 @@ class DbSettingsWindow(QDialog):
         try:
             if password == self.configJson["Admin"]["password"]:
                 self.passwordForm.reject()
-                self.child.pushButton.setEnabled(True)
-                self.child.pushButton_3.setEnabled(False)
-                for lineEdit in self.lineEdits:
-                    edit = self.child.frame.findChild(
-                        (QtWidgets.QLineEdit), lineEdit)
-                    edit.setReadOnly(False)
-                    edit.setStyleSheet("QLineEdit{background-color:white}")
-                    font = QtGui.QFont()
-                    font.setFamily("微软雅黑 Light")
-                    font.setPointSize(14)
-                    font.setWeight(50)
-                    edit.setFont(font)
+                self.ChangeInterfaceComponent(False)
         except:
             self.passwordForm.reject()
-            self.child.pushButton.setEnabled(True)
-            self.child.pushButton_3.setEnabled(False)
-            for lineEdit in self.lineEdits:
-                edit = self.child.frame.findChild(
-                    (QtWidgets.QLineEdit), lineEdit)
-                edit.setReadOnly(False)
-                edit.setStyleSheet("QLineEdit{background-color:white}")
-                font = QtGui.QFont()
-                font.setFamily("微软雅黑 Light")
-                font.setPointSize(14)
-                font.setWeight(50)
-                edit.setFont(font)
+            self.ChangeInterfaceComponent(False)
 
 # 管理员权限授权窗口类
 
@@ -141,6 +120,8 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
             self.CreateSectionSettingsWindow)
         self.actionDbSet.triggered.connect(self.CreateDbSettingsWindow)
         self.pushButton_4.clicked.connect(self.CreateDailyStasticForm)
+        # self.label_10.setPixmap(QtGui.QPixmap(os.path.split(os.path.realpath(__file__))[0] + r"\unnamed.jpg"))
+        # self.label_10.setScaledContents(True)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
@@ -183,13 +164,13 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         ax = self.figure.add_axes([0.1, 0.1, 0.8, 0.8])
         x = ["08:00", '09:00', '10:00', '11:00', '12: 00',
              '13:00', '14:00', '15:00', '16:00', '17:00']
-        y = [0, 41, 27, 30, 19, 8, 12, 15, 17, 23]
-        z = [0, 11, 12, 6, 8, 34, 45, 2, 11, 34]
-        f = [0, 15, 34, 35, 6, 3, 4, 9, 23, 47]
-        g = [0, 24, 44, 50, 16, 4, 5, 11, 18, 27]
-        h = [0, 16, 23, 18, 22, 29, 11, 14, 18, 23]
-        i = [0, 12, 2, 5, 7, 5, 13, 7, 8, 10]
-        j = [0, 4, 3, 6, 8, 4, 5, 7, 8, 9]
+        y = [0, 2, 0, 0, 0, 0, 0, 0, 0, 0]
+        z = [0, 5, 0, 0, 0, 0, 0, 0, 0, 0]
+        f = [0, 3, 0, 0, 0, 0, 0, 0, 0, 0]
+        g = [0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
+        h = [0, 0, 7, 0, 0, 0, 0, 0, 0, 0]
+        i = [0, 0, 3, 0, 0, 0, 0, 0, 0, 0]
+        j = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ax.plot(x, y, color='red', lineWidth=1,
                 linestyle="-", label="脱胶", marker='.')
         ax.plot(x, z, color="green", linewidth=1,
@@ -248,25 +229,25 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
             self.resize(1000, 700)
             self.frame.setMinimumSize(QtCore.QSize(200, 520))
             self.frame.setMaximumWidth(200)
-            font = QtGui.QFont()
-            font.setFamily("微软雅黑")
-            font.setPointSize(20)
-            font.setBold(True)
-            font.setWeight(50)
+            self.font = QtGui.QFont()
+            self.font.setFamily("微软雅黑")
+            self.font.setPointSize(20)
+            self.font.setBold(True)
+            self.font.setWeight(50)
             labels = ('label_2', 'label_4', 'label_6', 'label_7', 'label_9')
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
-                label.setFont(font)
+                label.setFont(self.font)
                 label.setMinimumSize(QtCore.QSize(16777215, 20))
-            font = QtGui.QFont()
-            font.setFamily("微软雅黑 Light")
-            font.setPointSize(20)
-            font.setBold(False)
-            font.setWeight(50)
+            self.font = QtGui.QFont()
+            self.font.setFamily("微软雅黑 Light")
+            self.font.setPointSize(20)
+            self.font.setBold(False)
+            self.font.setWeight(50)
             labels = ('label', 'label_3', 'label_5', 'label_8')
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
-                label.setFont(font)
+                label.setFont(self.font)
                 label.setMinimumSize(QtCore.QSize(16777215, 20))
 
 

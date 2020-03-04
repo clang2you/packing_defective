@@ -17,6 +17,18 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QLabel" name="label_10">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>60</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="font">
        <font>
         <family>微软雅黑</family>
@@ -105,6 +117,37 @@
             </spacer>
            </item>
            <item>
+            <widget class="QComboBox" name="comboBox_3">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>30</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>全天</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>上午</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>下午</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
             <widget class="QComboBox" name="comboBox_2">
              <property name="minimumSize">
               <size>
@@ -156,12 +199,12 @@
              </property>
              <item>
               <property name="text">
-               <string>柱状图</string>
+               <string>线状图</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>线状图</string>
+               <string>柱状图</string>
               </property>
              </item>
             </widget>
