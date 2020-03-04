@@ -42,7 +42,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -144,58 +144,26 @@
             <widget class="QComboBox" name="comboBox">
              <property name="minimumSize">
               <size>
-               <width>150</width>
+               <width>80</width>
                <height>30</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>16777215</width>
+               <width>80</width>
                <height>30</height>
               </size>
              </property>
              <item>
               <property name="text">
-               <string>当日时段不良</string>
+               <string>柱状图</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>月不良统计</string>
+               <string>线状图</string>
               </property>
              </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDateEdit" name="dateEdit">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="dateTime">
-              <datetime>
-               <hour>0</hour>
-               <minute>0</minute>
-               <second>0</second>
-               <year>2020</year>
-               <month>3</month>
-               <day>3</day>
-              </datetime>
-             </property>
-             <property name="displayFormat">
-              <string>M月</string>
-             </property>
             </widget>
            </item>
           </layout>
@@ -822,7 +790,8 @@
     <property name="title">
      <string>维护设置</string>
     </property>
-    <addaction name="actionDataBase_Settings"/>
+    <addaction name="actionDbSet"/>
+    <addaction name="actionInfoSet"/>
    </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
@@ -834,7 +803,7 @@
    <addaction name="menu_3"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionDataBase_Settings">
+  <action name="actionDbSet">
    <property name="text">
     <string>数据库服务器设置</string>
    </property>
@@ -842,6 +811,11 @@
   <action name="actionSectionSet">
    <property name="text">
     <string>各段不良设定</string>
+   </property>
+  </action>
+  <action name="actionInfoSet">
+   <property name="text">
+    <string>线别 / 时间段 / 不良原因设置</string>
    </property>
   </action>
  </widget>

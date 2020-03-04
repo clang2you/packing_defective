@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QMainWindow,QDialog, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QWidget
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QTableWidget, QProgressBar
 # from PyQt5.QtCore import Qt
@@ -13,8 +13,112 @@ import matplotlib.pyplot as plt
 from ConfigHelper.config_helper import CfgHelper
 from Ui_sectionSettings import Ui_Dialog as section_Ui
 from Ui_dailyDefStasticForm import Ui_MainWindow as dailyDef_Ui
+from dbSettings import Ui_Dialog as dbSettings_ui
+from adminAuthorization import Ui_Dialog as adminPassowrd_ui
 
 matplotlib.use("Qt5Agg")
+
+# 数据库设定窗口类
+
+
+class DbSettingsWindow(QDialog):
+    def __init__(self, parent=None):
+        super(DbSettingsWindow, self).__init__(parent)
+        self.child = dbSettings_ui()
+        self.child.setupUi(self)
+        self.config = CfgHelper()
+        self.configJson = self.config.cfg_dict
+        self.child.pushButton_3.clicked.connect(self.ChangeDbSettings)
+        self.child.pushButton.clicked.connect(self.SaveDbSettings)
+        self.lineEdits = ['lineEdit', 'lineEdit_2', 'lineEdit_3', 'lineEdit_4']
+        self.ChangeLineEditBackgoundColor()
+        self.SetLineEditText()
+
+    def SaveDbSettings(self):
+        self.configJson["MySQL"] = {'address': self.child.lineEdit.text(), 'user': self.child.lineEdit_2.text(),
+                                    'password': self.child.lineEdit_3.text(), 'dbName': self.child.lineEdit_4.text()}
+        self.config.SaveConfigToJson(self.configJson)
+        self.child.pushButton_3.setEnabled(True)
+        self.child.pushButton.setEnabled(False)
+        for lineEdit in self.lineEdits:
+            edit = self.child.frame.findChild((QtWidgets.QLineEdit), lineEdit)
+            edit.setStyleSheet("QLineEdit{background-color:silver}")
+            font = QtGui.QFont()
+            font.setFamily("微软雅黑 Light")
+            font.setPointSize(14)
+            font.setWeight(50)
+            edit.setFont(font)
+            edit.setReadOnly(True)
+
+    def ChangeLineEditBackgoundColor(self):
+        for lineEdit in self.lineEdits:
+            edit = self.child.frame.findChild((QtWidgets.QLineEdit), lineEdit)
+            edit.setStyleSheet("QLineEdit{background-color:silver}")
+
+    def SetLineEditText(self):
+        try:
+            self.child.lineEdit.setText(
+                self.configJson["MySQL"]["address"])
+            self.child.lineEdit_2.setText(
+                self.configJson["MySQL"]["user"])
+            self.child.lineEdit_3.setText(
+                self.configJson["MySQL"]["password"])
+            self.child.lineEdit_4.setText(
+                self.configJson["MySQL"]["dbName"])
+        except:
+            for lineEdit in self.lineEdits:
+                edit = self.child.frame.findChild(
+                    (QtWidgets.QLineEdit), lineEdit)
+                edit.setText("读取配置出错")
+
+    def ChangeDbSettings(self):
+        self.passwordForm = AdminAutorizationForm(self)
+        self.passwordForm.child.lineEdit.editingFinished.connect(
+            lambda: self.HandlePassword(self.passwordForm.child.lineEdit.text()))
+        self.passwordForm.exec()
+
+    def HandlePassword(self, password):
+        try:
+            if password == self.configJson["Admin"]["password"]:
+                self.passwordForm.reject()
+                self.child.pushButton.setEnabled(True)
+                self.child.pushButton_3.setEnabled(False)
+                for lineEdit in self.lineEdits:
+                    edit = self.child.frame.findChild(
+                        (QtWidgets.QLineEdit), lineEdit)
+                    edit.setReadOnly(False)
+                    edit.setStyleSheet("QLineEdit{background-color:white}")
+                    font = QtGui.QFont()
+                    font.setFamily("微软雅黑 Light")
+                    font.setPointSize(14)
+                    font.setWeight(50)
+                    edit.setFont(font)
+        except:
+            self.passwordForm.reject()
+            self.child.pushButton.setEnabled(True)
+            self.child.pushButton_3.setEnabled(False)
+            for lineEdit in self.lineEdits:
+                edit = self.child.frame.findChild(
+                    (QtWidgets.QLineEdit), lineEdit)
+                edit.setReadOnly(False)
+                edit.setStyleSheet("QLineEdit{background-color:white}")
+                font = QtGui.QFont()
+                font.setFamily("微软雅黑 Light")
+                font.setPointSize(14)
+                font.setWeight(50)
+                edit.setFont(font)
+
+# 管理员权限授权窗口类
+
+
+class AdminAutorizationForm(QDialog):
+    def __init__(self, parent=None):
+        super(AdminAutorizationForm, self).__init__(parent)
+        self.child = adminPassowrd_ui()
+        self.child.setupUi(self)
+
+# 加工线分段信息设定窗口类
+
 
 class SectionSettingWindow(QDialog):
     def __init__(self, parent=None):
@@ -22,52 +126,48 @@ class SectionSettingWindow(QDialog):
         self.child = section_Ui()
         self.child.setupUi(self)
 
+
 class DailyDefStasticForm(QMainWindow, dailyDef_Ui):
     def __init__(self, parent=None):
         super(DailyDefStasticForm, self).__init__(parent)
         self.setupUi(self)
 
+
 class MyMainForm(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(MyMainForm, self).__init__(parent)
         self.setupUi(self)
-        self.progressBar = QProgressBar()
-        self.progressBar.setMaximumHeight(20)
-        self.statusBar().addPermanentWidget(self.progressBar)
-        self.progressBar.hide()
-        self.progressBar.setRange(0, 500) # 设置进度条的范围
-        self.progressBar.setValue(20)
 
-        self.comboBox.currentIndexChanged.connect(self.SetMonthSelectComboBoxEnabled)
-        self.actionSectionSet.triggered.connect(self.CreateSectionSettingsWindow)
+        self.actionSectionSet.triggered.connect(
+            self.CreateSectionSettingsWindow)
+        self.actionDbSet.triggered.connect(self.CreateDbSettingsWindow)
         self.pushButton_4.clicked.connect(self.CreateDailyStasticForm)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
-    
+
+    def CreateDbSettingsWindow(self):
+        self.dbSettingWindow = DbSettingsWindow(self)
+        self.dbSettingWindow.exec()
+
     def CreateSectionSettingsWindow(self):
         self.sectionSettingsWindow = SectionSettingWindow(self)
         self.sectionSettingsWindow.exec()
-    
+
     def CreateDailyStasticForm(self):
         self.dailyStasticForm = DailyDefStasticForm(self)
         self.dailyStasticForm.label_2.setStyleSheet("QLabel{color:green}")
         self.dailyStasticForm.statusBar().hide()
-        self.dailyStasticForm.pushButton.clicked.connect(self.CloseDailyStasticForm)
+        self.dailyStasticForm.pushButton.clicked.connect(
+            self.CloseDailyStasticForm)
         for header_item_index in range(self.dailyStasticForm.tableWidget.columnCount()):
             self.dailyStasticForm.tableWidget.horizontalHeader().setSectionResizeMode(
                 header_item_index, QtWidgets.QHeaderView.Stretch)
         self.dailyStasticForm.show()
-    
+
     def CloseDailyStasticForm(self):
         if self.dailyStasticForm.isActiveWindow():
             self.dailyStasticForm.close()
-
-    def SetMonthSelectComboBoxEnabled(self):
-        if self.comboBox.currentIndex() > 0:
-            self.dateEdit.setEnabled(True)
-        else:
-            self.dateEdit.setEnabled(False)
 
     def SetTableWidgetColumnHeaderStretchMode(self):
         for header_item_index in range(self.tableWidget.columnCount()):
