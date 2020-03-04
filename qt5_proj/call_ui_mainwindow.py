@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow,QDialog, QWidget
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QTableWidget, QProgressBar
 # from PyQt5.QtCore import Qt
@@ -11,9 +11,21 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 # import numpy as np
 from ConfigHelper.config_helper import CfgHelper
+from Ui_sectionSettings import Ui_Dialog as section_Ui
+from Ui_dailyDefStasticForm import Ui_MainWindow as dailyDef_Ui
 
 matplotlib.use("Qt5Agg")
 
+class SectionSettingWindow(QDialog):
+    def __init__(self, parent=None):
+        super(SectionSettingWindow, self).__init__(parent)
+        self.child = section_Ui()
+        self.child.setupUi(self)
+
+class DailyDefStasticForm(QMainWindow, dailyDef_Ui):
+    def __init__(self, parent=None):
+        super(DailyDefStasticForm, self).__init__(parent)
+        self.setupUi(self)
 
 class MyMainForm(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
@@ -26,8 +38,36 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         self.progressBar.setRange(0, 500) # 设置进度条的范围
         self.progressBar.setValue(20)
 
+        self.comboBox.currentIndexChanged.connect(self.SetMonthSelectComboBoxEnabled)
+        self.actionSectionSet.triggered.connect(self.CreateSectionSettingsWindow)
+        self.pushButton_4.clicked.connect(self.CreateDailyStasticForm)
+
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
+    
+    def CreateSectionSettingsWindow(self):
+        self.sectionSettingsWindow = SectionSettingWindow(self)
+        self.sectionSettingsWindow.exec()
+    
+    def CreateDailyStasticForm(self):
+        self.dailyStasticForm = DailyDefStasticForm(self)
+        self.dailyStasticForm.label_2.setStyleSheet("QLabel{color:green}")
+        self.dailyStasticForm.statusBar().hide()
+        self.dailyStasticForm.pushButton.clicked.connect(self.CloseDailyStasticForm)
+        for header_item_index in range(self.dailyStasticForm.tableWidget.columnCount()):
+            self.dailyStasticForm.tableWidget.horizontalHeader().setSectionResizeMode(
+                header_item_index, QtWidgets.QHeaderView.Stretch)
+        self.dailyStasticForm.show()
+    
+    def CloseDailyStasticForm(self):
+        if self.dailyStasticForm.isActiveWindow():
+            self.dailyStasticForm.close()
+
+    def SetMonthSelectComboBoxEnabled(self):
+        if self.comboBox.currentIndex() > 0:
+            self.dateEdit.setEnabled(True)
+        else:
+            self.dateEdit.setEnabled(False)
 
     def SetTableWidgetColumnHeaderStretchMode(self):
         for header_item_index in range(self.tableWidget.columnCount()):
@@ -45,8 +85,8 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         x = ["08:00", '09:00', '10:00', '11:00', '12: 00',
              '13:00', '14:00', '15:00', '16:00', '17:00']
         y = [0, 41, 27, 30, 19, 8, 12, 15, 17, 23]
-        z = [0, 11, 12, 6, 8, 34, 56, 2, 11, 34]
-        f = [0, 15, 34, 65, 6, 3, 4, 9, 23, 47]
+        z = [0, 11, 12, 6, 8, 34, 45, 2, 11, 34]
+        f = [0, 15, 34, 35, 6, 3, 4, 9, 23, 47]
         g = [0, 24, 44, 50, 16, 4, 5, 11, 18, 27]
         h = [0, 16, 23, 18, 22, 29, 11, 14, 18, 23]
         i = [0, 12, 2, 5, 7, 5, 13, 7, 8, 10]

@@ -824,24 +824,24 @@
     </property>
     <addaction name="actionDataBase_Settings"/>
    </widget>
-   <widget class="QMenu" name="menu_2">
-    <property name="title">
-     <string>报表查看</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
-     <string>生管定义</string>
+     <string>品管定义</string>
     </property>
+    <addaction name="actionSectionSet"/>
    </widget>
    <addaction name="menu"/>
-   <addaction name="menu_2"/>
    <addaction name="menu_3"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionDataBase_Settings">
    <property name="text">
     <string>数据库服务器设置</string>
+   </property>
+  </action>
+  <action name="actionSectionSet">
+   <property name="text">
+    <string>各段不良设定</string>
    </property>
   </action>
  </widget>
