@@ -54,7 +54,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -841,6 +841,7 @@
      <string>品管定义</string>
     </property>
     <addaction name="actionSectionSet"/>
+    <addaction name="actionWorkingTimeSet"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_3"/>
@@ -859,6 +860,11 @@
   <action name="actionInfoSet">
    <property name="text">
     <string>线别 / 时间段 / 不良原因设置</string>
+   </property>
+  </action>
+  <action name="actionWorkingTimeSet">
+   <property name="text">
+    <string>WorkingTimeSet</string>
    </property>
   </action>
  </widget>

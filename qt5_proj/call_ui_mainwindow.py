@@ -11,9 +11,12 @@ import matplotlib.pyplot as plt
 # import numpy as np
 from ConfigHelper.config_helper import CfgHelper
 from sectionSettings import Ui_Dialog as section_Ui
-from Ui_dailyDefStasticForm import Ui_MainWindow as dailyDef_Ui
+from dailyDefStasticForm import Ui_MainWindow as dailyDef_Ui
 from dbSettings import Ui_Dialog as dbSettings_ui
 from adminAuthorization import Ui_Dialog as adminPassowrd_ui
+from userInput import Ui_Dialog as userInput_ui
+from monthlyDefStasticForm import Ui_MainWindow as monthlyDef_Ui
+from countAdjustment import Ui_Dialog as countAdjustment_ui
 
 matplotlib.use("Qt5Agg")
 
@@ -37,7 +40,6 @@ class DbSettingsWindow(QDialog):
 
         self.ChangeInterfaceComponent(True)
         self.SetLineEditText()
-        
 
     def SaveDbSettings(self):
         self.configJson["MySQL"] = {'address': self.child.lineEdit.text(), 'user': self.child.lineEdit_2.text(),
@@ -48,7 +50,7 @@ class DbSettingsWindow(QDialog):
     def ChangeInterfaceComponent(self, saveOrNotAuthorization):
         self.child.pushButton_3.setEnabled(saveOrNotAuthorization)
         self.child.pushButton.setEnabled(not saveOrNotAuthorization)
-        qss = "QLineEdit{background-color:silver}" if saveOrNotAuthorization  else "QLineEdit{background-color:white}"
+        qss = "QLineEdit{background-color:silver}" if saveOrNotAuthorization else "QLineEdit{background-color:white}"
         for lineEdit in self.lineEdits:
             edit = self.child.frame.findChild((QtWidgets.QLineEdit), lineEdit)
             edit.setStyleSheet(qss)
@@ -104,11 +106,73 @@ class SectionSettingWindow(QDialog):
         self.child = section_Ui()
         self.child.setupUi(self)
 
+# 日不良统计窗口类
+
 
 class DailyDefStasticForm(QMainWindow, dailyDef_Ui):
     def __init__(self, parent=None):
         super(DailyDefStasticForm, self).__init__(parent)
         self.setupUi(self)
+        self.label_2.setStyleSheet("QLabel{color:green}")
+        self.statusBar().hide()
+        self.SetTableWidgetWidth()
+        self.pushButton.clicked.connect(self.close)
+        self.progressBar.hide()
+
+    def SetTableWidgetWidth(self):
+        for header_item_index in range(self.tableWidget.columnCount()):
+            self.tableWidget.horizontalHeader().setSectionResizeMode(
+                header_item_index, QtWidgets.QHeaderView.Stretch)
+
+# 月不良统计窗口类
+
+
+class MonthlyDefStasticForm(QMainWindow, monthlyDef_Ui):
+    def __init__(self, parent=None):
+        super(MonthlyDefStasticForm, self).__init__(parent)
+        self.setupUi(self)
+        self.label_2.setStyleSheet("QLabel{color:green}")
+        self.statusBar().hide()
+        self.SetTableWidgetWidth()
+        self.pushButton_3.clicked.connect(self.close)
+        self.progressBar.hide()
+
+    def SetTableWidgetWidth(self):
+        for header_item_index in range(self.tableWidget.columnCount()):
+            # 判断列表头字符数量，大于 4 个中文字符的将按实际内容适应宽度
+            if len(self.tableWidget.horizontalHeaderItem(header_item_index).text()) < 4:
+                self.tableWidget.horizontalHeader().setSectionResizeMode(
+                header_item_index, QtWidgets.QHeaderView.Stretch)
+            else:
+                self.tableWidget.horizontalHeader().setSectionResizeMode(
+                header_item_index, QtWidgets.QHeaderView.ResizeToContents)
+
+# 数量更正窗口类
+
+
+class CountAdjustmentWindow(QDialog):
+    def __init__(self, parent=None):
+        super(CountAdjustmentWindow, self).__init__(parent)
+        self.child = countAdjustment_ui()
+        self.child.setupUi(self)
+
+# 缴库量输入窗口类
+
+
+class UserInputWindow(QDialog):
+    def __init__(self, parent=None):
+        super(UserInputWindow, self).__init__(parent)
+        self.child = userInput_ui()
+        self.child.setupUi(self)
+        self.SetTableWidgetHeaderWidth()
+        self.child.lineEdit.setValidator(QtGui.QIntValidator())
+
+    def SetTableWidgetHeaderWidth(self):
+        for header_item_index in range(self.child.tableWidget.columnCount()):
+            self.child.tableWidget.horizontalHeader().setSectionResizeMode(
+                header_item_index, QtWidgets.QHeaderView.Stretch)
+
+# 主窗口类
 
 
 class MyMainForm(QMainWindow, Ui_MainWindow):
@@ -120,11 +184,20 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
             self.CreateSectionSettingsWindow)
         self.actionDbSet.triggered.connect(self.CreateDbSettingsWindow)
         self.pushButton_4.clicked.connect(self.CreateDailyStasticForm)
-        # self.label_10.setPixmap(QtGui.QPixmap(os.path.split(os.path.realpath(__file__))[0] + r"\unnamed.jpg"))
-        # self.label_10.setScaledContents(True)
+        self.pushButton_2.clicked.connect(self.CreateMonthlyStasticForm)
+        self.pushButton_3.clicked.connect(self.CreateUserInputWindow)
+        self.pushButton.clicked.connect(self.CreateCountAdjustmentWindow)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
+    
+    def CreateCountAdjustmentWindow(self):
+        self.countAdjustmentWindow = CountAdjustmentWindow(self)
+        self.countAdjustmentWindow.exec()
+
+    def CreateUserInputWindow(self):
+        self.userInputWindow = UserInputWindow(self)
+        self.userInputWindow.exec()
 
     def CreateDbSettingsWindow(self):
         self.dbSettingWindow = DbSettingsWindow(self)
@@ -136,18 +209,11 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
 
     def CreateDailyStasticForm(self):
         self.dailyStasticForm = DailyDefStasticForm(self)
-        self.dailyStasticForm.label_2.setStyleSheet("QLabel{color:green}")
-        self.dailyStasticForm.statusBar().hide()
-        self.dailyStasticForm.pushButton.clicked.connect(
-            self.CloseDailyStasticForm)
-        for header_item_index in range(self.dailyStasticForm.tableWidget.columnCount()):
-            self.dailyStasticForm.tableWidget.horizontalHeader().setSectionResizeMode(
-                header_item_index, QtWidgets.QHeaderView.Stretch)
         self.dailyStasticForm.show()
 
-    def CloseDailyStasticForm(self):
-        if self.dailyStasticForm.isActiveWindow():
-            self.dailyStasticForm.close()
+    def CreateMonthlyStasticForm(self):
+        self.monthlyStasticForm = MonthlyDefStasticForm(self)
+        self.monthlyStasticForm.show()
 
     def SetTableWidgetColumnHeaderStretchMode(self):
         for header_item_index in range(self.tableWidget.columnCount()):

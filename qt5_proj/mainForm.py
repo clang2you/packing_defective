@@ -366,14 +366,17 @@ class Ui_MainWindow(object):
         self.actionSectionSet.setObjectName("actionSectionSet")
         self.actionInfoSet = QtWidgets.QAction(MainWindow)
         self.actionInfoSet.setObjectName("actionInfoSet")
+        self.actionWorkingTimeSet = QtWidgets.QAction(MainWindow)
+        self.actionWorkingTimeSet.setObjectName("actionWorkingTimeSet")
         self.menu.addAction(self.actionDbSet)
         self.menu.addAction(self.actionInfoSet)
         self.menu_3.addAction(self.actionSectionSet)
+        self.menu_3.addAction(self.actionWorkingTimeSet)
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menu_3.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -437,3 +440,4 @@ class Ui_MainWindow(object):
         self.actionDbSet.setText(_translate("MainWindow", "数据库服务器设置"))
         self.actionSectionSet.setText(_translate("MainWindow", "各段不良设定"))
         self.actionInfoSet.setText(_translate("MainWindow", "线别 / 时间段 / 不良原因设置"))
+        self.actionWorkingTimeSet.setText(_translate("MainWindow", "WorkingTimeSet"))
