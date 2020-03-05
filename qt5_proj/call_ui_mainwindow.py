@@ -17,6 +17,9 @@ from adminAuthorization import Ui_Dialog as adminPassowrd_ui
 from userInput import Ui_Dialog as userInput_ui
 from monthlyDefStasticForm import Ui_MainWindow as monthlyDef_Ui
 from countAdjustment import Ui_Dialog as countAdjustment_ui
+from workingTimeSettings import Ui_Dialog as workingTimeSet_ui
+from targetSettings import Ui_Dialog as targetSet_ui
+from workRestTimeSettings import Ui_Dialog as workRestSet_ui
 
 matplotlib.use("Qt5Agg")
 
@@ -97,6 +100,15 @@ class AdminAutorizationForm(QDialog):
         self.child = adminPassowrd_ui()
         self.child.setupUi(self)
 
+# 生产时段设置窗口类
+
+
+class WorkingtimeSettingsWindow(QDialog):
+    def __init__(self, parent=None):
+        super(WorkingtimeSettingsWindow, self).__init__(parent)
+        self.child = workingTimeSet_ui()
+        self.child.setupUi(self)
+
 # 加工线分段信息设定窗口类
 
 
@@ -106,6 +118,26 @@ class SectionSettingWindow(QDialog):
         self.child = section_Ui()
         self.child.setupUi(self)
 
+# 作休时间设置窗口类
+class WorkRestTimeSettingWindow(QDialog):
+    def __init__(self, parent=None):
+        super(WorkRestTimeSettingWindow, self).__init__(parent)
+        self.child = workRestSet_ui()
+        self.child.setupUi(self)
+
+# 每日目标产量设定窗口类
+class TargetSettingWindow(QDialog):
+    def __init__(self, parent=None):
+        super(TargetSettingWindow, self).__init__(parent)
+        self.child = targetSet_ui()
+        self.child.setupUi(self)
+        self.SetTableWidgetHeaderWidth()
+    
+    def SetTableWidgetHeaderWidth(self):
+        for header_item_index in range(self.child.tableWidget.columnCount()):
+            self.child.tableWidget.horizontalHeader().setSectionResizeMode(
+                header_item_index, QtWidgets.QHeaderView.Stretch)
+
 # 日不良统计窗口类
 
 
@@ -113,6 +145,8 @@ class DailyDefStasticForm(QMainWindow, dailyDef_Ui):
     def __init__(self, parent=None):
         super(DailyDefStasticForm, self).__init__(parent)
         self.setupUi(self)
+        self.tableWidget.setEditTriggers(
+            QtWidgets.QAbstractItemView.NoEditTriggers)
         self.label_2.setStyleSheet("QLabel{color:green}")
         self.statusBar().hide()
         self.SetTableWidgetWidth()
@@ -131,6 +165,8 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDef_Ui):
     def __init__(self, parent=None):
         super(MonthlyDefStasticForm, self).__init__(parent)
         self.setupUi(self)
+        self.tableWidget.setEditTriggers(
+            QtWidgets.QAbstractItemView.NoEditTriggers)
         self.label_2.setStyleSheet("QLabel{color:green}")
         self.statusBar().hide()
         self.SetTableWidgetWidth()
@@ -142,10 +178,10 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDef_Ui):
             # 判断列表头字符数量，大于 4 个中文字符的将按实际内容适应宽度
             if len(self.tableWidget.horizontalHeaderItem(header_item_index).text()) < 4:
                 self.tableWidget.horizontalHeader().setSectionResizeMode(
-                header_item_index, QtWidgets.QHeaderView.Stretch)
+                    header_item_index, QtWidgets.QHeaderView.Stretch)
             else:
                 self.tableWidget.horizontalHeader().setSectionResizeMode(
-                header_item_index, QtWidgets.QHeaderView.ResizeToContents)
+                    header_item_index, QtWidgets.QHeaderView.ResizeToContents)
 
 # 数量更正窗口类
 
@@ -164,6 +200,8 @@ class UserInputWindow(QDialog):
         super(UserInputWindow, self).__init__(parent)
         self.child = userInput_ui()
         self.child.setupUi(self)
+        self.child.tableWidget.setEditTriggers(
+            QtWidgets.QAbstractItemView.NoEditTriggers)
         self.SetTableWidgetHeaderWidth()
         self.child.lineEdit.setValidator(QtGui.QIntValidator())
 
@@ -182,15 +220,30 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
 
         self.actionSectionSet.triggered.connect(
             self.CreateSectionSettingsWindow)
+        self.actionWorkingTimeSet.triggered.connect(self.CreateWorkingTimeSetWindow)
+        self.actionWorkRestTimeSet.triggered.connect(self.CreateWorkRestTimeSettingWindow)
         self.actionDbSet.triggered.connect(self.CreateDbSettingsWindow)
         self.pushButton_4.clicked.connect(self.CreateDailyStasticForm)
         self.pushButton_2.clicked.connect(self.CreateMonthlyStasticForm)
         self.pushButton_3.clicked.connect(self.CreateUserInputWindow)
         self.pushButton.clicked.connect(self.CreateCountAdjustmentWindow)
+        self.pushButton_7.clicked.connect(self.CreateTargetSettingWindow)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
     
+    def CreateWorkRestTimeSettingWindow(self):
+        self.workRestTimeSettingWindow = WorkRestTimeSettingWindow(self)
+        self.workRestTimeSettingWindow.exec()
+    
+    def CreateTargetSettingWindow(self):
+        self.targetSetWindow = TargetSettingWindow(self)
+        self.targetSetWindow.exec()
+
+    def CreateWorkingTimeSetWindow(self):
+        self.workingTimeSetWindow = WorkingtimeSettingsWindow(self)
+        self.workingTimeSetWindow.exec()
+
     def CreateCountAdjustmentWindow(self):
         self.countAdjustmentWindow = CountAdjustmentWindow(self)
         self.countAdjustmentWindow.exec()

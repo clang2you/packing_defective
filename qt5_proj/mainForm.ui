@@ -291,6 +291,12 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label">
              <property name="minimumSize">
@@ -551,27 +557,6 @@
            <item>
             <layout class="QGridLayout" name="gridLayout">
              <item row="1" column="0">
-              <widget class="QPushButton" name="pushButton_3">
-               <property name="text">
-                <string>缴库量输入</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QPushButton" name="pushButton_4">
-               <property name="text">
-                <string>日统计</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QPushButton" name="pushButton_2">
-               <property name="text">
-                <string>月统计</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
               <widget class="QPushButton" name="pushButton">
                <property name="minimumSize">
                 <size>
@@ -587,6 +572,34 @@
                </property>
                <property name="text">
                 <string>投料 / 包装数据修正</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QPushButton" name="pushButton_2">
+               <property name="text">
+                <string>月统计</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QPushButton" name="pushButton_4">
+               <property name="text">
+                <string>日统计</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QPushButton" name="pushButton_3">
+               <property name="text">
+                <string>缴库量输入</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="pushButton_7">
+               <property name="text">
+                <string>每日目标产量设置</string>
                </property>
               </widget>
              </item>
@@ -842,6 +855,7 @@
     </property>
     <addaction name="actionSectionSet"/>
     <addaction name="actionWorkingTimeSet"/>
+    <addaction name="actionWorkRestTimeSet"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_3"/>
@@ -864,7 +878,12 @@
   </action>
   <action name="actionWorkingTimeSet">
    <property name="text">
-    <string>WorkingTimeSet</string>
+    <string>生产时段设置</string>
+   </property>
+  </action>
+  <action name="actionWorkRestTimeSet">
+   <property name="text">
+    <string>作休时间设置</string>
    </property>
   </action>
  </widget>

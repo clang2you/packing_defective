@@ -1,0 +1,875 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>361</width>
+    <height>417</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Microsoft YaHei UI Light</family>
+    <pointsize>14</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>生产时段设置</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>当前部门：</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_6">
+        <property name="font">
+         <font>
+          <family>Microsoft YaHei UI</family>
+          <pointsize>16</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>NOS1A</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>154</width>
+          <height>17</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="frame_2">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <property name="horizontalSpacing">
+         <number>10</number>
+        </property>
+        <item row="6" column="2">
+         <widget class="QLabel" name="label_18">
+          <property name="maximumSize">
+           <size>
+            <width>25</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>至</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>时段一：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>时段三：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLabel" name="label_15">
+          <property name="maximumSize">
+           <size>
+            <width>25</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>至</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>时段四：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLabel" name="label_16">
+          <property name="maximumSize">
+           <size>
+            <width>25</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>至</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="2">
+         <widget class="QLabel" name="label_17">
+          <property name="maximumSize">
+           <size>
+            <width>25</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>至</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="label_2">
+          <property name="maximumSize">
+           <size>
+            <width>25</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>至</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label_13">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>时段八：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLabel" name="label_14">
+          <property name="maximumSize">
+           <size>
+            <width>25</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>至</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_10">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>时段五：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>时段六：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="2">
+         <widget class="QLabel" name="label_19">
+          <property name="maximumSize">
+           <size>
+            <width>25</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>至</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>时段二：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_12">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>时段七：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QTimeEdit" name="timeEdit">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="dateTime">
+           <datetime>
+            <hour>15</hour>
+            <minute>29</minute>
+            <second>0</second>
+            <year>2020</year>
+            <month>3</month>
+            <day>5</day>
+           </datetime>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QTimeEdit" name="timeEdit_2">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QTimeEdit" name="timeEdit_3">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QTimeEdit" name="timeEdit_4">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QTimeEdit" name="timeEdit_5">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QTimeEdit" name="timeEdit_6">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QTimeEdit" name="timeEdit_7">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QTimeEdit" name="timeEdit_8">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QTimeEdit" name="timeEdit_9">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QTimeEdit" name="timeEdit_10">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QTimeEdit" name="timeEdit_11">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3">
+         <widget class="QTimeEdit" name="timeEdit_12">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="QTimeEdit" name="timeEdit_13">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="3">
+         <widget class="QTimeEdit" name="timeEdit_14">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="3">
+         <widget class="QTimeEdit" name="timeEdit_15">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="3">
+         <widget class="QTimeEdit" name="timeEdit_16">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::HourSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>hh:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>false</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::LocalTime</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="label_7">
+          <property name="maximumSize">
+           <size>
+            <width>25</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>至</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="frame_3">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>9</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>保存设定</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="text">
+         <string>关闭</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>286</x>
+     <y>374</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>264</x>
+     <y>-14</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

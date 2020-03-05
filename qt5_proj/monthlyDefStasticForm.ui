@@ -22,100 +22,6 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QFrame" name="frame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QTableWidget" name="tableWidget">
-         <property name="minimumSize">
-          <size>
-           <width>986</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>986</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei UI Light</family>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <column>
-          <property name="text">
-           <string>日期</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>脱胶</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>高胶</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>清洁度</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>不对称</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>针车不良</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>其他</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>研磨线外露</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>合计</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>投料</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>回收率</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>包装</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
      <widget class="QFrame" name="frame_2">
       <property name="minimumSize">
        <size>
@@ -217,6 +123,9 @@
            <day>5</day>
           </datetime>
          </property>
+         <property name="calendarPopup">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -247,6 +156,9 @@
            <month>4</month>
            <day>5</day>
           </datetime>
+         </property>
+         <property name="calendarPopup">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -319,6 +231,100 @@
          <property name="text">
           <string>关闭</string>
          </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QTableWidget" name="tableWidget">
+         <property name="minimumSize">
+          <size>
+           <width>986</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>986</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI Light</family>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <column>
+          <property name="text">
+           <string>日期</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>脱胶</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>高胶</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>清洁度</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>不对称</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>针车不良</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>其他</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>研磨线外露</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>合计</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>投料</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>回收率</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>包装</string>
+          </property>
+         </column>
         </widget>
        </item>
       </layout>
