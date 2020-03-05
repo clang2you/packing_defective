@@ -270,7 +270,7 @@
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>40</height>
+       <height>50</height>
       </size>
      </property>
      <property name="frameShape">
@@ -302,6 +302,12 @@
         </property>
         <item>
          <widget class="QLabel" name="label_7">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="text">
            <string>用于计算节拍产量</string>
           </property>
@@ -309,6 +315,12 @@
         </item>
         <item>
          <widget class="QLabel" name="label_8">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="text">
            <string>节拍产量 = 目标产量 * 已工作时长 / 总时长</string>
           </property>
@@ -334,7 +346,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>40</height>
+          <height>30</height>
          </size>
         </property>
         <property name="text">
@@ -347,7 +359,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>40</height>
+          <height>30</height>
          </size>
         </property>
         <property name="text">
