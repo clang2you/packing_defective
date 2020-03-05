@@ -3,24 +3,24 @@ import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QWidget
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QTableWidget, QProgressBar
-from mainForm import Ui_MainWindow
+import qt5_proj.mainForm
 import matplotlib
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 # import numpy as np
-from ConfigHelper.config_helper import CfgHelper
-from sectionSettings import Ui_Dialog as section_Ui
-from dailyDefStasticForm import Ui_MainWindow as dailyDef_Ui
-from dbSettings import Ui_Dialog as dbSettings_ui
-from adminAuthorization import Ui_Dialog as adminPassowrd_ui
-from userInput import Ui_Dialog as userInput_ui
-from monthlyDefStasticForm import Ui_MainWindow as monthlyDef_Ui
-from countAdjustment import Ui_Dialog as countAdjustment_ui
-from workingTimeSettings import Ui_Dialog as workingTimeSet_ui
-from targetSettings import Ui_Dialog as targetSet_ui
-from workRestTimeSettings import Ui_Dialog as workRestSet_ui
-from lineSettings import Ui_Dialog as lineSet_ui
+import qt5_proj.ConfigHelper.config_helper as config_mod
+import qt5_proj.sectionSettings
+import qt5_proj.dailyDefStasticForm
+import qt5_proj.dbSettings
+import qt5_proj.adminAuthorization
+import qt5_proj.userInput
+import qt5_proj.monthlyDefStasticForm
+import qt5_proj.countAdjustment
+import qt5_proj.workingTimeSettings
+import qt5_proj.targetSettings
+import qt5_proj.workRestTimeSettings
+import qt5_proj.lineSettings
 
 matplotlib.use("Qt5Agg")
 
@@ -30,9 +30,9 @@ matplotlib.use("Qt5Agg")
 class DbSettingsWindow(QDialog):
     def __init__(self, parent=None):
         super(DbSettingsWindow, self).__init__(parent)
-        self.child = dbSettings_ui()
+        self.child = dbSettings.Ui_Dialog()
         self.child.setupUi(self)
-        self.config = CfgHelper()
+        self.config = config_mod.CfgHelper()
         self.configJson = self.config.cfg_dict
         self.child.pushButton_3.clicked.connect(self.ChangeDbSettings)
         self.child.pushButton.clicked.connect(self.SaveDbSettings)
@@ -98,7 +98,7 @@ class DbSettingsWindow(QDialog):
 class AdminAutorizationForm(QDialog):
     def __init__(self, parent=None):
         super(AdminAutorizationForm, self).__init__(parent)
-        self.child = adminPassowrd_ui()
+        self.child = adminAuthorization.Ui_Dialog()
         self.child.setupUi(self)
 
 # 生产时段设置窗口类
@@ -107,7 +107,7 @@ class AdminAutorizationForm(QDialog):
 class WorkingtimeSettingsWindow(QDialog):
     def __init__(self, parent=None):
         super(WorkingtimeSettingsWindow, self).__init__(parent)
-        self.child = workingTimeSet_ui()
+        self.child = workingTimeSettings.Ui_Dialog()
         self.child.setupUi(self)
 
 # 加工线分段信息设定窗口类
@@ -116,7 +116,7 @@ class WorkingtimeSettingsWindow(QDialog):
 class SectionSettingWindow(QDialog):
     def __init__(self, parent=None):
         super(SectionSettingWindow, self).__init__(parent)
-        self.child = section_Ui()
+        self.child = sectionSettings.Ui_Dialog()
         self.child.setupUi(self)
 
 # 作休时间设置窗口类
@@ -125,7 +125,7 @@ class SectionSettingWindow(QDialog):
 class WorkRestTimeSettingWindow(QDialog):
     def __init__(self, parent=None):
         super(WorkRestTimeSettingWindow, self).__init__(parent)
-        self.child = workRestSet_ui()
+        self.child = workRestTimeSettings.Ui_Dialog()
         self.child.setupUi(self)
 
 # 每日目标产量设定窗口类
@@ -134,7 +134,7 @@ class WorkRestTimeSettingWindow(QDialog):
 class TargetSettingWindow(QDialog):
     def __init__(self, parent=None):
         super(TargetSettingWindow, self).__init__(parent)
-        self.child = targetSet_ui()
+        self.child = targetSettings.Ui_Dialog()
         self.child.setupUi(self)
         self.SetTableWidgetHeaderWidth()
 
@@ -149,13 +149,13 @@ class TargetSettingWindow(QDialog):
 class LineSettingsWindow(QDialog):
     def __init__(self, parent=None):
         super(LineSettingsWindow, self).__init__(parent)
-        self.child = lineSet_ui()
+        self.child = lineSettings.Ui_Dialog()
         self.child.setupUi(self)
 
 # 日不良统计窗口类
 
 
-class DailyDefStasticForm(QMainWindow, dailyDef_Ui):
+class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
     def __init__(self, parent=None):
         super(DailyDefStasticForm, self).__init__(parent)
         self.setupUi(self)
@@ -175,7 +175,7 @@ class DailyDefStasticForm(QMainWindow, dailyDef_Ui):
 # 月不良统计窗口类
 
 
-class MonthlyDefStasticForm(QMainWindow, monthlyDef_Ui):
+class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
     def __init__(self, parent=None):
         super(MonthlyDefStasticForm, self).__init__(parent)
         self.setupUi(self)
@@ -203,7 +203,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDef_Ui):
 class CountAdjustmentWindow(QDialog):
     def __init__(self, parent=None):
         super(CountAdjustmentWindow, self).__init__(parent)
-        self.child = countAdjustment_ui()
+        self.child = countAdjustment.Ui_Dialog()
         self.child.setupUi(self)
 
 # 缴库量输入窗口类
@@ -212,7 +212,7 @@ class CountAdjustmentWindow(QDialog):
 class UserInputWindow(QDialog):
     def __init__(self, parent=None):
         super(UserInputWindow, self).__init__(parent)
-        self.child = userInput_ui()
+        self.child = userInput.Ui_Dialog()
         self.child.setupUi(self)
         self.child.tableWidget.setEditTriggers(
             QtWidgets.QAbstractItemView.NoEditTriggers)
@@ -227,7 +227,7 @@ class UserInputWindow(QDialog):
 # 主窗口类
 
 
-class MyMainForm(QMainWindow, Ui_MainWindow):
+class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
     def __init__(self, parent=None):
         super(MyMainForm, self).__init__(parent)
         self.setupUi(self)
