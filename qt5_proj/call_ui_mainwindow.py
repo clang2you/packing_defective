@@ -120,6 +120,8 @@ class SectionSettingWindow(QDialog):
         self.child.setupUi(self)
 
 # 作休时间设置窗口类
+
+
 class WorkRestTimeSettingWindow(QDialog):
     def __init__(self, parent=None):
         super(WorkRestTimeSettingWindow, self).__init__(parent)
@@ -127,22 +129,26 @@ class WorkRestTimeSettingWindow(QDialog):
         self.child.setupUi(self)
 
 # 每日目标产量设定窗口类
+
+
 class TargetSettingWindow(QDialog):
     def __init__(self, parent=None):
         super(TargetSettingWindow, self).__init__(parent)
         self.child = targetSet_ui()
         self.child.setupUi(self)
         self.SetTableWidgetHeaderWidth()
-    
+
     def SetTableWidgetHeaderWidth(self):
         for header_item_index in range(self.child.tableWidget.columnCount()):
             self.child.tableWidget.horizontalHeader().setSectionResizeMode(
                 header_item_index, QtWidgets.QHeaderView.Stretch)
 
 # 线别、不良类型及工作时段设定窗口类
+
+
 class LineSettingsWindow(QDialog):
     def __init__(self, parent=None):
-        super(LineSettingsWindow,self).__init__(parent)
+        super(LineSettingsWindow, self).__init__(parent)
         self.child = lineSet_ui()
         self.child.setupUi(self)
 
@@ -228,8 +234,10 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
 
         self.actionSectionSet.triggered.connect(
             self.CreateSectionSettingsWindow)
-        self.actionWorkingTimeSet.triggered.connect(self.CreateWorkingTimeSetWindow)
-        self.actionWorkRestTimeSet.triggered.connect(self.CreateWorkRestTimeSettingWindow)
+        self.actionWorkingTimeSet.triggered.connect(
+            self.CreateWorkingTimeSetWindow)
+        self.actionWorkRestTimeSet.triggered.connect(
+            self.CreateWorkRestTimeSettingWindow)
         self.actionInfoSet.triggered.connect(self.CreateLineSettingsWindow)
         self.actionDbSet.triggered.connect(self.CreateDbSettingsWindow)
         self.pushButton_4.clicked.connect(self.CreateDailyStasticForm)
@@ -240,15 +248,15 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
-    
+
     def CreateLineSettingsWindow(self):
         self.lineSettingsWindow = LineSettingsWindow(self)
         self.lineSettingsWindow.exec()
-    
+
     def CreateWorkRestTimeSettingWindow(self):
         self.workRestTimeSettingWindow = WorkRestTimeSettingWindow(self)
         self.workRestTimeSettingWindow.exec()
-    
+
     def CreateTargetSettingWindow(self):
         self.targetSetWindow = TargetSettingWindow(self)
         self.targetSetWindow.exec()
