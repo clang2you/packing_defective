@@ -20,6 +20,7 @@ from countAdjustment import Ui_Dialog as countAdjustment_ui
 from workingTimeSettings import Ui_Dialog as workingTimeSet_ui
 from targetSettings import Ui_Dialog as targetSet_ui
 from workRestTimeSettings import Ui_Dialog as workRestSet_ui
+from lineSettings import Ui_Dialog as lineSet_ui
 
 matplotlib.use("Qt5Agg")
 
@@ -138,6 +139,13 @@ class TargetSettingWindow(QDialog):
             self.child.tableWidget.horizontalHeader().setSectionResizeMode(
                 header_item_index, QtWidgets.QHeaderView.Stretch)
 
+# 线别、不良类型及工作时段设定窗口类
+class LineSettingsWindow(QDialog):
+    def __init__(self, parent=None):
+        super(LineSettingsWindow,self).__init__(parent)
+        self.child = lineSet_ui()
+        self.child.setupUi(self)
+
 # 日不良统计窗口类
 
 
@@ -222,6 +230,7 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
             self.CreateSectionSettingsWindow)
         self.actionWorkingTimeSet.triggered.connect(self.CreateWorkingTimeSetWindow)
         self.actionWorkRestTimeSet.triggered.connect(self.CreateWorkRestTimeSettingWindow)
+        self.actionInfoSet.triggered.connect(self.CreateLineSettingsWindow)
         self.actionDbSet.triggered.connect(self.CreateDbSettingsWindow)
         self.pushButton_4.clicked.connect(self.CreateDailyStasticForm)
         self.pushButton_2.clicked.connect(self.CreateMonthlyStasticForm)
@@ -231,6 +240,10 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
+    
+    def CreateLineSettingsWindow(self):
+        self.lineSettingsWindow = LineSettingsWindow(self)
+        self.lineSettingsWindow.exec()
     
     def CreateWorkRestTimeSettingWindow(self):
         self.workRestTimeSettingWindow = WorkRestTimeSettingWindow(self)
