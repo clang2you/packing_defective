@@ -1,1 +1,59 @@
-{"MySQL": {"address": "127.0.0.1", "user": "root", "password": "", "dbName": "PackingDefInfo"}, "PackingLineInfo": {"LineId": "NOS1A", "QC1Name": "\u9648\u6587\u5a1f", "QC2Name": "\u6797\u79c0\u4e00", "QC3Name": "\u5c0f\u54e5\u54e5", "QC4Name": "\u5c0f\u59d0\u59d0"}, "Settings": {"RefreshInterval": 5}, "Admin": {"password": "sysadmin"}, "DefReasons": {"1": "\u8131\u80f6", "2": "\u9ad8\u80f6", "3": "\u4e0d\u5bf9\u79f0", "4": "\u6e05\u6d01\u5ea6", "5": "\u9488\u8f66\u4e0d\u826f", "6": "\u5176\u4ed6", "7": "\u7814\u78e8\u7ebf\u5916\u9732"}}
+{
+    "MySQL": {
+        "address": "172.22.0.21",
+        "user": "root",
+        "password": "",
+        "dbName": "PackingDefInfo"
+    },
+    "Line": {
+        "name": "AL",
+        "amStart": "08:30",
+        "amStop": "11:30",
+        "pmStart": "13:00",
+        "pmStop": "17:00",
+        "DefType": {
+            "1": "\u8131\u80f6",
+            "2": "\u5176\u4ed6",
+            "3": "\u6e05\u6d01\u5ea6",
+            "4": "\u4e0d\u5bf9\u79f0",
+            "5": "\u7814\u78e8\u7ebf\u5916\u9732",
+            "6": "\u9ad8\u80f6",
+            "7": "\u9488\u8f66\u4e0d\u826f"
+        }
+    },
+    "Section": {
+        "ruxuan": {
+            "1": "\u6e05\u6d01\u5ea6",
+            "2": "\u4e0d\u5bf9\u79f0",
+            "3": "\u9488\u8f66\u4e0d\u826f"
+        },
+        "tiedi": {
+            "1": "\u4e0d\u5bf9\u79f0",
+            "2": "\u9ad8\u80f6",
+            "3": "\u7814\u78e8\u7ebf\u5916\u9732"
+        },
+        "baozhuang": {
+            "1": "\u5176\u4ed6",
+            "2": "\u6e05\u6d01\u5ea6",
+            "3": "\u8131\u80f6"
+        }
+    },
+    "QcInfo": {
+        "QC1Name": "\u9648\u6587\u5a1f",
+        "QC2Name": "\u6797\u79c0\u4e00",
+        "QC3Name": "\u5c0f\u54e5\u54e5",
+        "QC4Name": "\u5c0f\u59d0\u59d0"
+    },
+    "Admin": {
+        "password": "sysadmin"
+    },
+    "DefReasons": {
+        "1": "\u8131\u80f6",
+        "2": "\u9ad8\u80f6",
+        "3": "\u4e0d\u5bf9\u79f0",
+        "4": "\u6e05\u6d01\u5ea6",
+        "5": "\u9488\u8f66\u4e0d\u826f",
+        "6": "\u5176\u4ed6",
+        "7": "\u7814\u78e8\u7ebf\u5916\u9732"
+    }
+}

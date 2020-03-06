@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>519</width>
+    <width>502</width>
     <height>428</height>
    </rect>
   </property>
@@ -26,6 +26,9 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QFrame" name="frame_3">
         <property name="maximumSize">
@@ -47,6 +50,9 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
@@ -99,6 +105,9 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <property name="bottomMargin">
           <number>0</number>
          </property>
@@ -108,6 +117,9 @@
             <string>今日缴库量：</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <property name="rightMargin">
+             <number>9</number>
+            </property>
             <property name="bottomMargin">
              <number>0</number>
             </property>
@@ -219,6 +231,9 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QGroupBox" name="groupBox_2">
         <property name="title">

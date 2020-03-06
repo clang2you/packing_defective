@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['call_ui_mainwindow.py'],
-             pathex=['.\\ConfigHelper\\config_helper.py', '.\\DbHelper\\db_helper.py', 'C:\\Users\\lex\\py_proj\\packing_defective\\qt5_proj'],
+             pathex=['C:\\Users\\Lex Chen\\py_proj\\qt5_proj\\qt5_proj'],
              binaries=[],
              datas=[],
              hiddenimports=[],
@@ -26,7 +26,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=True )
+          console=False )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

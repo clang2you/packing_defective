@@ -1,4 +1,5 @@
-('C:\\Users\\lex\\py_proj\\packing_defective\\qt5_proj\\build\\call_ui_mainwindow\\PKG-00.pkg',
+('C:\\Users\\Lex '
+ 'Chen\\py_proj\\qt5_proj\\qt5_proj\\build\\call_ui_mainwindow\\PKG-00.pkg',
  {'BINARY': 1,
   'DATA': 1,
   'EXECUTABLE': 1,
@@ -7,44 +8,59 @@
   'PYSOURCE': 1,
   'PYZ': 0},
  [('PYZ-00.pyz',
-   'C:\\Users\\lex\\py_proj\\packing_defective\\qt5_proj\\build\\call_ui_mainwindow\\PYZ-00.pyz',
+   'C:\\Users\\Lex '
+   'Chen\\py_proj\\qt5_proj\\qt5_proj\\build\\call_ui_mainwindow\\PYZ-00.pyz',
    'PYZ'),
-  ('struct', 'c:\\python38\\lib\\struct.pyo', 'PYMODULE'),
+  ('struct',
+   'c:\\users\\lex '
+   'chen\\appdata\\local\\programs\\python\\python38-32\\lib\\struct.pyo',
+   'PYMODULE'),
   ('pyimod01_os_path',
-   'c:\\users\\lex\\appdata\\local\\pypoetry\\cache\\virtualenvs\\qt5-proj-p4ggavh2-py3.8\\lib\\site-packages\\PyInstaller\\loader\\pyimod01_os_path.pyc',
+   'c:\\users\\lex '
+   'chen\\appdata\\local\\pypoetry\\cache\\virtualenvs\\qt5-proj-syrolbyl-py3.8\\lib\\site-packages\\PyInstaller\\loader\\pyimod01_os_path.pyc',
    'PYMODULE'),
   ('pyimod02_archive',
-   'c:\\users\\lex\\appdata\\local\\pypoetry\\cache\\virtualenvs\\qt5-proj-p4ggavh2-py3.8\\lib\\site-packages\\PyInstaller\\loader\\pyimod02_archive.pyc',
+   'c:\\users\\lex '
+   'chen\\appdata\\local\\pypoetry\\cache\\virtualenvs\\qt5-proj-syrolbyl-py3.8\\lib\\site-packages\\PyInstaller\\loader\\pyimod02_archive.pyc',
    'PYMODULE'),
   ('pyimod03_importers',
-   'c:\\users\\lex\\appdata\\local\\pypoetry\\cache\\virtualenvs\\qt5-proj-p4ggavh2-py3.8\\lib\\site-packages\\PyInstaller\\loader\\pyimod03_importers.pyc',
+   'c:\\users\\lex '
+   'chen\\appdata\\local\\pypoetry\\cache\\virtualenvs\\qt5-proj-syrolbyl-py3.8\\lib\\site-packages\\PyInstaller\\loader\\pyimod03_importers.pyc',
    'PYMODULE'),
   ('pyiboot01_bootstrap',
-   'c:\\users\\lex\\appdata\\local\\pypoetry\\cache\\virtualenvs\\qt5-proj-p4ggavh2-py3.8\\lib\\site-packages\\PyInstaller\\loader\\pyiboot01_bootstrap.py',
+   'c:\\users\\lex '
+   'chen\\appdata\\local\\pypoetry\\cache\\virtualenvs\\qt5-proj-syrolbyl-py3.8\\lib\\site-packages\\PyInstaller\\loader\\pyiboot01_bootstrap.py',
    'PYSOURCE'),
   ('pyi_rth__tkinter',
-   'C:\\Users\\lex\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-P4GGaVH2-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth__tkinter.py',
+   'C:\\Users\\Lex '
+   'Chen\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-sYrolBYL-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth__tkinter.py',
    'PYSOURCE'),
   ('pyi_rth_multiprocessing',
-   'C:\\Users\\lex\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-P4GGaVH2-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth_multiprocessing.py',
+   'C:\\Users\\Lex '
+   'Chen\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-sYrolBYL-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth_multiprocessing.py',
    'PYSOURCE'),
   ('pyi_rth_pkgres',
-   'C:\\Users\\lex\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-P4GGaVH2-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth_pkgres.py',
+   'C:\\Users\\Lex '
+   'Chen\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-sYrolBYL-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth_pkgres.py',
    'PYSOURCE'),
   ('pyi_rth_mplconfig',
-   'C:\\Users\\lex\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-P4GGaVH2-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth_mplconfig.py',
+   'C:\\Users\\Lex '
+   'Chen\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-sYrolBYL-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth_mplconfig.py',
    'PYSOURCE'),
   ('pyi_rth_mpldata',
-   'C:\\Users\\lex\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-P4GGaVH2-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth_mpldata.py',
+   'C:\\Users\\Lex '
+   'Chen\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-sYrolBYL-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth_mpldata.py',
    'PYSOURCE'),
   ('pyi_rth_pyqt5',
-   'C:\\Users\\lex\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-P4GGaVH2-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth_pyqt5.py',
+   'C:\\Users\\Lex '
+   'Chen\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\qt5-proj-sYrolBYL-py3.8\\Lib\\site-packages\\PyInstaller\\loader\\rthooks\\pyi_rth_pyqt5.py',
    'PYSOURCE'),
   ('call_ui_mainwindow',
-   'C:\\Users\\lex\\py_proj\\packing_defective\\qt5_proj\\call_ui_mainwindow.py',
+   'C:\\Users\\Lex Chen\\py_proj\\qt5_proj\\qt5_proj\\call_ui_mainwindow.py',
    'PYSOURCE'),
   ('call_ui_mainwindow.exe.manifest',
-   'C:\\Users\\lex\\py_proj\\packing_defective\\qt5_proj\\build\\call_ui_mainwindow\\call_ui_mainwindow.exe.manifest',
+   'C:\\Users\\Lex '
+   'Chen\\py_proj\\qt5_proj\\qt5_proj\\build\\call_ui_mainwindow\\call_ui_mainwindow.exe.manifest',
    'BINARY')],
  True,
  False,
