@@ -67,6 +67,19 @@
         </property>
        </spacer>
       </item>
+      <item>
+       <widget class="QLabel" name="label_6">
+        <property name="font">
+         <font>
+          <family>Microsoft YaHei UI Light</family>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -92,7 +105,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="ruxuan_1">
         <property name="minimumSize">
          <size>
           <width>170</width>
@@ -114,7 +127,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_2">
+       <widget class="QComboBox" name="ruxuan_2">
         <property name="minimumSize">
          <size>
           <width>170</width>
@@ -136,7 +149,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_3">
+       <widget class="QComboBox" name="ruxuan_3">
         <property name="minimumSize">
          <size>
           <width>170</width>
@@ -250,7 +263,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QComboBox" name="comboBox_4">
+       <widget class="QComboBox" name="tiedi_1">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -271,7 +284,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_5">
+       <widget class="QComboBox" name="tiedi_2">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -292,7 +305,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_6">
+       <widget class="QComboBox" name="tiedi_3">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -399,7 +412,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
-       <widget class="QComboBox" name="comboBox_7">
+       <widget class="QComboBox" name="baozhuang_1">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -420,7 +433,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_8">
+       <widget class="QComboBox" name="baozhuang_2">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -441,7 +454,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_9">
+       <widget class="QComboBox" name="baozhuang_3">
         <property name="minimumSize">
          <size>
           <width>0</width>

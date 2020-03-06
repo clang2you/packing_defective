@@ -27,39 +27,54 @@ matplotlib.use("Qt5Agg")
 # 配置全局变量
 config = config_mod.CfgHelper()
 configJson = config.cfg_dict
-configDb = configJson["MySQL"]
-configLine = configJson["Line"]
-configSection = configJson["Section"]
-configQc = configJson["QcInfo"]
-configAdmin = configJson["Admin"]
-configDefType = configJson["DefReasons"]
-configJson = {"MySQL": configDb, "Line": configLine,
-              "Section": configSection, "QcInfo": configQc,
-              "Admin": configAdmin, "DefReasons": configDefType}
+# configDb = configJson["MySQL"]
+# configLine = configJson["Line"]
+# configSection = configJson["Section"]
+# configQc = configJson["QcInfo"]
+# configAdmin = configJson["Admin"]
+# configDefType = configJson["DefReasons"]
+# configJson = {"MySQL": configDb, "Line": configLine,
+#               "Section": configSection, "QcInfo": configQc,
+#               "Admin": configAdmin, "DefReasons": configDefType}
+
+light_14_font = QtGui.QFont()
+light_14_font.setFamily("微软雅黑 Light")
+light_14_font.setPointSize(14)
+light_14_font.setWeight(50)
+
+bold_20_font = QtGui.QFont()
+bold_20_font.setFamily("微软雅黑")
+bold_20_font.setPointSize(20)
+bold_20_font.setBold(True)
+bold_20_font.setWeight(50)
+
+light_20_font = QtGui.QFont()
+light_20_font.setFamily("微软雅黑 Light")
+light_20_font.setPointSize(20)
+light_20_font.setBold(False)
+light_20_font.setWeight(50)
 
 # 数据库设定窗口类
 
 
 class DbSettingsWindow(QDialog):
     def __init__(self, parent=None):
-        global configJson, configDb, configAdmin
+        global configJson
         super(DbSettingsWindow, self).__init__(parent)
         self.child = dbSettings.Ui_Dialog()
         self.child.setupUi(self)
         self.child.pushButton_3.clicked.connect(self.ChangeDbSettings)
         self.child.pushButton.clicked.connect(self.SaveDbSettings)
         self.lineEdits = ['lineEdit', 'lineEdit_2', 'lineEdit_3', 'lineEdit_4']
-        self.font = QtGui.QFont()
-        self.font.setFamily("微软雅黑 Light")
-        self.font.setPointSize(14)
-        self.font.setWeight(50)
 
         self.ChangeInterfaceComponent(True)
-        self.SetLineEditText()
+        self.SetLineEditText(configJson["MySQL"])
 
     def SaveDbSettings(self):
+        global configJson
         configDb = {'address': self.child.lineEdit.text(), 'user': self.child.lineEdit_2.text(),
                     'password': self.child.lineEdit_3.text(), 'dbName': self.child.lineEdit_4.text()}
+        configJson["MySQL"] = configDb
         config.SaveConfigToJson(configJson)
         self.ChangeInterfaceComponent(True)
 
@@ -70,10 +85,10 @@ class DbSettingsWindow(QDialog):
         for lineEdit in self.lineEdits:
             edit = self.child.frame.findChild((QtWidgets.QLineEdit), lineEdit)
             edit.setStyleSheet(qss)
-            edit.setFont(self.font)
+            edit.setFont(light_14_font)
             edit.setReadOnly(saveOrNotAuthorization)
 
-    def SetLineEditText(self):
+    def SetLineEditText(self, configDb):
         try:
             self.child.lineEdit.setText(
                 configDb["address"])
@@ -87,7 +102,7 @@ class DbSettingsWindow(QDialog):
             for lineEdit in self.lineEdits:
                 edit = self.child.frame.findChild(
                     (QtWidgets.QLineEdit), lineEdit)
-                edit.setText("读取配置出错")
+                edit.setText("Error")
 
     def ChangeDbSettings(self):
         self.passwordForm = AdminAutorizationForm(self)
@@ -97,7 +112,7 @@ class DbSettingsWindow(QDialog):
 
     def HandlePassword(self, password):
         try:
-            if password == configAdmin["password"]:
+            if password == configJson["Admin"]["password"]:
                 self.passwordForm.reject()
                 self.ChangeInterfaceComponent(False)
         except:
@@ -127,58 +142,41 @@ class WorkingtimeSettingsWindow(QDialog):
 
 class SectionSettingWindow(QDialog):
     def __init__(self, parent=None):
+        global configJson
         super(SectionSettingWindow, self).__init__(parent)
         self.child = sectionSettings.Ui_Dialog()
         self.child.setupUi(self)
+        self.child.pushButton.clicked.connect(self.SaveSectionSettings)
 
         try:
+            self.child.label_5.setText(configLine["name"])
             for itemName in dir(self.child):
-                if itemName.startswith("comboBox"):
-                    choiceBox = self.findChild((QComboBox,), itemName)
-                    choiceBox.addItems(configLine["DefType"].values())
-            # configJson = config_mod.CfgHelper().cfg_dict
-            # self.child.label_5.setText(configLine["name"])
-            # itemList = list(configLine["DefType"].values())
-            # self.child.comboBox.addItems(itemList)
-            # if configSection["ruxuan"]["1"] != None:
-            #     self.child.comboBox.setCurrentText(
-            #         configSection["ruxuan"]["1"] )
-            # self.child.comboBox_2.addItems(itemList)
-            # if configSection["ruxuan"]["2"] != None:
-            #     self.child.comboBox_2.setCurrentText(
-            #         configSection["ruxuan"]["2"])
-            # self.child.comboBox_3.addItems(itemList)
-            # if configSection["ruxuan"]["3"] != None:
-            #     self.child.comboBox_3.setCurrentText(
-            #         configSection["ruxuan"]["3"])
-            # self.child.comboBox_4.addItems(itemList)
-            # if configSection["tiedi"]["1"] != None:
-            #     # print(configJson["Section"]["tiedi"]["1"])
-            #     self.child.comboBox_4.setCurrentText(
-            #         configSection["tiedi"]["1"])
-            # self.child.comboBox_5.addItems(itemList)
-            # if configJson["Section"]["tiedi"]["2"] != None:
-            #     selectName = configJson["Section"]["tiedi"]["2"]
-            #     self.child.comboBox_5.setCurrentText(selectName)
-            # self.child.comboBox_6.addItems(itemList)
-            # if configJson["Section"]["tiedi"]["3"] != None:
-            #     self.child.comboBox_6.setCurrentText(
-            #         configJson["Section"]["tiedi"]["3"])
-            # self.child.comboBox_7.addItems(itemList)
-            # if configJson["Section"]["baozhuang"]["1"] != None:
-            #     self.child.comboBox_7.setCurrentText(
-            #         configJson["Section"]["baozhuang"]["1"])
-            # self.child.comboBox_8.addItems(itemList)
-            # if configJson["Section"]["baozhuang"]["2"] != None:
-            #     self.child.comboBox_8.setCurrentText(
-            #         configJson["Section"]["baozhuang"]["2"])
-            # self.child.comboBox_9.addItems(itemList)
-            # if configJson["Section"]["baozhuang"]["3"] != None:
-            #     self.child.comboBox_9.setCurrentText(
-            #         configJson["Section"]["baozhuang"]["3"])
-
+                if type(getattr(self.child, itemName)) == QComboBox:
+                    choiceBox = getattr(self.child, itemName)
+                    choiceBox.addItems(list(configJson["DefReasons"].values()))
+                    section, no = itemName.split('_')
+                    if section in configSection.keys():
+                        choiceBox.setCurrentText(configSection[section][no])
         except Exception as ex:
             print(ex)
+
+    def SaveSectionSettings(self):
+        global config, configJson, configSection
+        for itemName in dir(self.child):
+            if type(getattr(self.child, itemName)) == QComboBox:
+                choiceBox = getattr(self.child, itemName)
+                section, no = itemName.split('_')
+                if section in configSection.keys():
+                    configSection[section][no] = choiceBox.currentText()
+                elif len(configSection.keys()) < 1:
+                    configSection = {section: {no: choiceBox.currentText()}}
+                else:
+                    configSection[section] = {no: choiceBox.currentText()}
+        configJson["Section"] = configSection
+        config.SaveConfigToJson(configJson)
+        self.child.label_6.setText("设定保存完成")
+        self.child.label_6.setStyleSheet("QLabel{color: green}")
+        self.child.label_6.setFont(light_14_font)
 
  # 作休时间设置窗口类
 
@@ -212,56 +210,54 @@ class LineSettingsWindow(QDialog):
         super(LineSettingsWindow, self).__init__(parent)
         self.child = lineSettings.Ui_Dialog()
         self.child.setupUi(self)
-        self.font = QtGui.QFont()
-        self.font.setFamily("微软雅黑 Light")
-        self.font.setPointSize(14)
-        self.font.setWeight(50)
         self.child.pushButton.clicked.connect(
             self.SaveLineSettingsToConfigJson)
         self.GetLineSettingsFromConfigJson()
 
     def GetLineSettingsFromConfigJson(self):
-        self.config = config_mod.CfgHelper()
-        self.configJson = self.config.cfg_dict
+        global configJson, configLine, configDefType
         editList = ("lineEdit_2", "lineEdit_7", "lineEdit_4", "lineEdit_3",
                     "lineEdit_5", "lineEdit_6",  "lineEdit_8")
         try:
-            self.child.comboBox.setCurrentText(self.configJson["Line"]["name"])
+            self.child.comboBox.setCurrentText(configLine['name'])
             self.child.timeEdit.setTime(QtCore.QTime.fromString(
-                self.configJson["Line"]["amStart"], "HH:mm"))
+                configLine["amStart"], "HH:mm"))
             self.child.timeEdit_2.setTime(QtCore.QTime.fromString(
-                self.configJson["Line"]["amStop"], "HH:mm"))
+                configLine["amStop"], "HH:mm"))
             self.child.timeEdit_3.setTime(QtCore.QTime.fromString(
-                self.configJson["Line"]["pmStart"], "HH:mm"))
+                configLine["pmStart"], "HH:mm"))
             self.child.timeEdit_4.setTime(QtCore.QTime.fromString(
-                self.configJson["Line"]["pmStop"], "HH:mm"))
+                configLine["pmStop"], "HH:mm"))
             defTypeIndex = 1
             for editName in editList:
                 edit = self.child.frame_3.findChild((QLineEdit), editName)
-                edit.setText(self.configJson["Line"]
-                             ["DefType"][str(defTypeIndex)])
+                edit.setText(configDefType[str(defTypeIndex)])
                 defTypeIndex += 1
         except Exception as ex:
             print(ex)
-            self.child.label_13.setFont(self.font)
+            self.child.label_13.setFont(light_14_font)
             self.child.label_13.setText("未设定线别信息")
             self.child.label_13.setStyleSheet("QLabel{color: red}")
 
     def SaveLineSettingsToConfigJson(self):
-        self.configJson["Line"] = {"name": self.child.comboBox.currentText(),
-                                   "amStart": self.child.timeEdit.time().toString("HH:mm"),
-                                   "amStop": self.child.timeEdit_2.time().toString("HH:mm"),
-                                   "pmStart": self.child.timeEdit_3.time().toString("HH:mm"),
-                                   "pmStop": self.child.timeEdit_4.time().toString("HH:mm"),
-                                   "DefType": {"1": self.child.lineEdit_2.text(),
-                                               "2": self.child.lineEdit_7.text(),
-                                               "3": self.child.lineEdit_4.text(),
-                                               "4": self.child.lineEdit_3.text(),
-                                               "5": self.child.lineEdit_5.text(),
-                                               "6": self.child.lineEdit_6.text(),
-                                               "7": self.child.lineEdit_8.text()}}
-        self.config.SaveConfigToJson(self.configJson)
-        self.child.label_13.setFont(self.font)
+        global config, configJson, configLine, configDefType
+        configLine = {"name": self.child.comboBox.currentText(),
+                      "amStart": self.child.timeEdit.time().toString("HH:mm"),
+                      "amStop": self.child.timeEdit_2.time().toString("HH:mm"),
+                      "pmStart": self.child.timeEdit_3.time().toString("HH:mm"),
+                      "pmStop": self.child.timeEdit_4.time().toString("HH:mm"),
+                      }
+        configJson["Line"] = configLine
+        configDefType = {"1": self.child.lineEdit_2.text(),
+                         "2": self.child.lineEdit_7.text(),
+                         "3": self.child.lineEdit_4.text(),
+                         "4": self.child.lineEdit_3.text(),
+                         "5": self.child.lineEdit_5.text(),
+                         "6": self.child.lineEdit_6.text(),
+                         "7": self.child.lineEdit_8.text()}
+        configJson["DefReasons"] = configDefType
+        config.SaveConfigToJson(configJson)
+        self.child.label_13.setFont(light_14_font)
         self.child.label_13.setText("设定保存完成")
         self.child.label_13.setStyleSheet("QLabel{color: green}")
 
@@ -482,31 +478,31 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             self.resize(1000, 700)
             self.frame.setMinimumSize(QtCore.QSize(200, 520))
             self.frame.setMaximumWidth(200)
-            self.font = QtGui.QFont()
-            self.font.setFamily("微软雅黑")
-            self.font.setPointSize(20)
-            self.font.setBold(True)
-            self.font.setWeight(50)
             labels = ('label_2', 'label_4', 'label_6', 'label_7', 'label_9')
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
-                label.setFont(self.font)
+                label.setFont(bold_20_font)
                 label.setMinimumSize(QtCore.QSize(16777215, 20))
-            self.font = QtGui.QFont()
-            self.font.setFamily("微软雅黑 Light")
-            self.font.setPointSize(20)
-            self.font.setBold(False)
-            self.font.setWeight(50)
             labels = ('label', 'label_3', 'label_5', 'label_8')
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
-                label.setFont(self.font)
+                label.setFont(light_20_font)
                 label.setMinimumSize(QtCore.QSize(16777215, 20))
 
 
 if __name__ == "__main__":
-    # cfg = CfgHelper()
-    # print(cfg.cfg_dict)
+    configDictionary = {"MySQL": None, "Line": None, "Section": None, "QcInfo": None, "Admin": None, "DefReasons": None}
+    for fieldName in configDictionary.keys():
+        try:
+            if configJson[fieldName] != None:
+                configDictionary[fieldName] = configJson[fieldName]
+            elif fieldName == "Admin":
+                configDictionary[fieldName] = {"password": "sysadmin"}
+        except:
+            pass
+    configJson = {"MySQL": configDictionary["MySQL"], "Line": configDictionary["Line"],
+                  "Section": configDictionary["Section"], "QcInfo": configDictionary["QcInfo"],
+                  "Admin": configDictionary["Admin"], "DefReasons": configDictionary["DefReasons"]}
     app = QApplication(sys.argv)
     mywin = MyMainForm()
     mywin.SetTableWidgetColumnHeaderStretchMode()
