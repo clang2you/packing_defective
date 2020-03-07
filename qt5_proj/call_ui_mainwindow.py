@@ -7,7 +7,7 @@ import matplotlib
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
-# pyinstaller 打包不支持自定义代码包 from xxx import xxx 的引用方式，仅能使用 import 来导入所需的包
+# pyinstaller 打包不支持自定义模块 from xxx import xxx 的引用方式，仅能使用 import 来导入所需的包
 import qt5_proj.mainForm as mainForm
 import qt5_proj.ConfigHelper.config_helper as config_mod
 import qt5_proj.sectionSettings as sectionSettings
@@ -24,10 +24,11 @@ import qt5_proj.lineSettings as lineSettings
 
 matplotlib.use("Qt5Agg")
 
-# 配置全局变量
+# Config_Helper 全局
 config = config_mod.CfgHelper()
 configJson = config.cfg_dict
 
+# 三种字体 全局
 light_14_font = QtGui.QFont()
 light_14_font.setFamily("微软雅黑 Light")
 light_14_font.setPointSize(14)
@@ -93,7 +94,7 @@ class DbSettingsWindow(QDialog):
             for lineEdit in self.lineEdits:
                 edit = self.child.frame.findChild(
                     (QtWidgets.QLineEdit), lineEdit)
-                edit.setText("Error")
+                edit.setText("")
 
     def ChangeDbSettings(self):
         self.passwordForm = AdminAutorizationForm(self)
@@ -337,20 +338,30 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
         self.actionSectionSet.triggered.connect(
             self.CreateSectionSettingsWindow)
-        self.actionWorkingTimeSet.triggered.connect(
-            self.CreateWorkingTimeSetWindow)
+        # self.actionWorkingTimeSet_2.triggered.connect(
+        #     self.CreateWorkingTimeSetWindow)
         self.actionWorkRestTimeSet.triggered.connect(
             self.CreateWorkRestTimeSettingWindow)
         self.actionInfoSet.triggered.connect(self.CreateLineSettingsWindow)
         self.actionDbSet.triggered.connect(self.CreateDbSettingsWindow)
         self.pushButton_4.clicked.connect(self.CreateDailyStasticForm)
         self.pushButton_2.clicked.connect(self.CreateMonthlyStasticForm)
-        self.pushButton_3.clicked.connect(self.CreateUserInputWindow)
+        # 缴库量在现有系统上并无意义，故暂时不启用，后期如有需求取消注释即可加载缴库量输入界面
+        # self.pushButton_3.clicked.connect(self.CreateUserInputWindow)
+        self.pushButton_3.hide()
         self.pushButton.clicked.connect(self.CreateCountAdjustmentWindow)
         self.pushButton_7.clicked.connect(self.CreateTargetSettingWindow)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
+
+        timer = QtCore.QTimer(self)
+        timer.timeout.connect(self.Showtime)
+        timer.start()
+    
+    def Showtime(self):
+        datetime = QtCore.QDateTime.currentDateTime()
+        self.label_7.setText(datetime.toString("HH:mm:ss"))
 
     def CreateLineSettingsWindow(self):
         self.lineSettingsWindow = LineSettingsWindow(self)

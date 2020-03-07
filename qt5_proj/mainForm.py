@@ -13,7 +13,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
+        MainWindow.setWindowModality(QtCore.Qt.NonModal)
         MainWindow.resize(1113, 924)
+        MainWindow.setLocale(QtCore.QLocale(QtCore.QLocale.Chinese, QtCore.QLocale.China))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -371,6 +373,8 @@ class Ui_MainWindow(object):
         self.actionInfoSet = QtWidgets.QAction(MainWindow)
         self.actionInfoSet.setObjectName("actionInfoSet")
         self.actionWorkingTimeSet = QtWidgets.QAction(MainWindow)
+        self.actionWorkingTimeSet.setEnabled(True)
+        self.actionWorkingTimeSet.setVisible(True)
         self.actionWorkingTimeSet.setObjectName("actionWorkingTimeSet")
         self.actionWorkRestTimeSet = QtWidgets.QAction(MainWindow)
         self.actionWorkRestTimeSet.setVisible(False)
@@ -378,7 +382,6 @@ class Ui_MainWindow(object):
         self.menu.addAction(self.actionDbSet)
         self.menu.addAction(self.actionInfoSet)
         self.menu_3.addAction(self.actionSectionSet)
-        self.menu_3.addAction(self.actionWorkingTimeSet)
         self.menu_3.addAction(self.actionWorkRestTimeSet)
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menu_3.menuAction())

@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -12,6 +15,9 @@
   </property>
   <property name="windowTitle">
    <string>包装线回收率统计看板</string>
+  </property>
+  <property name="locale">
+   <locale language="Chinese" country="China"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -854,8 +860,8 @@
      <string>品管定义</string>
     </property>
     <addaction name="actionSectionSet"/>
-    <addaction name="actionWorkingTimeSet"/>
     <addaction name="actionWorkRestTimeSet"/>
+    <addaction name="actionWorkingTimeSet_2"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_3"/>
@@ -877,13 +883,27 @@
    </property>
   </action>
   <action name="actionWorkingTimeSet">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>生产时段设置</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionWorkRestTimeSet">
    <property name="text">
     <string>作休时间设置</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionWorkingTimeSet_2">
+   <property name="text">
+    <string>生产时间段定义</string>
    </property>
    <property name="visible">
     <bool>false</bool>
