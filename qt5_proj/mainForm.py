@@ -373,6 +373,7 @@ class Ui_MainWindow(object):
         self.actionWorkingTimeSet = QtWidgets.QAction(MainWindow)
         self.actionWorkingTimeSet.setObjectName("actionWorkingTimeSet")
         self.actionWorkRestTimeSet = QtWidgets.QAction(MainWindow)
+        self.actionWorkRestTimeSet.setVisible(False)
         self.actionWorkRestTimeSet.setObjectName("actionWorkRestTimeSet")
         self.menu.addAction(self.actionDbSet)
         self.menu.addAction(self.actionInfoSet)

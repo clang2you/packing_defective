@@ -885,6 +885,9 @@
    <property name="text">
     <string>作休时间设置</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
  </widget>
  <resources/>

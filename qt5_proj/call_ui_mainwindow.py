@@ -27,15 +27,6 @@ matplotlib.use("Qt5Agg")
 # 配置全局变量
 config = config_mod.CfgHelper()
 configJson = config.cfg_dict
-# configDb = configJson["MySQL"]
-# configLine = configJson["Line"]
-# configSection = configJson["Section"]
-# configQc = configJson["QcInfo"]
-# configAdmin = configJson["Admin"]
-# configDefType = configJson["DefReasons"]
-# configJson = {"MySQL": configDb, "Line": configLine,
-#               "Section": configSection, "QcInfo": configQc,
-#               "Admin": configAdmin, "DefReasons": configDefType}
 
 light_14_font = QtGui.QFont()
 light_14_font.setFamily("微软雅黑 Light")
@@ -149,27 +140,28 @@ class SectionSettingWindow(QDialog):
         self.child.pushButton.clicked.connect(self.SaveSectionSettings)
 
         try:
-            self.child.label_5.setText(configLine["name"])
+            self.child.label_5.setText(configJson["Line"]["name"])
             for itemName in dir(self.child):
                 if type(getattr(self.child, itemName)) == QComboBox:
                     choiceBox = getattr(self.child, itemName)
                     choiceBox.addItems(list(configJson["DefReasons"].values()))
                     section, no = itemName.split('_')
-                    if section in configSection.keys():
-                        choiceBox.setCurrentText(configSection[section][no])
+                    if configJson["Section"] != None and section in configJson["Section"].keys():
+                        choiceBox.setCurrentText(configJson["Section"][section][no])
         except Exception as ex:
             print(ex)
 
     def SaveSectionSettings(self):
-        global config, configJson, configSection
+        global config, configJson
+        configSection = configJson["Section"]
         for itemName in dir(self.child):
             if type(getattr(self.child, itemName)) == QComboBox:
                 choiceBox = getattr(self.child, itemName)
                 section, no = itemName.split('_')
+                if configSection == None:
+                    configSection = {section: {no: choiceBox.currentText()}}
                 if section in configSection.keys():
                     configSection[section][no] = choiceBox.currentText()
-                elif len(configSection.keys()) < 1:
-                    configSection = {section: {no: choiceBox.currentText()}}
                 else:
                     configSection[section] = {no: choiceBox.currentText()}
         configJson["Section"] = configSection
@@ -215,9 +207,11 @@ class LineSettingsWindow(QDialog):
         self.GetLineSettingsFromConfigJson()
 
     def GetLineSettingsFromConfigJson(self):
-        global configJson, configLine, configDefType
+        global configJson
         editList = ("lineEdit_2", "lineEdit_7", "lineEdit_4", "lineEdit_3",
                     "lineEdit_5", "lineEdit_6",  "lineEdit_8")
+        configLine = configJson["Line"]
+        configDefType = configJson["DefReasons"]
         try:
             self.child.comboBox.setCurrentText(configLine['name'])
             self.child.timeEdit.setTime(QtCore.QTime.fromString(
@@ -240,7 +234,7 @@ class LineSettingsWindow(QDialog):
             self.child.label_13.setStyleSheet("QLabel{color: red}")
 
     def SaveLineSettingsToConfigJson(self):
-        global config, configJson, configLine, configDefType
+        global config, configJson
         configLine = {"name": self.child.comboBox.currentText(),
                       "amStart": self.child.timeEdit.time().toString("HH:mm"),
                       "amStop": self.child.timeEdit_2.time().toString("HH:mm"),
@@ -490,19 +484,9 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 label.setMinimumSize(QtCore.QSize(16777215, 20))
 
 
-if __name__ == "__main__":
-    configDictionary = {"MySQL": None, "Line": None, "Section": None, "QcInfo": None, "Admin": None, "DefReasons": None}
-    for fieldName in configDictionary.keys():
-        try:
-            if configJson[fieldName] != None:
-                configDictionary[fieldName] = configJson[fieldName]
-            elif fieldName == "Admin":
-                configDictionary[fieldName] = {"password": "sysadmin"}
-        except:
-            pass
-    configJson = {"MySQL": configDictionary["MySQL"], "Line": configDictionary["Line"],
-                  "Section": configDictionary["Section"], "QcInfo": configDictionary["QcInfo"],
-                  "Admin": configDictionary["Admin"], "DefReasons": configDictionary["DefReasons"]}
+if __name__ == "__main__":    
+    if configJson["Admin"] == None:
+        configJson["Admin"] = {"password": "sysadmin"}
     app = QApplication(sys.argv)
     mywin = MyMainForm()
     mywin.SetTableWidgetColumnHeaderStretchMode()
