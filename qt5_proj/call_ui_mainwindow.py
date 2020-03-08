@@ -335,6 +335,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
     def __init__(self, parent=None):
         super(MyMainForm, self).__init__(parent)
         self.setupUi(self)
+        self.label_15.setText(QtCore.QDateTime.currentDateTime().toString("M月d日"))
 
         self.actionSectionSet.triggered.connect(
             self.CreateSectionSettingsWindow)
@@ -357,7 +358,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
         timer = QtCore.QTimer(self)
         timer.timeout.connect(self.Showtime)
-        timer.start()
+        timer.start(500)
     
     def Showtime(self):
         datetime = QtCore.QDateTime.currentDateTime()
@@ -476,14 +477,17 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.label_6.setStyleSheet("QLabel{color:pink}")
         self.label_9.setStyleSheet("QLabel{color:green}")
         self.label_7.setStyleSheet("QLabel{color:purple}")
+        self.label_15.setStyleSheet("QLabel{color:purple}")
         # 从系统分辨率中提取桌面高度
         height = QApplication.desktop().screenGeometry().height()
         # 高度小于 1000，字体及高度都修改为20, 修改 frame 宽度为 150，高度为 530
         if height <= 1000:
             self.resize(1000, 700)
+            self.label_7.setMaximumHeight(30)            
+            self.label_15.setMaximumHeight(30)
             self.frame.setMinimumSize(QtCore.QSize(200, 520))
             self.frame.setMaximumWidth(200)
-            labels = ('label_2', 'label_4', 'label_6', 'label_7', 'label_9')
+            labels = ('label_2', 'label_4', 'label_6', 'label_7', 'label_9', 'label_15')
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
                 label.setFont(bold_20_font)
