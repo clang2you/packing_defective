@@ -2,7 +2,7 @@ import sys
 import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QWidget
 from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtWidgets import QTableWidget, QProgressBar, QLineEdit, QComboBox, QFrame
+from PyQt5.QtWidgets import QTableWidget, QProgressBar, QLineEdit, QComboBox, QFrame, QTableWidgetItem
 import matplotlib
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -149,7 +149,8 @@ class SectionSettingWindow(QDialog):
                     choiceBox.addItems(list(configJson["DefReasons"].values()))
                     section, no = itemName.split('_')
                     if configJson["Section"] != None and section in configJson["Section"].keys():
-                        choiceBox.setCurrentText(configJson["Section"][section][no])
+                        choiceBox.setCurrentText(
+                            configJson["Section"][section][no])
         except Exception as ex:
             print(ex)
 
@@ -286,29 +287,75 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         self.setupUi(self)
         self.tableWidget.setEditTriggers(
             QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.label_2.setStyleSheet("QLabel{color:green}")
+        if configJson["Line"] != None:
+            self.label_2.setText(configJson["Line"]["name"])
+            self.label_2.setStyleSheet("QLabel{color:green}")
+        else:
+            self.label_2.setText("未配置")
+            self.label_2.setStyleSheet("QLabel{color:red}")
         self.statusBar().hide()
-        self.SetTableWidgetColumns()
-        self.SetTableWidgetWidth()
+        try:
+            self.SetTableWidgetColumns()
+            self.SetTableWidgetWidth()
+            self.dbHandler = dbHelper.DbHelper(configJson)
+        except:
+            self.label_5.setText("配置文件未设定！")
+            self.label_5.setStyleSheet("QLabel{color:red}")
         self.pushButton_3.clicked.connect(self.close)
         self.progressBar.hide()
-        self.dbHandler = dbHelper.DbHelper(configJson)
         self.pushButton_2.clicked.connect(self.GetDbQueryResultDic)
-    
+
     def GetDbQueryResultDic(self):
-        results = self.dbHandler.GetMonthDataResult(self.dateEdit.date().toString('yyyyMMdd'), self.dateEdit_2.date().toString('yyyyMMdd'))
-        print(results)
-    
+        self.label_5.setText("")
+        try:
+            self.tableWidget.clearContents()
+            results = self.dbHandler.GetMonthDataResult(self.dateEdit.date().toString(
+                'yyyyMMdd'), self.dateEdit_2.date().toString('yyyyMMdd'))
+            self.tableWidget.setRowCount(len(results) + 1)
+            self.tableWidget.verticalHeader().setHidden(True)
+            for j in range(len(results)):
+                for keyName in results[j].keys():
+                    for i in range(self.tableWidget.columnCount()):
+                        if keyName == self.tableWidget.horizontalHeaderItem(i).text():
+                            newItem = QTableWidgetItem(
+                                str(results[j][keyName]))
+                            newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                            self.tableWidget.setItem(j, i, newItem)
+                            break
+            for i in range(self.tableWidget.columnCount()):
+                count = 0
+                if i == 0:
+                    newItem = QTableWidgetItem("合计")
+                    newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                    self.tableWidget.setItem(
+                        self.tableWidget.rowCount() - 1, i, newItem)
+                else:
+                    isPercent = False
+                    for j in range(self.tableWidget.rowCount()):
+                        cell = self.tableWidget.item(j, i)
+                        if cell != None and "%" not in cell.text():
+                            count = str(count + int(cell.text()))
+                        if cell != None and "%" in cell.text():
+                            count = float(cell.text().strip("%"))
+                            isPercent = True
+                    newItem = QTableWidgetItem(count) if isPercent != True else QTableWidgetItem(
+                        str(count / (self.tableWidget.rowCount() - 1)) + "%")
+                    newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                    self.tableWidget.setItem(
+                        self.tableWidget.rowCount() - 1, i, newItem)
+        except:
+            self.label_5.setText("出错，无法连接数据库，请联系 IT 处理！")
+            self.label_5.setStyleSheet("QLabel{color:red}")
+
     def SetTableWidgetColumns(self):
         self.tableWidget.setColumnCount(12)
         itemList = ['日期']
         for defName in list(configJson["DefReasons"].values()):
             itemList.append(defName)
-        itemList.extend(['合计','投料','回收率', '包装'])
+        itemList.extend(['合计', '投料', '回收率', '包装'])
         for i in range(12):
             item = item = QtWidgets.QTableWidgetItem(itemList[i])
             self.tableWidget.setHorizontalHeaderItem(i, item)
-        
 
     def SetTableWidgetWidth(self):
         for header_item_index in range(self.tableWidget.columnCount()):
@@ -354,7 +401,8 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
     def __init__(self, parent=None):
         super(MyMainForm, self).__init__(parent)
         self.setupUi(self)
-        self.label_15.setText(QtCore.QDateTime.currentDateTime().toString("M月d日"))
+        self.label_15.setText(
+            QtCore.QDateTime.currentDateTime().toString("M月d日"))
 
         self.actionSectionSet.triggered.connect(
             self.CreateSectionSettingsWindow)
@@ -378,7 +426,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.clockTimer = QtCore.QTimer(self)
         self.clockTimer.timeout.connect(self.Showtime)
         self.clockTimer.start(500)
-    
+
     def Showtime(self):
         datetime = QtCore.QDateTime.currentDateTime()
         self.label_7.setText(datetime.toString("HH:mm:ss"))
@@ -502,11 +550,12 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         # 高度小于 1000，字体及高度都修改为20, 修改 frame 宽度为 150，高度为 530
         if height <= 1000:
             self.resize(1000, 700)
-            self.label_7.setMaximumHeight(30)            
+            self.label_7.setMaximumHeight(30)
             self.label_15.setMaximumHeight(30)
             self.frame.setMinimumSize(QtCore.QSize(200, 520))
             self.frame.setMaximumWidth(200)
-            labels = ('label_2', 'label_4', 'label_6', 'label_7', 'label_9', 'label_15')
+            labels = ('label_2', 'label_4', 'label_6',
+                      'label_7', 'label_9', 'label_15')
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
                 label.setFont(bold_20_font)
@@ -518,7 +567,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 label.setMinimumSize(QtCore.QSize(16777215, 20))
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     if configJson["Admin"] == None:
         configJson["Admin"] = {"password": "sysadmin"}
     app = QApplication(sys.argv)

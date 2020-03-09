@@ -79,6 +79,13 @@
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -258,7 +265,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>986</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>

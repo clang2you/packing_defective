@@ -1,5 +1,6 @@
 import pymysql
 import qt5_proj.ConfigHelper.config_helper as config_mod
+import datetime
 # # print(cfg_dict)
 # cfg = config_mod.CfgHelper()
 # cfg_dict = cfg.cfg_dict
@@ -87,7 +88,7 @@ class DbHelper():
         results = []
         for row in self.runQuerySql(sql):
             resultDic = {}
-            resultDic["日期"] = row[0]
+            resultDic["日期"] = (datetime.datetime.strptime(row[0], '%Y-%m-%d')).strftime("%m/%d")
             resultDic["投料"] = row[1]
             resultDic["包装"] = row[2]
             defTotal = 0
@@ -95,7 +96,7 @@ class DbHelper():
                 resultDic[type] = row[defList.index(type) + 3]
                 defTotal += row[defList.index(type) + 3]
             resultDic["合计"] = defTotal
-            resultDic["回收率"] = defTotal / row[1] * 100
+            resultDic["回收率"] = str(defTotal / row[1] * 100) + "%"
             results.append(resultDic)
         return results
             
