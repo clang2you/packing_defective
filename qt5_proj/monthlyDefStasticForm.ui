@@ -268,66 +268,6 @@
            <pointsize>14</pointsize>
           </font>
          </property>
-         <column>
-          <property name="text">
-           <string>日期</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>脱胶</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>高胶</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>清洁度</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>不对称</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>针车不良</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>其他</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>研磨线外露</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>合计</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>投料</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>回收率</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>包装</string>
-          </property>
-         </column>
         </widget>
        </item>
       </layout>

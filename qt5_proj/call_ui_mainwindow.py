@@ -7,6 +7,7 @@ import matplotlib
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
+import qt5_proj.DbHelper.db_helper as dbHelper
 # pyinstaller 打包不支持自定义模块 from xxx import xxx 的引用方式，仅能使用 import 来导入所需的包
 import qt5_proj.mainForm as mainForm
 import qt5_proj.ConfigHelper.config_helper as config_mod
@@ -287,9 +288,27 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
             QtWidgets.QAbstractItemView.NoEditTriggers)
         self.label_2.setStyleSheet("QLabel{color:green}")
         self.statusBar().hide()
+        self.SetTableWidgetColumns()
         self.SetTableWidgetWidth()
         self.pushButton_3.clicked.connect(self.close)
         self.progressBar.hide()
+        self.dbHandler = dbHelper.DbHelper(configJson)
+        self.pushButton_2.clicked.connect(self.GetDbQueryResultDic)
+    
+    def GetDbQueryResultDic(self):
+        results = self.dbHandler.GetMonthDataResult(self.dateEdit.date().toString('yyyyMMdd'), self.dateEdit_2.date().toString('yyyyMMdd'))
+        print(results)
+    
+    def SetTableWidgetColumns(self):
+        self.tableWidget.setColumnCount(12)
+        itemList = ['日期']
+        for defName in list(configJson["DefReasons"].values()):
+            itemList.append(defName)
+        itemList.extend(['合计','投料','回收率', '包装'])
+        for i in range(12):
+            item = item = QtWidgets.QTableWidgetItem(itemList[i])
+            self.tableWidget.setHorizontalHeaderItem(i, item)
+        
 
     def SetTableWidgetWidth(self):
         for header_item_index in range(self.tableWidget.columnCount()):
@@ -356,9 +375,9 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
 
-        timer = QtCore.QTimer(self)
-        timer.timeout.connect(self.Showtime)
-        timer.start(500)
+        self.clockTimer = QtCore.QTimer(self)
+        self.clockTimer.timeout.connect(self.Showtime)
+        self.clockTimer.start(500)
     
     def Showtime(self):
         datetime = QtCore.QDateTime.currentDateTime()
