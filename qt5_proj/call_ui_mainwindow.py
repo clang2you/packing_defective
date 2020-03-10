@@ -370,7 +370,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
 
     def SetTableWidgetWidth(self):
         for header_item_index in range(self.tableWidget.columnCount()):
-            # 判断列表头字符数量，大于 4 个中文字符的将按实际内容适应宽度
+            # 判断列表头字符数量，大于 4 个中文字符的将按实际内容适应宽度，其余的拉伸占满宽度
             if len(self.tableWidget.horizontalHeaderItem(header_item_index).text()) < 4:
                 self.tableWidget.horizontalHeader().setSectionResizeMode(
                     header_item_index, QtWidgets.QHeaderView.Stretch)
@@ -595,10 +595,14 @@ class TimeManipulation():
 
     def ConvertSettingToTimeObj(self):
         today = datetime.datetime.now().strftime("%Y-%m-%d")
-        self.amTimeStart = datetime.datetime.strptime(today + " " + str(self.amTimeStart), "%Y-%m-%d %H:%M")
-        self.amTimeStop = datetime.datetime.strptime(today + " " + str(self.amTimeStop), "%Y-%m-%d %H:%M")
-        self.pmTimeStart = datetime.datetime.strptime(today + " " + str(self.pmTimeStart), "%Y-%m-%d %H:%M")
-        self.pmTimeStop = datetime.datetime.strptime(today + " " + str(self.pmTimeStop), "%Y-%m-%d %H:%M")
+        self.amTimeStart = datetime.datetime.strptime(
+            today + " " + str(self.amTimeStart), "%Y-%m-%d %H:%M")
+        self.amTimeStop = datetime.datetime.strptime(
+            today + " " + str(self.amTimeStop), "%Y-%m-%d %H:%M")
+        self.pmTimeStart = datetime.datetime.strptime(
+            today + " " + str(self.pmTimeStart), "%Y-%m-%d %H:%M")
+        self.pmTimeStop = datetime.datetime.strptime(
+            today + " " + str(self.pmTimeStop), "%Y-%m-%d %H:%M")
 
     def DayHourRange(self, frequency):
         amTimeRange = list(pd.date_range(
@@ -618,12 +622,13 @@ class TimeManipulation():
         self.pmTimeRanges = self.CalculatingWorkingTimeRanges(
             pmTimeRange, self.pmTimeStop, frequency)
         self.amTimeRanges.extend(self.pmTimeRanges)
+        # 注意：这里返回的 amTimeRanges 是全天的时间切片，已经 extend 了下午的时间切片列表
         return self.amTimeRanges
 
     def CalculatingWorkingTimeRanges(self, timeRange, stopTime, frequency):
         timeRanges = []
         for item in timeRange:
-            f_time = datetime.datetime.strptime(item , "%Y-%m-%d %H:%M:%S")
+            f_time = datetime.datetime.strptime(item, "%Y-%m-%d %H:%M:%S")
             t_time = (f_time + datetime.timedelta(seconds=frequency))
             if t_time >= stopTime:
                 timeRanges.append([f_time, stopTime])
