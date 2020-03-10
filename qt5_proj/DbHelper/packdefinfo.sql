@@ -11,7 +11,7 @@
  Target Server Version : 100411
  File Encoding         : 65001
 
- Date: 09/03/2020 17:34:36
+ Date: 10/03/2020 17:43:33
 */
 
 SET NAMES utf8mb4;
@@ -26,7 +26,7 @@ CREATE TABLE `com_input`  (
   `btn_pos` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `line` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of com_input
@@ -42,6 +42,21 @@ INSERT INTO `com_input` VALUES (31, '08', 'AL');
 INSERT INTO `com_input` VALUES (32, '01', 'Al');
 INSERT INTO `com_input` VALUES (33, '02', 'AL');
 INSERT INTO `com_input` VALUES (34, '01', 'AL');
+INSERT INTO `com_input` VALUES (35, '01', 'AL');
+INSERT INTO `com_input` VALUES (36, '01', 'AL');
+INSERT INTO `com_input` VALUES (37, '01', 'AL');
+INSERT INTO `com_input` VALUES (38, '01', 'AL');
+INSERT INTO `com_input` VALUES (39, '02', 'AL');
+INSERT INTO `com_input` VALUES (40, '02', 'AL');
+INSERT INTO `com_input` VALUES (41, '07', 'AL');
+INSERT INTO `com_input` VALUES (42, '08', 'AL');
+INSERT INTO `com_input` VALUES (43, '09', 'AL');
+INSERT INTO `com_input` VALUES (44, '03', 'AL');
+INSERT INTO `com_input` VALUES (45, '01', 'AL');
+INSERT INTO `com_input` VALUES (46, '01', 'AL');
+INSERT INTO `com_input` VALUES (47, '01', 'AL');
+INSERT INTO `com_input` VALUES (48, '01', 'AL');
+INSERT INTO `com_input` VALUES (49, '01', 'AL');
 
 -- ----------------------------
 -- Table structure for config
@@ -108,11 +123,28 @@ CREATE TABLE `history_input`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `time` datetime(0) NULL,
   `line` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `defType` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '',
-  `qcInfo` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `defType` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `qcPos` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '',
+  `btn_pos` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `qty` int(1) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 59 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of history_input
+-- ----------------------------
+INSERT INTO `history_input` VALUES (33, '2020-03-09 15:06:18', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `history_input` VALUES (34, '2020-03-09 15:06:25', 'AL', '包装', NULL, NULL, '02', 1);
+INSERT INTO `history_input` VALUES (35, '2020-03-09 15:06:30', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `history_input` VALUES (36, '2020-03-09 15:06:36', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `history_input` VALUES (37, '2020-03-09 15:06:41', 'AL', '高胶', '1', '1', '03', 1);
+INSERT INTO `history_input` VALUES (38, '2020-03-09 15:06:46', 'AL', '高胶', '1', '1', '03', 1);
+INSERT INTO `history_input` VALUES (39, '2020-03-09 15:47:54', 'AL', '针车不良', '5', '1', '07', 1);
+INSERT INTO `history_input` VALUES (40, '2020-03-09 15:47:58', 'AL', '研磨线', '6', '1', '08', 1);
+INSERT INTO `history_input` VALUES (41, '2020-03-09 15:48:03', 'Al', '投料', NULL, NULL, '01', 1);
+INSERT INTO `history_input` VALUES (42, '2020-03-09 15:48:08', 'AL', '包装', NULL, NULL, '02', 1);
+INSERT INTO `history_input` VALUES (43, '2020-03-09 15:48:13', 'AL', '投料', NULL, NULL, '01', 1);
 
 -- ----------------------------
 -- Table structure for manual_fixed_log
@@ -142,22 +174,26 @@ CREATE TABLE `realtime_input`  (
   `btn_pos` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `qty` int(1) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 44 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 59 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of realtime_input
 -- ----------------------------
-INSERT INTO `realtime_input` VALUES (33, '2020-03-09 15:06:18', 'AL', '投料', NULL, NULL, '01', 1);
-INSERT INTO `realtime_input` VALUES (34, '2020-03-09 15:06:25', 'AL', '包装', NULL, NULL, '02', 1);
-INSERT INTO `realtime_input` VALUES (35, '2020-03-09 15:06:30', 'AL', '投料', NULL, NULL, '01', 1);
-INSERT INTO `realtime_input` VALUES (36, '2020-03-09 15:06:36', 'AL', '投料', NULL, NULL, '01', 1);
-INSERT INTO `realtime_input` VALUES (37, '2020-03-09 15:06:41', 'AL', '高胶', '1', '1', '03', 1);
-INSERT INTO `realtime_input` VALUES (38, '2020-03-09 15:06:46', 'AL', '高胶', '1', '1', '03', 1);
-INSERT INTO `realtime_input` VALUES (39, '2020-03-09 15:47:54', 'AL', '针车不良', '5', '1', '07', 1);
-INSERT INTO `realtime_input` VALUES (40, '2020-03-09 15:47:58', 'AL', '研磨线', '6', '1', '08', 1);
-INSERT INTO `realtime_input` VALUES (41, '2020-03-09 15:48:03', 'Al', '投料', NULL, NULL, '01', 1);
-INSERT INTO `realtime_input` VALUES (42, '2020-03-09 15:48:08', 'AL', '包装', NULL, NULL, '02', 1);
-INSERT INTO `realtime_input` VALUES (43, '2020-03-09 15:48:13', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `realtime_input` VALUES (44, '2020-03-10 07:56:31', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `realtime_input` VALUES (45, '2020-03-10 07:56:37', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `realtime_input` VALUES (46, '2020-03-10 07:56:41', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `realtime_input` VALUES (47, '2020-03-10 07:56:45', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `realtime_input` VALUES (48, '2020-03-10 07:56:51', 'AL', '包装', NULL, NULL, '02', 1);
+INSERT INTO `realtime_input` VALUES (49, '2020-03-10 07:56:55', 'AL', '包装', NULL, NULL, '02', 1);
+INSERT INTO `realtime_input` VALUES (50, '2020-03-10 07:57:00', 'AL', '针车不良', '5', '1', '07', 1);
+INSERT INTO `realtime_input` VALUES (51, '2020-03-10 07:57:05', 'AL', '研磨线', '6', '1', '08', 1);
+INSERT INTO `realtime_input` VALUES (52, '2020-03-10 07:57:10', 'AL', '其他', '7', '1', '09', 1);
+INSERT INTO `realtime_input` VALUES (53, '2020-03-10 08:09:12', 'AL', '高胶', '1', '1', '03', 1);
+INSERT INTO `realtime_input` VALUES (54, '2020-03-10 08:09:31', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `realtime_input` VALUES (55, '2020-03-10 08:09:35', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `realtime_input` VALUES (56, '2020-03-10 08:09:38', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `realtime_input` VALUES (57, '2020-03-10 08:09:42', 'AL', '投料', NULL, NULL, '01', 1);
+INSERT INTO `realtime_input` VALUES (58, '2020-03-10 08:09:46', 'AL', '投料', NULL, NULL, '01', 1);
 
 -- ----------------------------
 -- Triggers structure for table com_input
