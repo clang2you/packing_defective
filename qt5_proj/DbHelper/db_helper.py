@@ -2,8 +2,6 @@ import pymysql
 import qt5_proj.ConfigHelper.config_helper as config_mod
 import datetime
 # # print(cfg_dict)
-# cfg = config_mod.CfgHelper()
-# cfg_dict = cfg.cfg_dict
 
 class DbHelper():
     def __init__(self, cfg_dict):
@@ -84,24 +82,30 @@ class DbHelper():
                 sql += temp_sql + ","
             else:
                 sql += temp_sql
-        sql += "FROM realtime_input where DATE_FORMAT(time,'%Y%m%d') BETWEEN '{}' and '{}' GROUP BY 日期".format(startDate, stopDate)
+        sql += "FROM history_input where DATE_FORMAT(time,'%Y%m%d') BETWEEN '{}' and '{}' GROUP BY 日期".format(startDate, stopDate)
         results = []
-        for row in self.runQuerySql(sql):
-            resultDic = {}
-            resultDic["日期"] = (datetime.datetime.strptime(row[0], '%Y-%m-%d')).strftime("%m/%d")
-            resultDic["投料"] = row[1]
-            resultDic["包装"] = row[2]
-            defTotal = 0
-            for type in defList:
-                resultDic[type] = row[defList.index(type) + 3]
-                defTotal += row[defList.index(type) + 3]
-            resultDic["合计"] = defTotal
-            resultDic["回收率"] = str(defTotal / row[1] * 100) + "%"
-            results.append(resultDic)
+        for i in range(2):
+            if i > 0:
+                sql = sql.replace('history_input', 'realtime_input')
+            for row in self.runQuerySql(sql):
+                resultDic = {}
+                resultDic["日期"] = (datetime.datetime.strptime(row[0], '%Y-%m-%d')).strftime("%m/%d")
+                resultDic["投料"] = row[1]
+                resultDic["包装"] = row[2]
+                defTotal = 0
+                for type in defList:
+                    resultDic[type] = row[defList.index(type) + 3]
+                    defTotal += row[defList.index(type) + 3]
+                resultDic["合计"] = defTotal
+                resultDic["回收率"] = str(round((defTotal / row[1]),1) * 100) + "%"
+                results.append(resultDic)
         return results
             
             
 if __name__ == '__main__':
+    cfg = config_mod.CfgHelper()
+    cfg_dict = cfg.cfg_dict
     dbHelper = DbHelper(cfg_dict)
     # print(dbHelper.db_name)
     print(dbHelper.GetMonthDataResult('20200301', '20200325'))
+    

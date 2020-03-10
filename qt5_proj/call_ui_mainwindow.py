@@ -1,5 +1,10 @@
 import sys
 import os
+import pytz
+import datetime
+import dateutil
+import pandas as pd
+import traceback
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QWidget
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QTableWidget, QProgressBar, QLineEdit, QComboBox, QFrame, QTableWidgetItem
@@ -24,6 +29,7 @@ import qt5_proj.workRestTimeSettings as workRestTimeSettings
 import qt5_proj.lineSettings as lineSettings
 
 matplotlib.use("Qt5Agg")
+utc=pytz.UTC
 
 # Config_Helper 全局
 config = config_mod.CfgHelper()
@@ -285,6 +291,11 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
     def __init__(self, parent=None):
         super(MonthlyDefStasticForm, self).__init__(parent)
         self.setupUi(self)
+        self.tableWidget.horizontalHeader().setStyleSheet(
+            'QHeaderView{font: 14pt "微软雅黑 Light";border: 1px solid #6c6c6c;}')
+        self.dateEdit.setDate(datetime.datetime.now() -
+                              dateutil.relativedelta.relativedelta(months=1))
+        self.dateEdit_2.setDate(datetime.datetime.now())
         self.tableWidget.setEditTriggers(
             QtWidgets.QAbstractItemView.NoEditTriggers)
         if configJson["Line"] != None:
@@ -334,16 +345,18 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
                     for j in range(self.tableWidget.rowCount()):
                         cell = self.tableWidget.item(j, i)
                         if cell != None and "%" not in cell.text():
-                            count = str(count + int(cell.text()))
+                            count = count + int(cell.text())
                         if cell != None and "%" in cell.text():
-                            count = float(cell.text().strip("%"))
+                            count = count + float(cell.text().strip("%"))
                             isPercent = True
-                    newItem = QTableWidgetItem(count) if isPercent != True else QTableWidgetItem(
-                        str(count / (self.tableWidget.rowCount() - 1)) + "%")
+                    newItem = QTableWidgetItem(str(count)) if isPercent != True else QTableWidgetItem(
+                        str(round(count / (self.tableWidget.rowCount() - 1), 1)) + "%")
                     newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                     self.tableWidget.setItem(
                         self.tableWidget.rowCount() - 1, i, newItem)
         except:
+            traceback.print_exc()
+            self.label_5.setFont(light_20_font)
             self.label_5.setText("出错，无法连接数据库，请联系 IT 处理！")
             self.label_5.setStyleSheet("QLabel{color:red}")
 
@@ -354,7 +367,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
             itemList.append(defName)
         itemList.extend(['合计', '投料', '回收率', '包装'])
         for i in range(12):
-            item = item = QtWidgets.QTableWidgetItem(itemList[i])
+            item = QtWidgets.QTableWidgetItem(itemList[i])
             self.tableWidget.setHorizontalHeaderItem(i, item)
 
     def SetTableWidgetWidth(self):
@@ -567,9 +580,68 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 label.setMinimumSize(QtCore.QSize(16777215, 20))
 
 
+class TimeManipulation():
+    def __init__(self):
+        global configJson
+        self.amTimeStart = "08:00"
+        self.amTimeStop = "11:30"
+        self.pmTimeStart = "13:00"
+        self.pmTimeStop = "17:00"
+        if configJson["Line"] != None:
+            lineSetting = configJson["Line"]
+            self.amTimeStart = lineSetting["amStart"]
+            self.amTimeStop = lineSetting["amStop"]
+            self.pmTimeStart = lineSetting["pmStart"]
+            self.pmTimeStop = lineSetting["pmStop"]
+            self.ConvertSettingToTimeObj()
+
+    def ConvertSettingToTimeObj(self):
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        self.amTimeStart = datetime.datetime.strptime(today + " " + str(self.amTimeStart), "%Y-%m-%d %H:%M")
+        self.amTimeStop = datetime.datetime.strptime(today + " " + str(self.amTimeStop), "%Y-%m-%d %H:%M")
+        self.pmTimeStart = datetime.datetime.strptime(today + " " + str(self.pmTimeStart), "%Y-%m-%d %H:%M")
+        self.pmTimeStop = datetime.datetime.strptime(today + " " + str(self.pmTimeStop), "%Y-%m-%d %H:%M")
+
+    def DayHourRange(self, frequency):
+        amTimeRange = list(pd.date_range(
+            self.amTimeStart, self.amTimeStop, freq="%sS" % frequency))
+        if self.amTimeStop not in amTimeRange:
+            amTimeRange.append(self.amTimeStop)
+        pmTimeRange = list(pd.date_range(
+            self.pmTimeStart, self.pmTimeStop, freq="%sS" % frequency))
+        if self.pmTimeStop not in pmTimeRange:
+            pmTimeRange.append(self.pmTimeStop)
+        amTimeRange = [item.strftime("%Y-%m-%d %H:%M:%S")
+                       for item in amTimeRange]
+        pmTimeRange = [item.strftime("%Y-%m-%d %H:%M:%S")
+                       for item in pmTimeRange]
+        self.amTimeRanges = self.CalculatingWorkingTimeRanges(
+            amTimeRange, self.amTimeStop, frequency)
+        self.pmTimeRanges = self.CalculatingWorkingTimeRanges(
+            pmTimeRange, self.pmTimeStop, frequency)
+        self.amTimeRanges.extend(self.pmTimeRanges)
+        return self.amTimeRanges
+
+    def CalculatingWorkingTimeRanges(self, timeRange, stopTime, frequency):
+        timeRanges = []
+        for item in timeRange:
+            f_time = datetime.datetime.strptime(item , "%Y-%m-%d %H:%M:%S")
+            t_time = (f_time + datetime.timedelta(seconds=frequency))
+            if t_time >= stopTime:
+                timeRanges.append([f_time, stopTime])
+                break
+            timeRanges.append([f_time, t_time])
+        return timeRanges
+
+
 if __name__ == "__main__":
     if configJson["Admin"] == None:
         configJson["Admin"] = {"password": "sysadmin"}
+
+    # 测试自定义时间操作类
+    timeOperator = TimeManipulation()
+    print(timeOperator.DayHourRange(60 * 30))
+
     app = QApplication(sys.argv)
     mywin = MyMainForm()
     mywin.SetTableWidgetColumnHeaderStretchMode()
