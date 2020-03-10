@@ -1,6 +1,5 @@
 import sys
 import os
-import pytz
 import datetime
 import dateutil
 import pandas as pd
@@ -29,7 +28,6 @@ import qt5_proj.workRestTimeSettings as workRestTimeSettings
 import qt5_proj.lineSettings as lineSettings
 
 matplotlib.use("Qt5Agg")
-utc=pytz.UTC
 
 # Config_Helper 全局
 config = config_mod.CfgHelper()
