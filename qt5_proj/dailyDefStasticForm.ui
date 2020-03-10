@@ -188,6 +188,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="pushButton_2">
             <property name="maximumSize">
              <size>
@@ -281,23 +288,15 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_5">
-            <property name="minimumSize">
+           <widget class="QLineEdit" name="lineEdit">
+            <property name="maximumSize">
              <size>
-              <width>50</width>
-              <height>0</height>
+              <width>100</width>
+              <height>16777215</height>
              </size>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>20</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>34</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -330,23 +329,15 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_7">
-            <property name="minimumSize">
+           <widget class="QLineEdit" name="lineEdit_2">
+            <property name="maximumSize">
              <size>
-              <width>50</width>
-              <height>0</height>
+              <width>100</width>
+              <height>16777215</height>
              </size>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>20</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>1</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -374,28 +365,20 @@
              </font>
             </property>
             <property name="text">
-             <string>缴库：</string>
+             <string>不良：</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_9">
-            <property name="minimumSize">
+           <widget class="QLineEdit" name="lineEdit_3">
+            <property name="maximumSize">
              <size>
-              <width>50</width>
-              <height>0</height>
+              <width>100</width>
+              <height>16777215</height>
              </size>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>20</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>0</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -410,72 +393,6 @@
            <pointsize>14</pointsize>
           </font>
          </property>
-         <column>
-          <property name="text">
-           <string>不良原因</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>合计</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>08:30
-至
-09:40</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>09:41
-至
-10:40</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>10:41
-至
-11:40</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>11:41
-至
-12:50</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>13:30
-至
-14:40</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>14:41
-至
-15:40</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>15:41
-至
-16:40</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>16:41
-至
-18:40</string>
-          </property>
-         </column>
         </widget>
        </item>
       </layout>

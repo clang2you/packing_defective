@@ -267,20 +267,43 @@ class LineSettingsWindow(QDialog):
 
 class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
     def __init__(self, parent=None):
+        global configJson
         super(DailyDefStasticForm, self).__init__(parent)
         self.setupUi(self)
+        self.tableWidget.horizontalHeader().setStyleSheet(
+            "QHeaderView::section{background-color:lightblue;color: black;padding-left: 4px;border: 1px solid#6c6c6c;}")
         self.tableWidget.setEditTriggers(
             QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.label_2.setStyleSheet("QLabel{color:green}")
+        self.label_2.setStyleSheet("QLabel{color:darkblue}")
+        self.dateEdit.setDate(datetime.datetime.now())
         self.statusBar().hide()
-        self.SetTableWidgetWidth()
         self.pushButton.clicked.connect(self.close)
         self.progressBar.hide()
+        try:
+            self.label_2.setText(configJson["Line"]["name"])
+            self.SetDailyTableColumns()
+            self.SetTableWidgetWidth()
+        except:
+            self.label_10.setText("分割时间段出错,\n请检查工作时段配置！")
+            self.label_10.setStyleSheet("QLabel{color:red}")
+            self.label_10.setFont(light_14_font)
 
     def SetTableWidgetWidth(self):
         for header_item_index in range(self.tableWidget.columnCount()):
             self.tableWidget.horizontalHeader().setSectionResizeMode(
                 header_item_index, QtWidgets.QHeaderView.Stretch)
+
+    def SetDailyTableColumns(self):
+        self.timeSliceList = TimeManipulation().DayHourRange(60*60)
+        self.tableWidget.setColumnCount(len(self.timeSliceList) + 2)
+        itemList = ["合计", "不良原因"]
+        for timeItem in self.timeSliceList:
+            itemList.append(timeItem[0].strftime(
+                "%H:%M") + "\n至\n" + timeItem[1].strftime("%H:%M"))
+        for i in range(len(itemList)):
+            item = QtWidgets.QTableWidgetItem(itemList[i])
+            item.setFont(light_14_font)
+            self.tableWidget.setHorizontalHeaderItem(i, item)
 
 # 月不良统计窗口类
 
@@ -290,7 +313,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         super(MonthlyDefStasticForm, self).__init__(parent)
         self.setupUi(self)
         self.tableWidget.horizontalHeader().setStyleSheet(
-            'QHeaderView{font: 14pt "微软雅黑 Light";border: 1px solid #6c6c6c;}')
+            "QHeaderView::section{background-color:lightblue;color: black;padding-left: 4px;border: 1px solid#6c6c6c;}")
         self.dateEdit.setDate(datetime.datetime.now() -
                               dateutil.relativedelta.relativedelta(months=1))
         self.dateEdit_2.setDate(datetime.datetime.now())
@@ -298,7 +321,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
             QtWidgets.QAbstractItemView.NoEditTriggers)
         if configJson["Line"] != None:
             self.label_2.setText(configJson["Line"]["name"])
-            self.label_2.setStyleSheet("QLabel{color:green}")
+            self.label_2.setStyleSheet("QLabel{color:darkblue}")
         else:
             self.label_2.setText("未配置")
             self.label_2.setStyleSheet("QLabel{color:red}")
@@ -366,6 +389,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         itemList.extend(['合计', '投料', '回收率', '包装'])
         for i in range(12):
             item = QtWidgets.QTableWidgetItem(itemList[i])
+            item.setFont(light_14_font)
             self.tableWidget.setHorizontalHeaderItem(i, item)
 
     def SetTableWidgetWidth(self):
@@ -642,8 +666,8 @@ if __name__ == "__main__":
         configJson["Admin"] = {"password": "sysadmin"}
 
     # 测试自定义时间操作类
-    timeOperator = TimeManipulation()
-    print(timeOperator.DayHourRange(60 * 30))
+    # timeOperator = TimeManipulation()
+    # print(timeOperator.DayHourRange(60 * 30))
 
     app = QApplication(sys.argv)
     mywin = MyMainForm()

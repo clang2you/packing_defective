@@ -84,6 +84,7 @@ class DbHelper():
                 sql += temp_sql
         sql += "FROM history_input where DATE_FORMAT(time,'%Y%m%d') BETWEEN '{}' and '{}' GROUP BY 日期".format(startDate, stopDate)
         results = []
+        print(sql)
         for i in range(2):
             if i > 0:
                 sql = sql.replace('history_input', 'realtime_input')
