@@ -283,7 +283,10 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
             self.label_2.setText(configJson["Line"]["name"])
             self.SetDailyTableColumns()
             self.SetTableWidgetWidth()
+            self.dbHandler = dbHelper.DbHelper(configJson)
+            self.GetQueryDailyResults()
         except:
+            traceback.print_exc()
             self.label_10.setText("分割时间段出错,\n请检查工作时段配置！")
             self.label_10.setStyleSheet("QLabel{color:red}")
             self.label_10.setFont(light_14_font)
@@ -296,14 +299,57 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
     def SetDailyTableColumns(self):
         self.timeSliceList = TimeManipulation().DayHourRange(60*60)
         self.tableWidget.setColumnCount(len(self.timeSliceList) + 2)
-        itemList = ["合计", "不良原因"]
+        itemList = ["不良原因", ]
         for timeItem in self.timeSliceList:
             itemList.append(timeItem[0].strftime(
                 "%H:%M") + "\n至\n" + timeItem[1].strftime("%H:%M"))
+        itemList.append("合计")
         for i in range(len(itemList)):
             item = QtWidgets.QTableWidgetItem(itemList[i])
             item.setFont(light_14_font)
             self.tableWidget.setHorizontalHeaderItem(i, item)
+
+    def GetQueryDailyResults(self):
+        try:
+            self.tableWidget.verticalHeader().setHidden(True)
+            dailyResult = self.dbHandler.GetDailyDataResults(
+                self.timeSliceList)
+            listLength = len(dailyResult)
+            self.tableWidget.setRowCount(listLength+ 1)
+            for rowIndex in range(len(dailyResult)):
+                subCount = 0
+                rowDataColumnCount=len(dailyResult[rowIndex])
+                for i in range(rowDataColumnCount):
+                    if isinstance(dailyResult[rowIndex][i], str):
+                        newItem = QtWidgets.QTableWidgetItem(
+                            dailyResult[rowIndex][i])
+                        newItem.setTextAlignment(QtCore.Qt.AlignLeft)
+                    else:
+                        subCount += int(dailyResult[rowIndex][i])
+                        newItem = QtWidgets.QTableWidgetItem(
+                            str(dailyResult[rowIndex][i]))
+                        newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                    self.tableWidget.setItem(
+                        rowIndex, i, newItem)
+                newItem = QtWidgets.QTableWidgetItem(str(subCount))
+                newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.tableWidget.setItem(rowIndex, rowDataColumnCount, newItem )
+            for i in range(self.tableWidget.columnCount()):
+                count = 0
+                if i == 0:
+                    newItem = QtWidgets.QTableWidgetItem("合计")
+                    newItem.setTextAlignment(QtCore.Qt.AlignLeft)
+                    self.tableWidget.setItem(self.tableWidget.rowCount() -1, i, newItem)
+                else:
+                    for j in range(self.tableWidget.rowCount()):
+                        cell = self.tableWidget.item(j, i)
+                        if cell != None:
+                            count = count + int(cell.text())
+                    newItem = QtWidgets.QTableWidgetItem(str(count))
+                    newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                    self.tableWidget.setItem(self.tableWidget.rowCount() -1, i, newItem)
+        except:
+            traceback.print_exc()
 
 # 月不良统计窗口类
 

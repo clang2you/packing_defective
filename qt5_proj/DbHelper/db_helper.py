@@ -3,6 +3,7 @@ import qt5_proj.ConfigHelper.config_helper as config_mod
 import datetime
 # # print(cfg_dict)
 
+
 class DbHelper():
     def __init__(self, cfg_dict):
         if cfg_dict["MySQL"] != None:
@@ -82,15 +83,17 @@ class DbHelper():
                 sql += temp_sql + ","
             else:
                 sql += temp_sql
-        sql += "FROM history_input where DATE_FORMAT(time,'%Y%m%d') BETWEEN '{}' and '{}' GROUP BY 日期".format(startDate, stopDate)
+        sql += "FROM history_input where DATE_FORMAT(time,'%Y%m%d') BETWEEN '{}' and '{}' GROUP BY 日期".format(
+            startDate, stopDate)
         results = []
-        print(sql)
+        # print(sql)
         for i in range(2):
             if i > 0:
                 sql = sql.replace('history_input', 'realtime_input')
             for row in self.runQuerySql(sql):
                 resultDic = {}
-                resultDic["日期"] = (datetime.datetime.strptime(row[0], '%Y-%m-%d')).strftime("%m/%d")
+                resultDic["日期"] = (datetime.datetime.strptime(
+                    row[0], '%Y-%m-%d')).strftime("%m/%d")
                 resultDic["投料"] = row[1]
                 resultDic["包装"] = row[2]
                 defTotal = 0
@@ -98,15 +101,31 @@ class DbHelper():
                     resultDic[type] = row[defList.index(type) + 3]
                     defTotal += row[defList.index(type) + 3]
                 resultDic["合计"] = defTotal
-                resultDic["回收率"] = str(round((defTotal / row[1]),1) * 100) + "%"
+                resultDic["回收率"] = str(
+                    round((defTotal / row[1]), 1) * 100) + "%"
                 results.append(resultDic)
         return results
-            
-            
+
+    def GetDailyDataResults(self, timeSliceList):
+        sql = "select type as '不良原因',"
+        # sum(case when time BETWEEN '2020/03/11 08:00:00' and '2020/03/11 09:00:00' then qty else 0 end) as '2020-03-11 9点之前',
+        # sum(case when time BETWEEN '2020/03/11 09:00:00' and '2020/03/11 10:00:00' then qty else 0 end) as '2020-03-11 9点以后'
+        for timeSliceItem in timeSliceList:
+            sql += "sum(case when time BETWEEN '" + timeSliceItem[0].strftime(
+                "%Y-%m-%d %H:%M") + "' and '" + timeSliceItem[1].strftime("%Y-%m-%d %H:%M") + "' then qty else 0 end) as '" + timeSliceItem[0].strftime("%H:%M") + "\\n至\\n" + timeSliceItem[1].strftime("%H:%M") + "',"
+        sql = sql[:-1]
+        sql += " from realtime_input where defType is not null GROUP BY type"
+        results = []
+        for row in self.runQuerySql(sql):
+            resultList = []
+            resultList.extend(row)
+            results.append(resultList)
+        return results
+
+
 if __name__ == '__main__':
     cfg = config_mod.CfgHelper()
     cfg_dict = cfg.cfg_dict
     dbHelper = DbHelper(cfg_dict)
     # print(dbHelper.db_name)
-    print(dbHelper.GetMonthDataResult('20200301', '20200325'))
-    
+    dbHelper.GetDailyDataResults()
