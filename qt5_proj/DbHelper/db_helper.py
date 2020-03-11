@@ -112,7 +112,7 @@ class DbHelper():
         # sum(case when time BETWEEN '2020/03/11 09:00:00' and '2020/03/11 10:00:00' then qty else 0 end) as '2020-03-11 9点以后'
         for timeSliceItem in timeSliceList:
             sql += "sum(case when time BETWEEN '" + timeSliceItem[0].strftime(
-                "%Y-%m-%d %H:%M") + "' and '" + timeSliceItem[1].strftime("%Y-%m-%d %H:%M") + "' then qty else 0 end) as '" + timeSliceItem[0].strftime("%H:%M") + "\\n至\\n" + timeSliceItem[1].strftime("%H:%M") + "',"
+                "%Y-%m-%d %H:%M") + "' and '" + timeSliceItem[1].strftime("%Y-%m-%d %H:%M") + "' then qty else 0 end) as '" + timeSliceItem[0].strftime("%H:%M") + " to " + timeSliceItem[1].strftime("%H:%M") + "',"
         sql = sql[:-1]
         sql += " from realtime_input where defType is not null GROUP BY type"
         results = []

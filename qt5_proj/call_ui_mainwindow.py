@@ -315,10 +315,10 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
             dailyResult = self.dbHandler.GetDailyDataResults(
                 self.timeSliceList)
             listLength = len(dailyResult)
-            self.tableWidget.setRowCount(listLength+ 1)
+            self.tableWidget.setRowCount(listLength + 1)
             for rowIndex in range(len(dailyResult)):
                 subCount = 0
-                rowDataColumnCount=len(dailyResult[rowIndex])
+                rowDataColumnCount = len(dailyResult[rowIndex])
                 for i in range(rowDataColumnCount):
                     if isinstance(dailyResult[rowIndex][i], str):
                         newItem = QtWidgets.QTableWidgetItem(
@@ -333,13 +333,14 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
                         rowIndex, i, newItem)
                 newItem = QtWidgets.QTableWidgetItem(str(subCount))
                 newItem.setTextAlignment(QtCore.Qt.AlignCenter)
-                self.tableWidget.setItem(rowIndex, rowDataColumnCount, newItem )
+                self.tableWidget.setItem(rowIndex, rowDataColumnCount, newItem)
             for i in range(self.tableWidget.columnCount()):
                 count = 0
                 if i == 0:
                     newItem = QtWidgets.QTableWidgetItem("合计")
                     newItem.setTextAlignment(QtCore.Qt.AlignLeft)
-                    self.tableWidget.setItem(self.tableWidget.rowCount() -1, i, newItem)
+                    self.tableWidget.setItem(
+                        self.tableWidget.rowCount() - 1, i, newItem)
                 else:
                     for j in range(self.tableWidget.rowCount()):
                         cell = self.tableWidget.item(j, i)
@@ -347,7 +348,8 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
                             count = count + int(cell.text())
                     newItem = QtWidgets.QTableWidgetItem(str(count))
                     newItem.setTextAlignment(QtCore.Qt.AlignCenter)
-                    self.tableWidget.setItem(self.tableWidget.rowCount() -1, i, newItem)
+                    self.tableWidget.setItem(
+                        self.tableWidget.rowCount() - 1, i, newItem)
         except:
             traceback.print_exc()
 
@@ -663,8 +665,8 @@ class TimeManipulation():
             self.pmTimeStop = lineSetting["pmStop"]
             self.ConvertSettingToTimeObj()
 
-    def ConvertSettingToTimeObj(self):
-        today = datetime.datetime.now().strftime("%Y-%m-%d")
+    def ConvertSettingToTimeObj(self, day=datetime.datetime.now()):
+        today = day.strftime("%Y-%m-%d")
         self.amTimeStart = datetime.datetime.strptime(
             today + " " + str(self.amTimeStart), "%Y-%m-%d %H:%M")
         self.amTimeStop = datetime.datetime.strptime(
