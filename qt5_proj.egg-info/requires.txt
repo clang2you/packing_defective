@@ -6,3 +6,4 @@ pyinstaller<4.0,>=3.6
 pymysql<0.10.0,>=0.9.3
 python-dateutil<3.0.0,>=2.8.1
 pywin32-ctypes<0.3.0,>=0.2.0
+pyzmq<20.0.0,>=19.0.0

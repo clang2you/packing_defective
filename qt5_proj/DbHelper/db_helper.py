@@ -131,7 +131,7 @@ class DbHelper():
         for row in self.runQuerySql(sql1):
             totalDic[str(row[0])] = str(row[1])
         for row in self.runQuerySql(sql2):
-            totalDic["不良合计"] = str(row[0])
+            totalDic["不良合计"] = str(row[0]) if row[0] is not None else "0"
         return totalDic
 
 if __name__ == '__main__':

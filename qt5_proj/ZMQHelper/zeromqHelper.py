@@ -1,20 +1,26 @@
 from PyQt5 import QtCore
 import zmq
-# import time
+import random
+import sys
+import time
 
-class CustomThread(QtCore.QObject):
+class ZMQListener(QtCore.QObject):
     message = QtCore.pyqtSignal(str)
+
     def __init__(self):
-        super(CustomThread, self).__init__()
+        super(ZMQListener, self).__init__()
         context = zmq.Context()
         self.socket = context.socket(zmq.SUB)
-        print("Collecting updates from ZMQ server")
-        self.socket.connect ("tcp://localhost:5555")
+        self.message.emit("Monitoring MQ Server ...")
+        self.socket.connect("tcp://localhost:5556")
+
+        topicfilter = "Updated at："
+        self.socket.setsockopt_string(zmq.SUBSCRIBE,topicfilter)
 
         self.running = True
-    
+
     def loop(self):
-        while self.running:
-            string = self.socket.recv()
+        while True:
+            string = self.socket.recv_string()
             self.message.emit(string)
-            
+            time.sleep(1)

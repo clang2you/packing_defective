@@ -334,9 +334,9 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
             else:
                 self.totalDic = self.dbHandler.GetDailyTotals(
                     str(self.dateEdit.date().toPyDate()))
-            self.lineEdit.setText(self.totalDic["投料"])
-            self.lineEdit_2.setText(self.totalDic["包装"])
-            self.lineEdit_3.setText(self.totalDic["不良合计"])
+            self.lineEdit.setText(self.totalDic["投料"] if "投料" in self.totalDic.keys() else "0")
+            self.lineEdit_2.setText(self.totalDic["包装"] if "包装" in self.totalDic.keys() else "0")
+            self.lineEdit_3.setText(self.totalDic["不良合计"] if "不良合计" in self.totalDic.keys() else "0")
             dailyResult = self.dbHandler.GetDailyDataResults(
                 self.timeSliceList, self.isHistory)
             # print(dailyResult)
@@ -539,13 +539,12 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.pushButton_3.hide()
         self.pushButton.clicked.connect(self.CreateCountAdjustmentWindow)
         self.pushButton_7.clicked.connect(self.CreateTargetSettingWindow)
-        # self.tabWidget.currentChanged.connect(self.StartMQService)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
 
         self.thread = QtCore.QThread()
-        self.zeromqListener = mqHelper.CustomThread()
+        self.zeromqListener = mqHelper.ZMQListener()
         self.zeromqListener.moveToThread(self.thread)
 
         self.thread.started.connect(self.zeromqListener.loop)
@@ -557,10 +556,8 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.clockTimer.timeout.connect(self.Showtime)
         self.clockTimer.start(500)
 
-    # def StartMQService(self):
-    #     self.zeromq.start()
     def ZMQReceived(self, message):
-        self.statusbar().showMessage(message)
+        self.statusbar.showMessage(message)
     
     def CloseEvent(self, event):
         self.zeromqListener.running = False

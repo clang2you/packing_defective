@@ -18,4 +18,4 @@ while True:
     messagedata = datetime.now().strftime("%Y/%m/%d日 %H:%M:%S")
     print("%s %s" % (topic, messagedata))
     socket.send_string("%s%s" % (topic, messagedata))
-    time.sleep(1)
+    time.sleep(10)
