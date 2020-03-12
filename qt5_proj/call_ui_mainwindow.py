@@ -26,6 +26,7 @@ import qt5_proj.workingTimeSettings as workingTimeSettings
 import qt5_proj.targetSettings as targetSettings
 import qt5_proj.workRestTimeSettings as workRestTimeSettings
 import qt5_proj.lineSettings as lineSettings
+import qt5_proj.ZMQHelper.zeromqHelper as mqHelper
 
 matplotlib.use("Qt5Agg")
 
@@ -538,13 +539,33 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.pushButton_3.hide()
         self.pushButton.clicked.connect(self.CreateCountAdjustmentWindow)
         self.pushButton_7.clicked.connect(self.CreateTargetSettingWindow)
+        # self.tabWidget.currentChanged.connect(self.StartMQService)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
 
+        self.thread = QtCore.QThread()
+        self.zeromqListener = mqHelper.CustomThread()
+        self.zeromqListener.moveToThread(self.thread)
+
+        self.thread.started.connect(self.zeromqListener.loop)
+        self.zeromqListener.message.connect(self.ZMQReceived)
+
+        QtCore.QTimer.singleShot(0, self.thread.start)
+
         self.clockTimer = QtCore.QTimer(self)
         self.clockTimer.timeout.connect(self.Showtime)
         self.clockTimer.start(500)
+
+    # def StartMQService(self):
+    #     self.zeromq.start()
+    def ZMQReceived(self, message):
+        self.statusbar().showMessage(message)
+    
+    def CloseEvent(self, event):
+        self.zeromqListener.running = False
+        self.thread.quit()
+        self.thread.wait()
 
     def Showtime(self):
         datetime = QtCore.QDateTime.currentDateTime()
