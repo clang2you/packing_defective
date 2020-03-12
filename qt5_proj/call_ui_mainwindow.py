@@ -297,9 +297,10 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
         for header_item_index in range(self.tableWidget.columnCount()):
             self.tableWidget.horizontalHeader().setSectionResizeMode(
                 header_item_index, QtWidgets.QHeaderView.Stretch)
-    
+
     def ChangeTimeSliceList(self):
-        self.timeSliceList = TimeManipulation(self.dateEdit.date().toPyDate()).DayHourRange(60*60)
+        self.timeSliceList = TimeManipulation(
+            self.dateEdit.date().toPyDate()).DayHourRange(60*60)
         if self.dateEdit.date().toPyDate() < datetime.datetime.now().date():
             self.isHistory = True
         else:
@@ -320,11 +321,18 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
 
     def GetQueryDailyResults(self):
         try:
+            self.label_5.setText("")
+            self.lineEdit.setText("")
+            self.lineEdit_2.setText("")
+            self.lineEdit_3.setText("")
+            self.tableWidget.clearContents()
             self.tableWidget.verticalHeader().setHidden(True)
             if self.isHistory:
-                self.totalDic = self.dbHandler.GetDailyTotals(str(self.dateEdit.date().toPyDate()), self.isHistory)
+                self.totalDic = self.dbHandler.GetDailyTotals(
+                    str(self.dateEdit.date().toPyDate()), self.isHistory)
             else:
-                self.totalDic = self.dbHandler.GetDailyTotals(str(self.dateEdit.date().toPyDate()))
+                self.totalDic = self.dbHandler.GetDailyTotals(
+                    str(self.dateEdit.date().toPyDate()))
             self.lineEdit.setText(self.totalDic["投料"])
             self.lineEdit_2.setText(self.totalDic["包装"])
             self.lineEdit_3.setText(self.totalDic["不良合计"])
@@ -342,7 +350,8 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
                             dailyResult[rowIndex][i])
                         newItem.setTextAlignment(QtCore.Qt.AlignLeft)
                     else:
-                        subCount += int(dailyResult[rowIndex][i]) if dailyResult[rowIndex][i] != None else 0
+                        subCount += int(dailyResult[rowIndex][i]
+                                        ) if dailyResult[rowIndex][i] != None else 0
                         newItem = QtWidgets.QTableWidgetItem(
                             str(dailyResult[rowIndex][i]))
                         newItem.setTextAlignment(QtCore.Qt.AlignCenter)
@@ -369,6 +378,9 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
                         self.tableWidget.rowCount() - 1, i, newItem)
         except:
             traceback.print_exc()
+            self.label_5.setFont(light_14_font)
+            self.label_5.setText("出错，无法连接数据库\n请联系 IT 处理！")
+            self.label_5.setStyleSheet("QLabel{color:red}")
 
 # 月不良统计窗口类
 
@@ -438,9 +450,12 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
                     if isPercent != True:
                         newItem = QTableWidgetItem(str(count))
                     else:
-                        defTotal = float(self.tableWidget.item((self.tableWidget.rowCount() - 1), i-2).text())
-                        inputTotal = float(self.tableWidget.item((self.tableWidget.rowCount() - 1), i-1).text())
-                        newItem = QTableWidgetItem(str(round(defTotal / inputTotal * 100, 1)) + "%")
+                        defTotal = float(self.tableWidget.item(
+                            (self.tableWidget.rowCount() - 1), i-2).text())
+                        inputTotal = float(self.tableWidget.item(
+                            (self.tableWidget.rowCount() - 1), i-1).text())
+                        newItem = QTableWidgetItem(
+                            str(round(defTotal / inputTotal * 100, 1)) + "%")
                     newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                     self.tableWidget.setItem(
                         self.tableWidget.rowCount() - 1, i, newItem)
@@ -734,10 +749,6 @@ class TimeManipulation():
 if __name__ == "__main__":
     if configJson["Admin"] == None:
         configJson["Admin"] = {"password": "sysadmin"}
-
-    # 测试自定义时间操作类
-    # timeOperator = TimeManipulation()
-    # print(timeOperator.DayHourRange(60 * 30))
 
     app = QApplication(sys.argv)
     mywin = MyMainForm()

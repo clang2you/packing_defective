@@ -124,7 +124,7 @@ class DbHelper():
             results.append(resultList)
         return results
     
-    def GetDailyTotals(self, day="NOW()", isHistory=False):
+    def GetDailyTotals(self, day, isHistory=False):
         totalDic = {}
         sql1 = "select type as 类型, sum(qty) as 数量 from {} where defType is null and TO_DAYS({}) = TO_DAYS(time) group by type".format("history_input" if isHistory else "realtime_input", "'" + day + "'")
         sql2 = "select sum(qty) as 不良合计 from {} where defType is not null and TO_DAYS({}) = TO_DAYS(time)".format("history_input" if isHistory else "realtime_input", "'" + day + "'")
