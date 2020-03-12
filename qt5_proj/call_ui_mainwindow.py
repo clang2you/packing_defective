@@ -277,14 +277,16 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
         self.label_2.setStyleSheet("QLabel{color:darkblue}")
         self.dateEdit.setDate(datetime.datetime.now())
         self.statusBar().hide()
+        self.isHistory = False
         self.pushButton.clicked.connect(self.close)
         self.progressBar.hide()
+        self.dateEdit.dateChanged.connect(self.ChangeTimeSliceList)
+        self.pushButton_2.clicked.connect(self.GetQueryDailyResults)
         try:
             self.label_2.setText(configJson["Line"]["name"])
             self.SetDailyTableColumns()
             self.SetTableWidgetWidth()
             self.dbHandler = dbHelper.DbHelper(configJson)
-            self.GetQueryDailyResults()
         except:
             traceback.print_exc()
             self.label_10.setText("分割时间段出错,\n请检查工作时段配置！")
@@ -295,6 +297,13 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
         for header_item_index in range(self.tableWidget.columnCount()):
             self.tableWidget.horizontalHeader().setSectionResizeMode(
                 header_item_index, QtWidgets.QHeaderView.Stretch)
+    
+    def ChangeTimeSliceList(self):
+        self.timeSliceList = TimeManipulation(self.dateEdit.date().toPyDate()).DayHourRange(60*60)
+        if self.dateEdit.date().toPyDate() < datetime.datetime.now().date():
+            self.isHistory = True
+        else:
+            self.isHistory = False
 
     def SetDailyTableColumns(self):
         self.timeSliceList = TimeManipulation().DayHourRange(60*60)
@@ -312,8 +321,16 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
     def GetQueryDailyResults(self):
         try:
             self.tableWidget.verticalHeader().setHidden(True)
+            if self.isHistory:
+                self.totalDic = self.dbHandler.GetDailyTotals(str(self.dateEdit.date().toPyDate()), self.isHistory)
+            else:
+                self.totalDic = self.dbHandler.GetDailyTotals(str(self.dateEdit.date().toPyDate()))
+            self.lineEdit.setText(self.totalDic["投料"])
+            self.lineEdit_2.setText(self.totalDic["包装"])
+            self.lineEdit_3.setText(self.totalDic["不良合计"])
             dailyResult = self.dbHandler.GetDailyDataResults(
-                self.timeSliceList)
+                self.timeSliceList, self.isHistory)
+            # print(dailyResult)
             listLength = len(dailyResult)
             self.tableWidget.setRowCount(listLength + 1)
             for rowIndex in range(len(dailyResult)):
@@ -325,7 +342,7 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
                             dailyResult[rowIndex][i])
                         newItem.setTextAlignment(QtCore.Qt.AlignLeft)
                     else:
-                        subCount += int(dailyResult[rowIndex][i])
+                        subCount += int(dailyResult[rowIndex][i]) if dailyResult[rowIndex][i] != None else 0
                         newItem = QtWidgets.QTableWidgetItem(
                             str(dailyResult[rowIndex][i]))
                         newItem.setTextAlignment(QtCore.Qt.AlignCenter)
@@ -342,7 +359,7 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
                     self.tableWidget.setItem(
                         self.tableWidget.rowCount() - 1, i, newItem)
                 else:
-                    for j in range(self.tableWidget.rowCount()):
+                    for j in range(self.tableWidget.rowCount() - 1):
                         cell = self.tableWidget.item(j, i)
                         if cell != None:
                             count = count + int(cell.text())
@@ -418,8 +435,12 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
                         if cell != None and "%" in cell.text():
                             count = count + float(cell.text().strip("%"))
                             isPercent = True
-                    newItem = QTableWidgetItem(str(count)) if isPercent != True else QTableWidgetItem(
-                        str(round(count / (self.tableWidget.rowCount() - 1), 1)) + "%")
+                    if isPercent != True:
+                        newItem = QTableWidgetItem(str(count))
+                    else:
+                        defTotal = float(self.tableWidget.item((self.tableWidget.rowCount() - 1), i-2).text())
+                        inputTotal = float(self.tableWidget.item((self.tableWidget.rowCount() - 1), i-1).text())
+                        newItem = QTableWidgetItem(str(round(defTotal / inputTotal * 100, 1)) + "%")
                     newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                     self.tableWidget.setItem(
                         self.tableWidget.rowCount() - 1, i, newItem)
@@ -651,8 +672,9 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
 
 class TimeManipulation():
-    def __init__(self):
+    def __init__(self, day=datetime.datetime.now()):
         global configJson
+        self.day = day
         self.amTimeStart = "08:00"
         self.amTimeStop = "11:30"
         self.pmTimeStart = "13:00"
@@ -665,8 +687,8 @@ class TimeManipulation():
             self.pmTimeStop = lineSetting["pmStop"]
             self.ConvertSettingToTimeObj()
 
-    def ConvertSettingToTimeObj(self, day=datetime.datetime.now()):
-        today = day.strftime("%Y-%m-%d")
+    def ConvertSettingToTimeObj(self):
+        today = self.day.strftime("%Y-%m-%d")
         self.amTimeStart = datetime.datetime.strptime(
             today + " " + str(self.amTimeStart), "%Y-%m-%d %H:%M")
         self.amTimeStop = datetime.datetime.strptime(
