@@ -52,6 +52,12 @@ light_20_font.setPointSize(20)
 light_20_font.setBold(False)
 light_20_font.setWeight(50)
 
+# light_30_font = QtGui.QFont()
+# light_30_font.setFamily("微软雅黑 Light")
+# light_30_font.setPointSize(30)
+# light_30_font.setBold(False)
+# light_30_font.setWeight(50)
+
 # 数据库设定窗口类
 
 
@@ -523,9 +529,13 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.setupUi(self)
         self.label_15.setText(
             QtCore.QDateTime.currentDateTime().toString("M月d日"))
-
+        self.statusbar.setFont(light_14_font)
+        self.tableWidget.horizontalHeader().setStyleSheet(
+            "QHeaderView::section{background-color:lightblue;color: black;padding-left: 4px;border: 1px solid#6c6c6c;}")
+        self.tableWidget.verticalHeader().setHidden(True)
         self.actionSectionSet.triggered.connect(
             self.CreateSectionSettingsWindow)
+        # 自定义工作时间段设定窗口，现在已根据起止时间自动分片，故取消此界面
         # self.actionWorkingTimeSet_2.triggered.connect(
         #     self.CreateWorkingTimeSetWindow)
         self.actionWorkRestTimeSet.triggered.connect(
@@ -543,6 +553,8 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
 
+        self.dbHandler = dbHelper.DbHelper(configJson)
+
         self.thread = QtCore.QThread()
         self.zeromqListener = mqHelper.ZMQListener()
         self.zeromqListener.moveToThread(self.thread)
@@ -558,11 +570,45 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
     def ZMQReceived(self, message):
         self.statusbar.showMessage(message)
+        self.RefreshRealtimeData()
     
     def CloseEvent(self, event):
         self.zeromqListener.running = False
         self.thread.quit()
         self.thread.wait()
+    
+    def RefreshRealtimeData(self):
+        try:
+            self.totalDic = self.dbHandler.GetRealTimeTotals()
+            self.label_2.setText(self.totalDic["回收"])
+            self.label_4.setText(self.totalDic["投料"])
+            self.label_9.setText(self.totalDic["包装"])
+            totalInput = float(self.totalDic["投料"]) 
+            totalDef = float(self.totalDic["回收"])
+            if totalInput > 0:
+                defRate = round(totalDef / totalInput *100, 2)
+                self.label_6.setText(str(defRate) + "%")
+            self.tableWidget.clearContents()
+            realtimeData = self.dbHandler.GetRealTimeDefDatas()
+            self.tableWidget.setRowCount(len(realtimeData.keys()))
+            for id in range(len(realtimeData.keys())):
+                newItem = QTableWidgetItem(str(id))
+                newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.tableWidget.setItem(id, 0, newItem)
+                newItem = QTableWidgetItem(str(list(realtimeData.keys())[id]))
+                newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.tableWidget.setItem(id, 1, newItem)
+                count = float(realtimeData[list(realtimeData.keys())[id]])
+                newItem = QTableWidgetItem(str(count))
+                newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.tableWidget.setItem(id, 2, newItem)
+                if totalDef > 0 and count > 0:
+                    newItem = QTableWidgetItem(str(round((count / totalDef * 100), 1)) + "%")
+                    newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                    self.tableWidget.setItem(id, 3, newItem)
+            self.tableWidget.resizeRowsToContents()
+        except:
+            traceback.print_exc()
 
     def Showtime(self):
         datetime = QtCore.QDateTime.currentDateTime()

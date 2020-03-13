@@ -280,13 +280,13 @@
          <widget class="QFrame" name="frame">
           <property name="minimumSize">
            <size>
-            <width>230</width>
+            <width>210</width>
             <height>730</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>230</width>
+            <width>210</width>
             <height>16777215</height>
            </size>
           </property>
@@ -326,7 +326,7 @@
               </font>
              </property>
              <property name="text">
-              <string>回收数量：</string>
+              <string>回收数量</string>
              </property>
             </widget>
            </item>
@@ -380,7 +380,7 @@
               </font>
              </property>
              <property name="text">
-              <string>加工投料：</string>
+              <string>加工投料</string>
              </property>
             </widget>
            </item>
@@ -407,7 +407,7 @@
               </font>
              </property>
              <property name="text">
-              <string>34</string>
+              <string>0</string>
              </property>
             </widget>
            </item>
@@ -434,7 +434,7 @@
               </font>
              </property>
              <property name="text">
-              <string>回收比例：</string>
+              <string>回收比例</string>
              </property>
             </widget>
            </item>
@@ -488,7 +488,7 @@
               </font>
              </property>
              <property name="text">
-              <string>包装数量：</string>
+              <string>包装数量</string>
              </property>
             </widget>
            </item>
@@ -515,7 +515,7 @@
               </font>
              </property>
              <property name="text">
-              <string>20</string>
+              <string>0</string>
              </property>
             </widget>
            </item>

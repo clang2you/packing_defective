@@ -49,7 +49,8 @@ class DbHelper():
             cursor.execute('use %s' % self.db_name)
             cursor.execute(sql)
             db_conn.commit()
-        except:
+        except Exception as ex:
+            print(ex)
             db_conn.rollback()
         finally:
             cursor.close()
@@ -63,12 +64,6 @@ class DbHelper():
             cursor.execute('use %s' % self.db_name)
             cursor.execute(sql)
             results = cursor.fetchall()
-            # for row in results:
-            #     date = row[0]
-            #     input = row[1]
-            #     pack = row[2]
-            #     def_1 = row[3]
-            #     print("日期: %s ; 投料: %s ; 包装: %s; 高胶：%s" % (date, input, pack, def_1))
         finally:
             cursor.close()
             db_conn.close()
@@ -133,10 +128,26 @@ class DbHelper():
         for row in self.runQuerySql(sql2):
             totalDic["不良合计"] = str(row[0]) if row[0] is not None else "0"
         return totalDic
+    
+    def GetRealTimeDefDatas(self):
+        realtimeData = {}
+        sql = "select type as '不良原因', sum(qty) as '不良数量' from realtime_input where defType is not NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type"
+        for row in self.runQuerySql(sql):
+            realtimeData[str(row[0])] = str(row[1])
+        return realtimeData
+    
+    def GetRealTimeTotals(self):
+        totalDic = {}
+        sql = """select type as 类型, sum(qty) as 数量 from realtime_input where defType is NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type
+        union
+        select '回收', sum(qty) as 数量 from realtime_input where defType is not null and TO_DAYS(time) = TO_DAYS(NOW())"""
+        for row in self.runQuerySql(sql):
+            totalDic[str(row[0])] = str(row[1])
+        return totalDic
+
 
 if __name__ == '__main__':
     cfg = config_mod.CfgHelper()
     cfg_dict = cfg.cfg_dict
     dbHelper = DbHelper(cfg_dict)
-    # print(dbHelper.db_name)
-    print(dbHelper.GetDailyTotals())
+    print(dbHelper.GetRealTimeTotals())
