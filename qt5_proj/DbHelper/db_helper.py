@@ -96,11 +96,14 @@ class DbHelper():
                     resultDic[type] = row[defList.index(type) + 3]
                     defTotal += row[defList.index(type) + 3]
                 resultDic["合计"] = defTotal
-                if row[1] >0 :
-                    resultDic["回收率"] = str(round((defTotal / row[1]), 1) * 100) + "%"
+                # print(defTotal)
+                # print(row[1])
+                if row[1] > 0:
+                    # print(str(row[1]))
+                    resultDic["回收率"] = str(round(float(defTotal) / float(row[1]) * 100, 2)) + "%"
                 else:
                     resultDic["回收率"] = "0.0%"
-                
+
                 results.append(resultDic)
         return results
 
@@ -110,7 +113,8 @@ class DbHelper():
             sql += "sum(case when time BETWEEN '" + timeSliceItem[0].strftime(
                 "%Y-%m-%d %H:%M") + "' and '" + timeSliceItem[1].strftime("%Y-%m-%d %H:%M") + "' then qty else 0 end) as '" + timeSliceItem[0].strftime("%H:%M") + " to " + timeSliceItem[1].strftime("%H:%M") + "',"
         sql = sql[:-1]
-        sql += " from {} where defType is not null GROUP BY type".format("history_input" if isHistory else "realtime_input")
+        sql += " from {} where defType is not null GROUP BY type".format(
+            "history_input" if isHistory else "realtime_input")
         # print(sql)
         results = []
         for row in self.runQuerySql(sql):
@@ -118,24 +122,26 @@ class DbHelper():
             resultList.extend(row)
             results.append(resultList)
         return results
-    
+
     def GetDailyTotals(self, day, isHistory=False):
         totalDic = {}
-        sql1 = "select type as 类型, sum(qty) as 数量 from {} where defType is null and TO_DAYS({}) = TO_DAYS(time) group by type".format("history_input" if isHistory else "realtime_input", "'" + day + "'")
-        sql2 = "select sum(qty) as 不良合计 from {} where defType is not null and TO_DAYS({}) = TO_DAYS(time)".format("history_input" if isHistory else "realtime_input", "'" + day + "'")
+        sql1 = "select type as 类型, sum(qty) as 数量 from {} where defType is null and TO_DAYS({}) = TO_DAYS(time) group by type".format(
+            "history_input" if isHistory else "realtime_input", "'" + day + "'")
+        sql2 = "select sum(qty) as 不良合计 from {} where defType is not null and TO_DAYS({}) = TO_DAYS(time)".format(
+            "history_input" if isHistory else "realtime_input", "'" + day + "'")
         for row in self.runQuerySql(sql1):
             totalDic[str(row[0])] = str(row[1])
         for row in self.runQuerySql(sql2):
             totalDic["不良合计"] = str(row[0]) if row[0] is not None else "0"
         return totalDic
-    
+
     def GetRealTimeDefDatas(self):
         realtimeData = {}
         sql = "select type as '不良原因', sum(qty) as '不良数量' from realtime_input where defType is not NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type"
         for row in self.runQuerySql(sql):
             realtimeData[str(row[0])] = str(row[1])
         return realtimeData
-    
+
     def GetRealTimeTotals(self):
         totalDic = {}
         sql = """select type as 类型, sum(qty) as 数量 from realtime_input where defType is NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type
@@ -145,9 +151,17 @@ class DbHelper():
             totalDic[str(row[0])] = str(row[1])
         return totalDic
 
+    def GetCurrentQcDefData(self):
+        qcDefList = []
+        sql = "select type as 不良原因, sum(qty) as 数量, qcPos as 包检位 from realtime_input where defType is not null and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type"
+        for row in self.runQuerySql(sql):
+            tempList = [str(row[0]), str(row[1]), str(row[2])]
+            qcDefList.append(tempList)
+        return qcDefList
+
 
 if __name__ == '__main__':
     cfg = config_mod.CfgHelper()
     cfg_dict = cfg.cfg_dict
     dbHelper = DbHelper(cfg_dict)
-    print(dbHelper.GetRealTimeTotals())
+    print(dbHelper.GetCurrentQcDefData())

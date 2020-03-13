@@ -328,6 +328,8 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
 
     def GetQueryDailyResults(self):
         try:
+            self.tableWidget.horizontalHeader().setSectionResizeMode(
+                0, QtWidgets.QHeaderView.ResizeToContents)
             self.label_5.setText("")
             self.lineEdit.setText("")
             self.lineEdit_2.setText("")
@@ -340,9 +342,12 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
             else:
                 self.totalDic = self.dbHandler.GetDailyTotals(
                     str(self.dateEdit.date().toPyDate()))
-            self.lineEdit.setText(self.totalDic["投料"] if "投料" in self.totalDic.keys() else "0")
-            self.lineEdit_2.setText(self.totalDic["包装"] if "包装" in self.totalDic.keys() else "0")
-            self.lineEdit_3.setText(self.totalDic["不良合计"] if "不良合计" in self.totalDic.keys() else "0")
+            self.lineEdit.setText(
+                self.totalDic["投料"] if "投料" in self.totalDic.keys() else "0")
+            self.lineEdit_2.setText(
+                self.totalDic["包装"] if "包装" in self.totalDic.keys() else "0")
+            self.lineEdit_3.setText(
+                self.totalDic["不良合计"] if "不良合计" in self.totalDic.keys() else "0")
             dailyResult = self.dbHandler.GetDailyDataResults(
                 self.timeSliceList, self.isHistory)
             # print(dailyResult)
@@ -527,14 +532,20 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
     def __init__(self, parent=None):
         super(MyMainForm, self).__init__(parent)
         self.setupUi(self)
+        if configJson["Line"] != None:
+            self.label_12.setText(configJson["Line"]["name"])
         self.label_15.setText(
             QtCore.QDateTime.currentDateTime().toString("M月d日"))
         self.statusbar.setFont(light_14_font)
         self.tableWidget.horizontalHeader().setStyleSheet(
             "QHeaderView::section{background-color:lightblue;color: black;padding-left: 4px;border: 1px solid#6c6c6c;}")
+        self.tableWidget_2.horizontalHeader().setStyleSheet(
+            "QHeaderView::section{background-color:lightblue;color: black;padding-left: 4px;border: 1px solid#6c6c6c;}")
         self.tableWidget.verticalHeader().setHidden(True)
+        self.tableWidget_2.verticalHeader().setHidden(True)
         self.actionSectionSet.triggered.connect(
             self.CreateSectionSettingsWindow)
+        self.pushButton_7.setVisible(False)
         # 自定义工作时间段设定窗口，现在已根据起止时间自动分片，故取消此界面
         # self.actionWorkingTimeSet_2.triggered.connect(
         #     self.CreateWorkingTimeSetWindow)
@@ -549,6 +560,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.pushButton_3.hide()
         self.pushButton.clicked.connect(self.CreateCountAdjustmentWindow)
         self.pushButton_7.clicked.connect(self.CreateTargetSettingWindow)
+        self.tabWidget.currentChanged.connect(self.RefreshRealtimeData)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
@@ -559,7 +571,8 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.zeromqListener = mqHelper.ZMQListener()
         self.zeromqListener.moveToThread(self.thread)
 
-        self.thread.started.connect(self.zeromqListener.loop)
+        if configJson["MySQL"] is not None and configJson["Line"] is not None:
+            self.thread.started.connect(self.zeromqListener.loop)
         self.zeromqListener.message.connect(self.ZMQReceived)
 
         QtCore.QTimer.singleShot(0, self.thread.start)
@@ -571,28 +584,52 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
     def ZMQReceived(self, message):
         self.statusbar.showMessage(message)
         self.RefreshRealtimeData()
-    
+
     def CloseEvent(self, event):
         self.zeromqListener.running = False
         self.thread.quit()
         self.thread.wait()
-    
+
     def RefreshRealtimeData(self):
+        if self.tabWidget.currentIndex() == 1:
+            self.RefreshTabPage2Data()
+        elif self.tabWidget.currentIndex() == 2:
+            self.RefreshTabPage3Data()
+
+    def RefreshTabPage3Data(self):
+        try:
+            self.page3DataList = self.dbHandler.GetCurrentQcDefData()
+            self.tableWidget_2.setRowCount(len(self.page3DataList))
+            for i in range(len(self.page3DataList)):
+                newItem = QTableWidgetItem(self.page3DataList[i][0])
+                newItem.setFont(light_20_font)
+                newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.tableWidget_2.setItem(i, 0, newItem)
+                newItem = QTableWidgetItem(self.page3DataList[i][1])
+                newItem.setFont(light_20_font)
+                newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                pos = int(self.page3DataList[i][2])
+                self.tableWidget_2.setItem(i, pos, newItem)
+            self.tableWidget_2.resizeRowsToContents()
+        except:
+            traceback.print_exc()
+
+    def RefreshTabPage2Data(self):
         try:
             self.totalDic = self.dbHandler.GetRealTimeTotals()
             self.label_2.setText(self.totalDic["回收"])
             self.label_4.setText(self.totalDic["投料"])
             self.label_9.setText(self.totalDic["包装"])
-            totalInput = float(self.totalDic["投料"]) 
+            totalInput = float(self.totalDic["投料"])
             totalDef = float(self.totalDic["回收"])
             if totalInput > 0:
-                defRate = round(totalDef / totalInput *100, 2)
+                defRate = round(totalDef / totalInput * 100, 2)
                 self.label_6.setText(str(defRate) + "%")
             self.tableWidget.clearContents()
             realtimeData = self.dbHandler.GetRealTimeDefDatas()
             self.tableWidget.setRowCount(len(realtimeData.keys()))
             for id in range(len(realtimeData.keys())):
-                newItem = QTableWidgetItem(str(id))
+                newItem = QTableWidgetItem(str(id + 1))
                 newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.tableWidget.setItem(id, 0, newItem)
                 newItem = QTableWidgetItem(str(list(realtimeData.keys())[id]))
@@ -603,7 +640,8 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.tableWidget.setItem(id, 2, newItem)
                 if totalDef > 0 and count > 0:
-                    newItem = QTableWidgetItem(str(round((count / totalDef * 100), 1)) + "%")
+                    newItem = QTableWidgetItem(
+                        str(round((count / totalDef * 100), 1)) + "%")
                     newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                     self.tableWidget.setItem(id, 3, newItem)
             self.tableWidget.resizeRowsToContents()

@@ -32,4 +32,5 @@ while True:
     messagedata = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
     print("%s %s" % (topic, messagedata))
     socket.send_string("%s%s" % (topic, messagedata))
-    time.sleep(sleepTimeList[randomInt])
+    # time.sleep(sleepTimeList[randomInt])
+    time.sleep(1)
