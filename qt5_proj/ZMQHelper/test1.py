@@ -18,16 +18,16 @@ socket.bind("tcp://*:%s" % port)
 cfgList = config_mod.CfgHelper().cfg_dict
 databaseHelper = dbHelper.DbHelper(cfgList)
 sql = "insert into com_input(btn_pos, line) values('{}', 'AL')"
-typeList = ["01", "02", "03", "04", "05", "06", "07", "08", "09"]
-sleepTimeList = [1, 5, 20, 10, 30, 15, 8, 7, 12]
+typeList = [num + 1 for num in range(30)]
+sleepTimeList = [1, 2, 3, 4, 5, 7, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
 while True:
-    randomInt = random.randint(0, 8)
-    databaseHelper.runNonQuerySql(sql.format(typeList[randomInt]))
-    # sql = "insert into com_input(btn_pos, line) values('01', 'AL')"
-    # databaseHelper.runNonQuerySql(sql)
-    # sql = "insert into com_input(btn_pos, line) values('02', 'AL')"
-    # databaseHelper.runNonQuerySql(sql)
+    randomInt = random.randint(0, 29)
+    # databaseHelper.runNonQuerySql(sql.format(typeList[randomInt]))
+    sql = "insert into com_input(btn_pos, line) values('01', 'AL')"
+    databaseHelper.runNonQuerySql(sql)
+    sql = "insert into com_input(btn_pos, line) values('02', 'AL')"
+    databaseHelper.runNonQuerySql(sql)
     topic = "Updated at："
     messagedata = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
     print("%s %s" % (topic, messagedata))

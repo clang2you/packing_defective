@@ -265,6 +265,11 @@ class LineSettingsWindow(QDialog):
                          "7": self.child.lineEdit_8.text()}
         configJson["DefReasons"] = configDefType
         config.SaveConfigToJson(configJson)
+        try:
+            self.dbHandler = dbHelper.DbHelper(configJson)
+            self.dbHandler.InsertIntoConfigTableDefInfo(configJson)
+        except:
+            traceback.print_exc()
         self.child.label_13.setFont(light_14_font)
         self.child.label_13.setText("设定保存完成")
         self.child.label_13.setStyleSheet("QLabel{color: green}")
@@ -302,8 +307,12 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
 
     def SetTableWidgetWidth(self):
         for header_item_index in range(self.tableWidget.columnCount()):
-            self.tableWidget.horizontalHeader().setSectionResizeMode(
-                header_item_index, QtWidgets.QHeaderView.Stretch)
+            if header_item_index != 0:
+                self.tableWidget.horizontalHeader().setSectionResizeMode(
+                    header_item_index, QtWidgets.QHeaderView.Stretch)
+            else:
+                self.tableWidget.horizontalHeader().setSectionResizeMode(
+                    header_item_index, QtWidgets.QHeaderView.ResizeToContents)
 
     def ChangeTimeSliceList(self):
         self.timeSliceList = TimeManipulation(
@@ -534,6 +543,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.setupUi(self)
         if configJson["Line"] != None:
             self.label_12.setText(configJson["Line"]["name"])
+        self.tableWidget.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.label_15.setText(
             QtCore.QDateTime.currentDateTime().toString("M月d日"))
         self.statusbar.setFont(light_14_font)
@@ -570,6 +580,8 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.thread = QtCore.QThread()
         self.zeromqListener = mqHelper.ZMQListener()
         self.zeromqListener.moveToThread(self.thread)
+
+        self.RefreshTabPage2Data()
 
         if configJson["MySQL"] is not None and configJson["Line"] is not None:
             self.thread.started.connect(self.zeromqListener.loop)
@@ -608,8 +620,30 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 newItem = QTableWidgetItem(self.page3DataList[i][1])
                 newItem.setFont(light_20_font)
                 newItem.setTextAlignment(QtCore.Qt.AlignCenter)
-                pos = int(self.page3DataList[i][2])
-                self.tableWidget_2.setItem(i, pos, newItem)
+                self.tableWidget_2.setItem(i, 1, newItem)
+                newItem = QTableWidgetItem(self.page3DataList[i][2])
+                newItem.setFont(light_20_font)
+                newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.tableWidget_2.setItem(i, 2, newItem)
+                newItem = QTableWidgetItem(self.page3DataList[i][3])
+                newItem.setFont(light_20_font)
+                newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.tableWidget_2.setItem(i, 3, newItem)
+                newItem = QTableWidgetItem(self.page3DataList[i][4])
+                newItem.setFont(light_20_font)
+                newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.tableWidget_2.setItem(i, 4, newItem)
+                subSum = 0
+                for j in range(self.tableWidget_2.columnCount()):
+                    if j != self.tableWidget_2.columnCount() -1 and j != 0:
+                        count = int(self.tableWidget_2.item(i, j).text()) if self.tableWidget_2.item(i, j) != None else 0
+                        subSum += count
+                    elif j == self.tableWidget_2.columnCount() - 1:
+                        newItem = QTableWidgetItem(str(subSum))
+                        newItem.setFont(light_20_font)
+                        newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                        # print(i, j)
+                        self.tableWidget_2.setItem(i, j, newItem)
             self.tableWidget_2.resizeRowsToContents()
         except:
             traceback.print_exc()
@@ -635,7 +669,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 newItem = QTableWidgetItem(str(list(realtimeData.keys())[id]))
                 newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.tableWidget.setItem(id, 1, newItem)
-                count = float(realtimeData[list(realtimeData.keys())[id]])
+                count = int(realtimeData[list(realtimeData.keys())[id]])
                 newItem = QTableWidgetItem(str(count))
                 newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.tableWidget.setItem(id, 2, newItem)
@@ -644,7 +678,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                         str(round((count / totalDef * 100), 1)) + "%")
                     newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                     self.tableWidget.setItem(id, 3, newItem)
-            self.tableWidget.resizeRowsToContents()
         except:
             traceback.print_exc()
 

@@ -153,15 +153,32 @@ class DbHelper():
 
     def GetCurrentQcDefData(self):
         qcDefList = []
-        sql = "select type as 不良原因, sum(qty) as 数量, qcPos as 包检位 from realtime_input where defType is not null and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type"
+        sql = """select type as 不良原因, 
+        sum(if(qcPos = '1', qty, 0)) as qc1数量,
+        sum(if(qcPos = '2', qty, 0)) as qc2数量,
+        sum(if(qcPos = '3', qty, 0)) as qc3数量,
+        sum(if(qcPos = '4', qty, 0)) as qc4数量
+        from realtime_input where defType is not null and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type"""
         for row in self.runQuerySql(sql):
-            tempList = [str(row[0]), str(row[1]), str(row[2])]
+            tempList = [str(row[0]), str(row[1]), str(row[2]), str(row[3]), str(row[4])]
             qcDefList.append(tempList)
         return qcDefList
-
+    
+    def InsertIntoConfigTableDefInfo(self,cfg_dic):
+        btnPos = 3
+        defTypeNo = 1
+        defTypeList = list(cfg_dic["DefReasons"].values())
+        # print(defTypeList)
+        for qcIndex in range(4):
+            for type in defTypeList:
+                sql = "REPLACE INTO config(type, def_type_no, btn_pos, qcPos) VALUES('{}', {}, '{}', {})".format(type, defTypeNo, str(btnPos).zfill(2), str(qcIndex + 1))
+                btnPos += 1
+                defTypeNo += 1
+                # print(sql)
+                self.runNonQuerySql(sql)
 
 if __name__ == '__main__':
     cfg = config_mod.CfgHelper()
     cfg_dict = cfg.cfg_dict
     dbHelper = DbHelper(cfg_dict)
-    print(dbHelper.GetCurrentQcDefData())
+    dbHelper.InsertIntoConfigTableDefInfo(cfg_dict)
