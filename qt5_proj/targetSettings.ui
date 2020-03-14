@@ -93,7 +93,7 @@
                </font>
               </property>
               <property name="text">
-               <string>NOS1A</string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -305,6 +305,19 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="font">
+         <font>
+          <family>Microsoft YaHei UI Light</family>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

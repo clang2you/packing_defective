@@ -202,11 +202,67 @@ class TargetSettingWindow(QDialog):
         self.child = targetSettings.Ui_Dialog()
         self.child.setupUi(self)
         self.SetTableWidgetHeaderWidth()
+        self.dbHandler = dbHelper.DbHelper(configJson)
+        self.child.pushButton.clicked.connect(self.InsertTargetToDb)
+        self.child.pushButton_3.setVisible(False)
+        self.child.pushButton_4.clicked.connect(self.DeleteDailyTarget)
+        self.child.tableWidget.verticalHeader().setHidden(True)
+        self.GetDbTargetDataMonthly()
 
     def SetTableWidgetHeaderWidth(self):
         for header_item_index in range(self.child.tableWidget.columnCount()):
             self.child.tableWidget.horizontalHeader().setSectionResizeMode(
                 header_item_index, QtWidgets.QHeaderView.Stretch)
+
+    def InsertTargetToDb(self):
+        self.child.label_3.setStyleSheet("QLabel{color:green}")
+        self.child.label_3.setText("")
+        date_info = self.child.dateEdit.date().toPyDate().strftime("%Y-%m-%d")
+        target = 0
+        try:
+            if int(self.child.lineEdit.text()) > 0:
+                target = int(self.child.lineEdit.text())
+            data = [configJson["Line"]["name"], date_info, str(target)]
+            self.dbHandler.InsertDailyTargetData(data)
+            self.GetDbTargetDataMonthly()
+            self.child.label_3.setText("保存成功!")
+        except:
+            self.child.label_3.setText("无法保存，请检查输入！")
+            self.child.label_3.setStyleSheet("QLabel{color:red}")
+
+    def GetDbTargetDataMonthly(self):
+        try:
+            self.child.label_2.setText(configJson["Line"]["name"])
+            dataDic = self.dbHandler.GetDailyTargetData(
+                configJson["Line"]["name"])
+            rowCount = len(list(dataDic.keys()))
+            self.child.tableWidget.setRowCount(rowCount)
+            rowIndex = 0
+            for key, value in dataDic.items():
+                newItem = QTableWidgetItem(str(key))
+                newItem.setFont(light_14_font)
+                newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.child.tableWidget.setItem(rowIndex, 0, newItem)
+                newItem = QTableWidgetItem(str(value))
+                newItem.setFont(light_14_font)
+                newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.child.tableWidget.setItem(rowIndex, 1, newItem)
+                rowIndex += 1
+        except:
+            self.child.label_3.setText("查询本月目标量出错！")
+            self.child.label_3.setStyleSheet("QLabel{color:red}")
+
+    def DeleteDailyTarget(self):
+        try:
+            currentRow = self.child.tableWidget.currentRow()
+            date = self.child.tableWidget.item(currentRow, 0).text()
+            self.dbHandler.DeleteDailyTargetData(
+                configJson["Line"]["name"], date)
+            self.GetDbTargetDataMonthly()
+        except:
+            traceback.print_exc()
+            self.child.label_3.setText("删除指定日期目标量出错！")
+            self.child.label_3.setStyleSheet("QLabel{color:red}")
 
 # 线别、不良类型及工作时段设定窗口类
 
@@ -265,9 +321,21 @@ class LineSettingsWindow(QDialog):
                          "7": self.child.lineEdit_8.text()}
         configJson["DefReasons"] = configDefType
         config.SaveConfigToJson(configJson)
+        workTimeInfoList = [self.child.timeEdit.time().toString("HH:mm"),
+                            self.child.timeEdit_2.time().toString("HH:mm"),
+                            self.child.timeEdit_3.time().toString("HH:mm"), 
+                            self.child.timeEdit_4.time().toString("HH:mm")]
+        timeOpt = TimeManipulation()
+        timeOpt.CalculatingTotalWorkTime()
+        amWorkHours = timeOpt.amTotalHours
+        pmWorkHours = timeOpt.pmTotalHours
+        totalHours = timeOpt.totalHours
+        tempList = [amWorkHours, pmWorkHours, totalHours, configJson["Line"]["name"]]
+        workTimeInfoList.extend(tempList)
         try:
             self.dbHandler = dbHelper.DbHelper(configJson)
             self.dbHandler.InsertIntoConfigTableDefInfo(configJson)
+            self.dbHandler.InsertWorkingTimeInfoToDb(workTimeInfoList)
         except:
             traceback.print_exc()
         self.child.label_13.setFont(light_14_font)
@@ -543,7 +611,8 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.setupUi(self)
         if configJson["Line"] != None:
             self.label_12.setText(configJson["Line"]["name"])
-        self.tableWidget.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self.tableWidget.verticalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
         self.label_15.setText(
             QtCore.QDateTime.currentDateTime().toString("M月d日"))
         self.statusbar.setFont(light_14_font)
@@ -555,7 +624,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.tableWidget_2.verticalHeader().setHidden(True)
         self.actionSectionSet.triggered.connect(
             self.CreateSectionSettingsWindow)
-        self.pushButton_7.setVisible(False)
         # 自定义工作时间段设定窗口，现在已根据起止时间自动分片，故取消此界面
         # self.actionWorkingTimeSet_2.triggered.connect(
         #     self.CreateWorkingTimeSetWindow)
@@ -591,7 +659,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
         self.clockTimer = QtCore.QTimer(self)
         self.clockTimer.timeout.connect(self.Showtime)
-        self.clockTimer.start(500)
+        self.clockTimer.start(100)
 
     def ZMQReceived(self, message):
         self.statusbar.showMessage(message)
@@ -611,7 +679,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
     def RefreshTabPage3Data(self):
         try:
             self.page3DataList = self.dbHandler.GetCurrentQcDefData()
-            self.tableWidget_2.setRowCount(len(self.page3DataList))
+            self.tableWidget_2.setRowCount(len(self.page3DataList) + 1)
             for i in range(len(self.page3DataList)):
                 newItem = QTableWidgetItem(self.page3DataList[i][0])
                 newItem.setFont(light_20_font)
@@ -635,8 +703,9 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 self.tableWidget_2.setItem(i, 4, newItem)
                 subSum = 0
                 for j in range(self.tableWidget_2.columnCount()):
-                    if j != self.tableWidget_2.columnCount() -1 and j != 0:
-                        count = int(self.tableWidget_2.item(i, j).text()) if self.tableWidget_2.item(i, j) != None else 0
+                    if j != self.tableWidget_2.columnCount() - 1 and j != 0:
+                        count = int(self.tableWidget_2.item(i, j).text(
+                        )) if self.tableWidget_2.item(i, j) != None else 0
                         subSum += count
                     elif j == self.tableWidget_2.columnCount() - 1:
                         newItem = QTableWidgetItem(str(subSum))
@@ -644,6 +713,22 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                         newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                         # print(i, j)
                         self.tableWidget_2.setItem(i, j, newItem)
+            for j in range(self.tableWidget_2.columnCount()):
+                if j == 0:
+                    newItem = QTableWidgetItem("合计")
+                    newItem.setFont(light_20_font)
+                    newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                    self.tableWidget_2.setItem(
+                        self.tableWidget_2.rowCount() - 1, j, newItem)
+                else:
+                    count = 0
+                    for i in range(self.tableWidget_2.rowCount() - 1):
+                        count += int(self.tableWidget_2.item(i, j).text())
+                    newItem = QTableWidgetItem(str(count))
+                    newItem.setFont(light_20_font)
+                    newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                    self.tableWidget_2.setItem(
+                        self.tableWidget_2.rowCount() - 1, j, newItem)
             self.tableWidget_2.resizeRowsToContents()
         except:
             traceback.print_exc()
@@ -651,11 +736,16 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
     def RefreshTabPage2Data(self):
         try:
             self.totalDic = self.dbHandler.GetRealTimeTotals()
-            self.label_2.setText(self.totalDic["回收"])
-            self.label_4.setText(self.totalDic["投料"])
-            self.label_9.setText(self.totalDic["包装"])
-            totalInput = float(self.totalDic["投料"])
-            totalDef = float(self.totalDic["回收"])
+            self.label_2.setText(
+                self.totalDic["回收"] if self.totalDic["回收"] != 'None' else '0')
+            self.label_4.setText(
+                self.totalDic["投料"] if "投料" in self.totalDic.keys() else '0')
+            self.label_9.setText(
+                self.totalDic["包装"] if "包装" in self.totalDic.keys() else '0')
+            totalInput = float(
+                self.totalDic["投料"] if "投料" in self.totalDic.keys() else '0')
+            totalDef = float(
+                self.totalDic["回收"] if self.totalDic["回收"] != 'None' else '0')
             if totalInput > 0:
                 defRate = round(totalDef / totalInput * 100, 2)
                 self.label_6.setText(str(defRate) + "%")
@@ -879,6 +969,11 @@ class TimeManipulation():
                 break
             timeRanges.append([f_time, t_time])
         return timeRanges
+
+    def CalculatingTotalWorkTime(self):
+        self.amTotalHours = (self.amTimeStop - self.amTimeStart).seconds / 3600
+        self.pmTotalHours = (self.pmTimeStop - self.pmTimeStart).seconds / 3600
+        self.totalHours = float(self.amTotalHours + self.pmTotalHours)
 
 
 if __name__ == "__main__":

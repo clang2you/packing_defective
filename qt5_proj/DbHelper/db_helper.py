@@ -151,6 +151,10 @@ class DbHelper():
             totalDic[str(row[0])] = str(row[1])
         return totalDic
 
+    def InsertDailyTargetData(self, data):
+        sql = "replace into daily_target(dep, date, target) values('{}', '{}', {})".format(data[0], data[1], data[2])
+        self.runNonQuerySql(sql)
+
     def GetCurrentQcDefData(self):
         qcDefList = []
         sql = """select type as 不良原因, 
@@ -176,6 +180,24 @@ class DbHelper():
                 defTypeNo += 1
                 # print(sql)
                 self.runNonQuerySql(sql)
+    
+    def GetDailyTargetData(self, name):
+        dataList = {}
+        sql = "select date as 日期, target as 目标量 from daily_target where dep = '{}' order by date".format(name)
+        result = self.runQuerySql(sql)
+        for row in result:
+            dataList[row[0]] = row[1]
+        return dataList
+    
+    def DeleteDailyTargetData(self, name, date):
+        sql = "delete from daily_target where date = '{}' and dep = '{}'".format(date, name)
+        self.runNonQuerySql(sql)
+
+    def InsertWorkingTimeInfoToDb(self, infoList):
+        sql = """replace into workingtimeperiod(amStartTime, amStopTime, pmStartTime, pmStopTime, amWorkHours, pmWorkHours, totalWorkHours, line) 
+        values('{}', '{}', '{}', '{}', {}, {}, {}, '{}')
+        """.format(*infoList)
+        self.runNonQuerySql(sql)
 
 if __name__ == '__main__':
     cfg = config_mod.CfgHelper()

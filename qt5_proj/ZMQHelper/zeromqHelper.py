@@ -14,7 +14,7 @@ class ZMQListener(QtCore.QObject):
         self.message.emit("Monitoring MQ Server ...")
         self.socket.connect("tcp://localhost:5556")
 
-        topicfilter = "Updated at："
+        topicfilter = "Updated@"
         self.socket.setsockopt_string(zmq.SUBSCRIBE,topicfilter)
 
         self.running = True
@@ -23,4 +23,4 @@ class ZMQListener(QtCore.QObject):
         while True:
             string = self.socket.recv_string()
             self.message.emit(string)
-            time.sleep(1)
+            time.sleep(0.1)
