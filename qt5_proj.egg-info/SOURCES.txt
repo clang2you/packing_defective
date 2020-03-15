@@ -42,4 +42,5 @@ qt5_proj/ZMQHelper/example1.py
 qt5_proj/ZMQHelper/test1.py
 qt5_proj/ZMQHelper/test2.py
 qt5_proj/ZMQHelper/zeromqHelper.py
+qt5_proj/xlsHelper/test1.py
 qt5_proj/xlsHelper/xlsHelper.py

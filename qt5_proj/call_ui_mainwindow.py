@@ -3,6 +3,7 @@ import os
 import datetime
 import dateutil
 import pandas as pd
+import numpy as np
 import traceback
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QWidget
 from PyQt5 import QtGui, QtCore, QtWidgets
@@ -507,18 +508,22 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
                 dateSectionStr = self.dateEdit.date().toPyDate().strftime("%y-%m-%d") + "~" + \
                     self.dateEdit_2.date().toPyDate().strftime("%y-%m-%d")
                 filename = QtWidgets.QFileDialog.getSaveFileName(
-                    self, "导出到Excel", "包装回收数据导出" + dateSectionStr + ".xls", "Excel文件(*.xls)")
-                self.excelHandler = exportHelper.ExportXlsHelper(filename[0])
-                self.excelHandler.qtTableWidgetExportToXls(self.tableWidget)
-                self.label_5.setStyleSheet("QLabel{color:green}")
-                self.label_5.setText("月不良记录导出成功")
-                self.label_5.setFont(light_20_font)
+                    self, "导出到Excel", configJson["Line"]["name"] + "包装回收数据导出" + dateSectionStr + ".xls", "Excel文件(*.xls)")
+                if filename[0] != '':
+                    self.excelHandler = exportHelper.ExportXlsHelper(filename[0])
+                    self.excelHandler.qtTableWidgetExportToXls(self.tableWidget,configJson["Line"]["name"] + "不良统计@" + dateSectionStr )
+                    self.label_5.setStyleSheet("QLabel{color:green}")
+                    self.label_5.setText("月不良记录导出成功")
+                    self.label_5.setFont(light_20_font)
             else:
                 self.label_5.setFont(light_20_font)
                 self.label_5.setStyleSheet("QLabel{color:blue}")
                 self.label_5.setText('请先点击“查询”后导出数据')
         except:
             traceback.print_exc()
+            self.label_5.setFont(light_20_font)
+            self.label_5.setStyleSheet("QLabel{color:red}")
+            self.label_5.setText('数据导出失败，请重试或联系 IT 处理')
 
     def GetDbQueryResultDic(self):
         self.label_5.setText("")
@@ -665,8 +670,9 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.thread = QtCore.QThread()
         self.zeromqListener = mqHelper.ZMQListener()
         self.zeromqListener.moveToThread(self.thread)
-
+        
         self.RefreshTabPage2Data()
+        
 
         if configJson["MySQL"] is not None and configJson["Line"] is not None:
             self.thread.started.connect(self.zeromqListener.loop)
@@ -696,7 +702,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
     def RefreshTabPage3Data(self):
         try:
             self.page3DataList = self.dbHandler.GetCurrentQcDefData()
-            self.tableWidget_2.setRowCount(len(self.page3DataList) + 1)
+            self.tableWidget_2.setRowCount(len(self.page3DataList))
             for i in range(len(self.page3DataList)):
                 newItem = QTableWidgetItem(self.page3DataList[i][0])
                 newItem.setFont(light_20_font)
@@ -730,22 +736,24 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                         newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                         # print(i, j)
                         self.tableWidget_2.setItem(i, j, newItem)
-            for j in range(self.tableWidget_2.columnCount()):
-                if j == 0:
-                    newItem = QTableWidgetItem("合计")
-                    newItem.setFont(light_20_font)
-                    newItem.setTextAlignment(QtCore.Qt.AlignCenter)
-                    self.tableWidget_2.setItem(
-                        self.tableWidget_2.rowCount() - 1, j, newItem)
-                else:
-                    count = 0
-                    for i in range(self.tableWidget_2.rowCount() - 1):
-                        count += int(self.tableWidget_2.item(i, j).text())
-                    newItem = QTableWidgetItem(str(count))
-                    newItem.setFont(light_20_font)
-                    newItem.setTextAlignment(QtCore.Qt.AlignCenter)
-                    self.tableWidget_2.setItem(
-                        self.tableWidget_2.rowCount() - 1, j, newItem)
+            if self.tableWidget_2.rowCount() > 0:
+                self.tableWidget_2.setRowCount(self.tableWidget_2.rowCount() + 1)
+                for j in range(self.tableWidget_2.columnCount()):
+                    if j == 0:
+                        newItem = QTableWidgetItem("合计")
+                        newItem.setFont(light_20_font)
+                        newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                        self.tableWidget_2.setItem(
+                            self.tableWidget_2.rowCount() - 1, j, newItem)
+                    else:
+                        count = 0
+                        for i in range(self.tableWidget_2.rowCount() - 1):
+                            count += int(self.tableWidget_2.item(i, j).text())
+                        newItem = QTableWidgetItem(str(count))
+                        newItem.setFont(light_20_font)
+                        newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                        self.tableWidget_2.setItem(
+                            self.tableWidget_2.rowCount() - 1, j, newItem)
             self.tableWidget_2.resizeRowsToContents()
         except:
             traceback.print_exc()
@@ -787,6 +795,9 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                     self.tableWidget.setItem(id, 3, newItem)
         except:
             traceback.print_exc()
+            self.tabWidget.blockSignals(True)
+            self.zeromqListener.blockSignals(True)
+            self.statusBar().showMessage("数据库服务器连接异常，请关闭程序再打开，如仍然无法正常使用，请联系 IT 处理")
 
     def Showtime(self):
         datetime = QtCore.QDateTime.currentDateTime()
@@ -844,53 +855,90 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 header_item_index, QtWidgets.QHeaderView.Stretch)
 
     def plot_(self):
-        ax = self.figure.add_axes([0.1, 0.1, 0.8, 0.8])
-        x = ["08:00", '09:00', '10:00', '11:00', '12: 00',
+        # ax = self.figure.add_axes([0.1, 0.1, 0.8, 0.8])
+        labels = ["08:00", '09:00', '10:00', '11:00', '12: 00',
              '13:00', '14:00', '15:00', '16:00', '17:00']
-        y = [0, 2, 0, 0, 0, 0, 0, 0, 0, 0]
-        z = [0, 5, 0, 0, 0, 0, 0, 0, 0, 0]
-        f = [0, 3, 0, 0, 0, 0, 0, 0, 0, 0]
-        g = [0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
-        h = [0, 0, 7, 0, 0, 0, 0, 0, 0, 0]
-        i = [0, 0, 3, 0, 0, 0, 0, 0, 0, 0]
-        j = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        ax.plot(x, y, color='red', lineWidth=1,
-                linestyle="-", label="脱胶", marker='.')
-        ax.plot(x, z, color="green", linewidth=1,
-                linestyle='-', label="高胶", marker=".")
-        ax.plot(x, j, color="magenta", linewidth=1,
-                linestyle='-', label="其他", marker=".")
-        ax.plot(x, f, color="blue", linewidth=1,
-                linestyle='-', label="清洁度", marker=".")
-        ax.plot(x, g, color="purple", linewidth=1,
-                linestyle='-', label="不对称", marker=".")
-        ax.plot(x, h, color="orange", linewidth=1,
-                linestyle='-', label="针车不良", marker=".")
-        ax.plot(x, i, color="navy", linewidth=1,
-                linestyle='-', label="研磨线外露", marker=".")
-        plt.style.use('Solarize_Light2')
-        # plt.style.use('seaborn')
-        plt.xlabel("时间段")
-        plt.ylabel("回收量")
-        ax.legend(loc=2)
-        ax.grid()
-        for x, y, z, f, g, h, i, j in list(zip(x, y, z, f, g, h, i, j)):
-            plt.annotate("%s" % y, (x, y), xytext=(-10, 13),
-                         ha='left', textcoords='offset points')
-            plt.annotate("%s" % z,  (x, z), xytext=(-10, 13),
-                         ha='left', textcoords='offset points')
-            plt.annotate("%s" % f,  (x, f), xytext=(-10, 13),
-                         ha='left', textcoords='offset points')
-            plt.annotate("%s" % g,  (x, g), xytext=(-10, 13),
-                         ha='left', textcoords='offset points')
-            plt.annotate("%s" % h,  (x, h), xytext=(-10, 13),
-                         ha='left', textcoords='offset points')
-            plt.annotate("%s" % i,  (x, i), xytext=(-10, 13),
-                         ha='left', textcoords='offset points')
-            plt.annotate("%s" % j,  (x, j), xytext=(-10, 13),
-                         ha='left', textcoords='offset points')
-        ax.set_title('各时段回收量', fontsize='18', fontweight='bold',
-                     color='black', loc='center')
+        a = [12, 2, 5, 8, 11, 13, 16, 4, 8, 9]
+        b = [4, 5, 11, 14, 12, 7, 10, 9, 12, 11]
+        c = [3, 6, 7, 11, 9, 10, 12, 16, 14, 13]
+        d = [12, 6, 4, 8, 2, 5, 4, 9, 2, 7]
+        e = [4, 6, 7, 9, 11, 3, 7, 8, 9, 7]
+        f = [10, 2, 3, 8, 6, 4, 7, 9, 4, 5]
+        g = [3, 7, 6, 12, 11, 9, 10, 6, 5, 3]        # ax.plot(x, y, color='red', lineWidth=1,
+        #         linestyle="-", label="脱胶", marker='.')
+        # ax.plot(x, z, color="green", linewidth=1,
+        #         linestyle='-', label="高胶", marker=".")
+        # ax.plot(x, j, color="magenta", linewidth=1,
+        #         linestyle='-', label="其他", marker=".")
+        # ax.plot(x, f, color="blue", linewidth=1,
+        #         linestyle='-', label="清洁度", marker=".")
+        # ax.plot(x, g, color="purple", linewidth=1,
+        #         linestyle='-', label="不对称", marker=".")
+        # ax.plot(x, h, color="orange", linewidth=1,
+        #         linestyle='-', label="针车不良", marker=".")
+        # ax.plot(x, i, color="navy", linewidth=1,
+        #         linestyle='-', label="研磨线外露", marker=".")
+        # plt.style.use('Solarize_Light2')
+        # # plt.style.use('seaborn')
+        # plt.xlabel("时间段")
+        # plt.ylabel("回收量")
+        # ax.legend(loc=2)
+        # ax.grid()
+        # for x, y, z, f, g, h, i, j in list(zip(x, y, z, f, g, h, i, j)):
+        #     plt.annotate("%s" % y, (x, y), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % z,  (x, z), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % f,  (x, f), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % g,  (x, g), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % h,  (x, h), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % i,  (x, i), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % j,  (x, j), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        # ax.set_title('各时段回收量', fontsize='18', fontweight='bold',
+        #              color='black', loc='center')
+        ax = self.figure.add_subplot(111)
+        # ax.set_xlabel('时间段')
+        ax.set_ylabel('回收量')
+        ax.set_title('各时段回收情况', bbox={'facecolor':'0.8', 'pad':5})
+        # ax.set_xticklabels(labels)
+        size = 10
+        x = np.arange(size)
+        # a = np.random.random(size)
+        # b = np.random.random(size)
+        # c = np.random.random(size)
+        # d = np.random.random(size)
+        # e = np.random.random(size)
+        # f = np.random.random(size)
+        # g = np.random.random(size)
+
+        total_width, n = 0.8, 7
+        width = total_width / n
+        x = x - (total_width - width) / 2
+
+        # plt.xticks(x, labels,size="small", rotation=30)
+        plt.bar(x, a,  width=width, label='脱胶')
+        plt.bar(x + width, b, width=width, label='高胶')
+        plt.bar(x + 2 * width, c, width=width, label='其他')
+        plt.bar(x + 3 * width, d, width=width, label='清洁度', tick_label = labels)
+        plt.bar(x + 4 * width, e, width=width, label='不对称')
+        plt.bar(x + 5* width, f, width=width, label='针车不良')
+        plt.bar(x + 6* width, g, width=width, label='研磨线')
+        for x1, a1,b1,c1,d1,e1,f1,g1 in zip(x, a,b,c,d,e,f,g):
+            plt.text(x1, a1+0.05, '%.0f' % a1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.12, b1+0.05, '%.0f' % b1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.22, c1+0.05, '%.0f' % c1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.34, d1+0.05, '%.0f' % d1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.46, e1+0.05, '%.0f' % e1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.55, f1+0.05, '%.0f' % f1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.68, g1+0.05, '%.0f' % g1, ha='center', va= 'bottom',fontsize=7)
+        plt.legend()
+        # plt.show()
+
         self.canvas.draw()
 
     def AddLineChartToForm(self):
@@ -911,21 +959,22 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         # 高度小于 1000，字体及高度都修改为20, 修改 frame 宽度为 150，高度为 530
         if height <= 1000:
             self.resize(1000, 700)
-            self.label_7.setMaximumHeight(30)
-            self.label_15.setMaximumHeight(30)
-            self.frame.setMinimumSize(QtCore.QSize(200, 550))
+            self.label_7.setMaximumHeight(28)
+            self.label_15.setMaximumHeight(28)
+            self.frame.setMinimumSize(QtCore.QSize(200, 500))
             self.frame.setMaximumWidth(200)
             labels = ('label_2', 'label_4', 'label_6',
                       'label_7', 'label_9', 'label_15')
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
                 label.setFont(bold_20_font)
-                label.setMinimumSize(QtCore.QSize(16777215, 30))
+                label.setMinimumSize(QtCore.QSize(16777215, 28))
             labels = ('label', 'label_3', 'label_5', 'label_8')
+            # self.label_15.setVisible(False)
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
                 label.setFont(light_20_font)
-                label.setMinimumSize(QtCore.QSize(16777215, 30))
+                label.setMinimumSize(QtCore.QSize(16777215, 28))
 
 
 class TimeManipulation():
@@ -986,16 +1035,84 @@ class TimeManipulation():
                 break
             timeRanges.append([f_time, t_time])
         return timeRanges
+    
+    def OnCurrentTimeRanges(self, isHalfHour):
+        unit = 60*30 if isHalfHour else 60*60
+        timeSlice = []
+        for item in self.DayHourRange(unit):
+            if item[0] < datetime.datetime.now():
+                break
+            else:
+                timeSlice.append(item)
+        return timeSlice
+
 
     def CalculatingTotalWorkTime(self):
         self.amTotalHours = (self.amTimeStop - self.amTimeStart).seconds / 3600
         self.pmTotalHours = (self.pmTimeStop - self.pmTimeStart).seconds / 3600
         self.totalHours = float(self.amTotalHours + self.pmTotalHours)
 
+class DrawingChart(QtCore.QObject):
+    def __init__(self):
+        super(DrawingChart,self).__init__()
+        self.figure = plt.figure()
+        self.canvas = FigureCanvas(self.figure)
+        self.dbHandler = dbHelper.DbHelper(configJson)
+        self.timeOpt = TimeManipulation()
+    
+    def GetDrawDatas(self, isHalfHour=False):
+        self.currentTimeSliceList = self.timeOpt.OnCurrentTimeRanges(isHalfHour)
+        return self.dbHandler.GetDailyDataResults(self.currentTimeSliceList)
+    
+    def DrawBarChart(self, labels, dataList):
+        labels = ["08:00", '09:00', '10:00', '11:00', '12: 00',
+             '13:00', '14:00', '15:00', '16:00', '17:00']
+        a = [12, 2, 5, 8, 11, 13, 16, 4, 8, 9]
+        b = [4, 5, 11, 14, 12, 7, 10, 9, 12, 11]
+        c = [3, 6, 7, 11, 9, 10, 12, 16, 14, 13]
+        d = [12, 6, 4, 8, 2, 5, 4, 9, 2, 7]
+        e = [4, 6, 7, 9, 11, 3, 7, 8, 9, 7]
+        f = [10, 2, 3, 8, 6, 4, 7, 9, 4, 5]
+        g = [3, 7, 6, 12, 11, 9, 10, 6, 5, 3] 
+        ax = self.figure.add_subplot(111)
+        # ax.set_xlabel('时间段')
+        ax.set_ylabel('回收量')
+        ax.set_title('各时段回收情况', bbox={'facecolor':'0.8', 'pad':5})
+
+        size = 10
+        x = np.arange(size)
+        total_width, n = 0.8, 7
+        width = total_width / n
+        x = x - (total_width - width) / 2
+
+        plt.bar(x, a,  width=width, label='脱胶')
+        plt.bar(x + width, b, width=width, label='高胶')
+        plt.bar(x + 2 * width, c, width=width, label='其他')
+        plt.bar(x + 3 * width, d, width=width, label='清洁度', tick_label = labels)
+        plt.bar(x + 4 * width, e, width=width, label='不对称')
+        plt.bar(x + 5* width, f, width=width, label='针车不良')
+        plt.bar(x + 6* width, g, width=width, label='研磨线')
+        for x1, a1,b1,c1,d1,e1,f1,g1 in zip(x, a,b,c,d,e,f,g):
+            plt.text(x1, a1+0.05, '%.0f' % a1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.12, b1+0.05, '%.0f' % b1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.22, c1+0.05, '%.0f' % c1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.34, d1+0.05, '%.0f' % d1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.46, e1+0.05, '%.0f' % e1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.55, f1+0.05, '%.0f' % f1, ha='center', va= 'bottom',fontsize=7)
+            plt.text(x1 +0.68, g1+0.05, '%.0f' % g1, ha='center', va= 'bottom',fontsize=7)
+        plt.legend()
+        self.canvas.draw()
+
+    def DrawLineChart(self):
+        pass
+
 
 if __name__ == "__main__":
     if configJson["Admin"] == None:
         configJson["Admin"] = {"password": "sysadmin"}
+    
+    test = DrawingChart()
+    print(test.GetDrawDatas())
 
     app = QApplication(sys.argv)
     mywin = MyMainForm()
