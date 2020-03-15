@@ -318,14 +318,15 @@ class LineSettingsWindow(QDialog):
         config.SaveConfigToJson(configJson)
         workTimeInfoList = [self.child.timeEdit.time().toString("HH:mm"),
                             self.child.timeEdit_2.time().toString("HH:mm"),
-                            self.child.timeEdit_3.time().toString("HH:mm"), 
+                            self.child.timeEdit_3.time().toString("HH:mm"),
                             self.child.timeEdit_4.time().toString("HH:mm")]
         timeOpt = TimeManipulation()
         timeOpt.CalculatingTotalWorkTime()
         amWorkHours = timeOpt.amTotalHours
         pmWorkHours = timeOpt.pmTotalHours
         totalHours = timeOpt.totalHours
-        tempList = [amWorkHours, pmWorkHours, totalHours, configJson["Line"]["name"]]
+        tempList = [amWorkHours, pmWorkHours,
+                    totalHours, configJson["Line"]["name"]]
         workTimeInfoList.extend(tempList)
         try:
             self.dbHandler = dbHelper.DbHelper(configJson)
@@ -499,12 +500,14 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         self.pushButton_3.clicked.connect(self.close)
         self.progressBar.hide()
         self.pushButton_2.clicked.connect(self.GetDbQueryResultDic)
-    
+
     def ExportToXls(self):
         try:
             if self.tableWidget.rowCount() >= 1:
-                dateSectionStr = self.dateEdit.date().toPyDate().strftime("%y-%m-%d") + "~" + self.dateEdit_2.date().toPyDate().strftime("%y-%m-%d")
-                filename = QtWidgets.QFileDialog.getSaveFileName(self, "导出到Excel", "包装回收数据导出"+ dateSectionStr + ".xls", "Excel文件(*.xls)")
+                dateSectionStr = self.dateEdit.date().toPyDate().strftime("%y-%m-%d") + "~" + \
+                    self.dateEdit_2.date().toPyDate().strftime("%y-%m-%d")
+                filename = QtWidgets.QFileDialog.getSaveFileName(
+                    self, "导出到Excel", "包装回收数据导出" + dateSectionStr + ".xls", "Excel文件(*.xls)")
                 self.excelHandler = exportHelper.ExportXlsHelper(filename[0])
                 self.excelHandler.qtTableWidgetExportToXls(self.tableWidget)
                 self.label_5.setStyleSheet("QLabel{color:green}")
