@@ -27,6 +27,7 @@ import qt5_proj.targetSettings as targetSettings
 import qt5_proj.workRestTimeSettings as workRestTimeSettings
 import qt5_proj.lineSettings as lineSettings
 import qt5_proj.ZMQHelper.zeromqHelper as mqHelper
+import qt5_proj.xlsHelper.xlsHelper as exportHelper
 
 matplotlib.use("Qt5Agg")
 
@@ -51,12 +52,6 @@ light_20_font.setFamily("微软雅黑 Light")
 light_20_font.setPointSize(20)
 light_20_font.setBold(False)
 light_20_font.setWeight(50)
-
-# light_30_font = QtGui.QFont()
-# light_30_font.setFamily("微软雅黑 Light")
-# light_30_font.setPointSize(30)
-# light_30_font.setBold(False)
-# light_30_font.setWeight(50)
 
 # 数据库设定窗口类
 
@@ -381,6 +376,7 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
             else:
                 self.tableWidget.horizontalHeader().setSectionResizeMode(
                     header_item_index, QtWidgets.QHeaderView.ResizeToContents)
+                # print(self.tableWidget.horizontalHeaderItem(0).text())
 
     def ChangeTimeSliceList(self):
         self.timeSliceList = TimeManipulation(
@@ -483,6 +479,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         self.dateEdit.setDate(datetime.datetime.now() -
                               dateutil.relativedelta.relativedelta(months=1))
         self.dateEdit_2.setDate(datetime.datetime.now())
+        self.pushButton.clicked.connect(self.ExportToXls)
         self.tableWidget.setEditTriggers(
             QtWidgets.QAbstractItemView.NoEditTriggers)
         if configJson["Line"] != None:
@@ -502,6 +499,23 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         self.pushButton_3.clicked.connect(self.close)
         self.progressBar.hide()
         self.pushButton_2.clicked.connect(self.GetDbQueryResultDic)
+    
+    def ExportToXls(self):
+        try:
+            if self.tableWidget.rowCount() >= 1:
+                dateSectionStr = self.dateEdit.date().toPyDate().strftime("%y-%m-%d") + "~" + self.dateEdit_2.date().toPyDate().strftime("%y-%m-%d")
+                filename = QtWidgets.QFileDialog.getSaveFileName(self, "导出到Excel", "包装回收数据导出"+ dateSectionStr + ".xls", "Excel文件(*.xls)")
+                self.excelHandler = exportHelper.ExportXlsHelper(filename[0])
+                self.excelHandler.qtTableWidgetExportToXls(self.tableWidget)
+                self.label_5.setStyleSheet("QLabel{color:green}")
+                self.label_5.setText("月不良记录导出成功")
+                self.label_5.setFont(light_20_font)
+            else:
+                self.label_5.setFont(light_20_font)
+                self.label_5.setStyleSheet("QLabel{color:blue}")
+                self.label_5.setText('请先点击“查询”后导出数据')
+        except:
+            traceback.print_exc()
 
     def GetDbQueryResultDic(self):
         self.label_5.setText("")
@@ -896,19 +910,19 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             self.resize(1000, 700)
             self.label_7.setMaximumHeight(30)
             self.label_15.setMaximumHeight(30)
-            self.frame.setMinimumSize(QtCore.QSize(200, 520))
+            self.frame.setMinimumSize(QtCore.QSize(200, 550))
             self.frame.setMaximumWidth(200)
             labels = ('label_2', 'label_4', 'label_6',
                       'label_7', 'label_9', 'label_15')
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
                 label.setFont(bold_20_font)
-                label.setMinimumSize(QtCore.QSize(16777215, 20))
+                label.setMinimumSize(QtCore.QSize(16777215, 30))
             labels = ('label', 'label_3', 'label_5', 'label_8')
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
                 label.setFont(light_20_font)
-                label.setMinimumSize(QtCore.QSize(16777215, 20))
+                label.setMinimumSize(QtCore.QSize(16777215, 30))
 
 
 class TimeManipulation():
