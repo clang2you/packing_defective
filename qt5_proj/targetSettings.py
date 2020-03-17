@@ -121,7 +121,7 @@ class Ui_Dialog(object):
         self.frame_5.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_5.setObjectName("frame_5")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.frame_5)
-        self.horizontalLayout_3.setContentsMargins(15, 0, 0, 0)
+        self.horizontalLayout_3.setContentsMargins(15, 0, 9, 0)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.pushButton_4 = QtWidgets.QPushButton(self.frame_5)
         font = QtGui.QFont()
