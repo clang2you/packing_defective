@@ -1152,8 +1152,8 @@ if __name__ == "__main__":
     if configJson["Admin"] == None:
         configJson["Admin"] = {"password": "sysadmin"}
 
-    test = DrawingChart()
-    test.GetDrawDatas()
+    # test = DrawingChart()
+    # test.GetDrawDatas()
 
     app = QApplication(sys.argv)
     mywin = MyMainForm()
