@@ -23,13 +23,13 @@ sleepTimeList = [1, 2, 3, 4, 5, 7, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
 while True:
     randomInt = random.randint(0, 29)
-    print(sql.format(str(typeList[randomInt]).zfill(2)))
-    databaseHelper.runNonQuerySql(sql.format(str(typeList[randomInt]).zfill(2)))
-    # sql = "insert into com_input(btn_pos, line) values('01', 'AL')"
-    # databaseHelper.runNonQuerySql(sql)
-    # sql = "insert into com_input(btn_pos, line) values('02', 'AL')"
-    # databaseHelper.runNonQuerySql(sql)
-    topic = "Updated at："
+    # print(sql.format(str(typeList[randomInt]).zfill(2)))
+    # databaseHelper.runNonQuerySql(sql.format(str(typeList[randomInt]).zfill(2)))
+    sql = "insert into com_input(btn_pos, line) values('01', 'AL')"
+    databaseHelper.runNonQuerySql(sql)
+    sql = "insert into com_input(btn_pos, line) values('02', 'AL')"
+    databaseHelper.runNonQuerySql(sql)
+    topic = "Updated@"
     messagedata = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
     print("%s %s" % (topic, messagedata))
     socket.send_string("%s%s" % (topic, messagedata))

@@ -197,13 +197,20 @@ class TargetSettingWindow(QDialog):
         super(TargetSettingWindow, self).__init__(parent)
         self.child = targetSettings.Ui_Dialog()
         self.child.setupUi(self)
+        self.child.dateEdit.setDate(datetime.datetime.now())
+        self.child.tableWidget.horizontalHeader().setStyleSheet(
+            "QHeaderView::section{background-color:lightblue;color: black;padding-left: 4px;border: 1px solid#6c6c6c;}")
         self.SetTableWidgetHeaderWidth()
         self.dbHandler = dbHelper.DbHelper(configJson)
         self.child.pushButton.clicked.connect(self.InsertTargetToDb)
+        self.child.lineEdit.textChanged.connect(self.ClearLabel3Contents)
         self.child.pushButton_3.setVisible(False)
         self.child.pushButton_4.clicked.connect(self.DeleteDailyTarget)
         self.child.tableWidget.verticalHeader().setHidden(True)
         self.GetDbTargetDataMonthly()
+    
+    def ClearLabel3Contents(self):
+        self.child.label_3.setText("")
 
     def SetTableWidgetHeaderWidth(self):
         for header_item_index in range(self.child.tableWidget.columnCount()):
@@ -1147,6 +1154,7 @@ class DrawingChart(QtCore.QObject):
 
     def DrawLineChart(self):
         pass
+
 
 if __name__ == "__main__":
     if configJson["Admin"] == None:
