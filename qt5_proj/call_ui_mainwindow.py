@@ -208,7 +208,7 @@ class TargetSettingWindow(QDialog):
         self.child.pushButton_4.clicked.connect(self.DeleteDailyTarget)
         self.child.tableWidget.verticalHeader().setHidden(True)
         self.GetDbTargetDataMonthly()
-    
+
     def ClearLabel3Contents(self):
         self.child.label_3.setText("")
 
@@ -366,6 +366,7 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
         self.progressBar.hide()
         self.dateEdit.dateChanged.connect(self.ChangeTimeSliceList)
         self.pushButton_2.clicked.connect(self.GetQueryDailyResults)
+        self.pushButton_3.clicked.connect(self.ExportDailyDefDatasToXls)
         try:
             self.label_2.setText(configJson["Line"]["name"])
             self.SetDailyTableColumns()
@@ -410,6 +411,7 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
 
     def GetQueryDailyResults(self):
         try:
+            self.label_10.setText("")
             self.tableWidget.horizontalHeader().setSectionResizeMode(
                 0, QtWidgets.QHeaderView.ResizeToContents)
             self.label_5.setText("")
@@ -476,6 +478,29 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
             self.label_5.setText("出错，无法连接数据库\n请联系 IT 处理！")
             self.label_5.setStyleSheet("QLabel{color:red}")
 
+    def ExportDailyDefDatasToXls(self):
+        try:
+            if self.tableWidget.rowCount() > 1:
+                dateSectionStr = self.dateEdit.date().toPyDate().strftime("%y-%m-%d")
+                filename = QtWidgets.QFileDialog.getSaveFileName(
+                    self, "导出到Excel", configJson["Line"]["name"] + "日不良数据导出" + dateSectionStr + ".xls", "Excel文件(*.xls)")
+                if filename[0] != "":
+                    self.excelHandler = exportHelper.ExportXlsHelper(
+                        filename[0])
+                    self.excelHandler.qtTableWidgetExportToXls(
+                        self, configJson["Line"]["name"] + "日不良统计@" + dateSectionStr, True)
+                    self.label_10.setStyleSheet("QLabel{color:green}")
+                    self.label_10.setText("日不良记录导出成功")
+                    self.label_10.setFont(light_20_font)
+            else:
+                self.label_10.setFont(light_14_font)
+                self.label_10.setStyleSheet("QLabel{color:blue}")
+                self.label_10.setText('无数据，请先点击“查询”\n将结果导出')
+        except:
+            traceback.print_exc()
+            self.label_10.setFont(light_14_font)
+            self.label_10.setStyleSheet("QLabel{color:red}")
+            self.label_10.setText('数据导出失败，\n请重试或联系 IT 处理')
 # 月不良统计窗口类
 
 
@@ -511,7 +536,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
 
     def ExportToXls(self):
         try:
-            if self.tableWidget.rowCount() >= 1:
+            if self.tableWidget.rowCount() > 1:
                 dateSectionStr = self.dateEdit.date().toPyDate().strftime("%y-%m-%d") + "~" + \
                     self.dateEdit_2.date().toPyDate().strftime("%y-%m-%d")
                 filename = QtWidgets.QFileDialog.getSaveFileName(
@@ -520,17 +545,17 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
                     self.excelHandler = exportHelper.ExportXlsHelper(
                         filename[0])
                     self.excelHandler.qtTableWidgetExportToXls(
-                        self.tableWidget, configJson["Line"]["name"] + "不良统计@" + dateSectionStr)
+                        self, configJson["Line"]["name"] + "不良统计@" + dateSectionStr)
                     self.label_5.setStyleSheet("QLabel{color:green}")
                     self.label_5.setText("月不良记录导出成功")
                     self.label_5.setFont(light_20_font)
             else:
-                self.label_5.setFont(light_20_font)
+                self.label_5.setFont(light_14_font)
                 self.label_5.setStyleSheet("QLabel{color:blue}")
-                self.label_5.setText('请先点击“查询”后导出数据')
+                self.label_5.setText('无数据,请先点击“查询”\n将结果导出')
         except:
             traceback.print_exc()
-            self.label_5.setFont(light_20_font)
+            self.label_5.setFont(light_14_font)
             self.label_5.setStyleSheet("QLabel{color:red}")
             self.label_5.setText('数据导出失败，请重试或联系 IT 处理')
 
@@ -610,10 +635,61 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
 
 
 class CountAdjustmentWindow(QDialog):
+    updateSignal = QtCore.pyqtSignal()
     def __init__(self, parent=None):
         super(CountAdjustmentWindow, self).__init__(parent)
         self.child = countAdjustment.Ui_Dialog()
         self.child.setupUi(self)
+        self.child.pushButton.clicked.connect(self.InsertIntoDbAdjustingCount)
+        self.child.pushButton_2.clicked.connect(self.InsertIntoDbAdjustingCount)
+        self.child.lineEdit_2.textChanged.connect(self.ClearInputLineEditContent)
+        self.child.lineEdit.textChanged.connect(self.ClearPackLineEditContent)
+        self.dbHandler = dbHelper.DbHelper(configJson)
+        self.GetDataFillLabel()
+    
+    def GetDataFillLabel(self):
+        try:
+            self.child.label_2.setText(configJson["Line"]["name"])
+            self.child.label_10.setText(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            totalDic = self.dbHandler.GetRealTimeTotals()
+            self.child.label_4.setText(totalDic["投料"])
+            self.child.label_7.setText(totalDic["包装"])
+        except:
+            traceback.print_exc()
+            self.child.label_4.setText("")
+            self.child.label_7.setText("")
+    
+    def ClearInputLineEditContent(self):
+        self.child.lineEdit.setText("")
+    
+    def ClearPackLineEditContent(self):
+        self.child.lineEdit_2.setText("")
+    
+    def InsertIntoDbAdjustingCount(self):
+        inputCount = 0
+        packCount = 0
+        try:
+            self.child.label_11.setText("")
+            self.child.label_11.setStyleSheet("QLabel{color:green}")
+            self.child.label_11.setFont(light_14_font)
+            inputCount = int(self.child.lineEdit.text()) if self.child.lineEdit.text() != '' else 0
+            packCount = int(self.child.lineEdit_2.text()) if self.child.lineEdit_2.text() != '' else 0
+            if inputCount > 0:
+                inputCount = inputCount - int(self.child.label_4.text())
+                self.dbHandler.InsertAdjustingDataToDb(["投料", inputCount])
+                self.child.label_11.setText("投料修正保存成功")
+                self.updateSignal.emit()
+            if packCount > 0:
+                packCount = packCount - int(self.child.label_7.text())
+                self.dbHandler.InsertAdjustingDataToDb(["包装", packCount])
+                self.child.label_11.setText("包装修正保存成功")
+                self.updateSignal.emit()
+            self.GetDataFillLabel()
+        except:
+            traceback.print_exc()
+            self.child.label_11.setText("保存修正数据失败")
+            self.child.label_11.setStyleSheet("QLabel{color:red}")
+            self.child.label_11.setFont(light_14_font)
 
 # 缴库量输入窗口类
 
@@ -830,6 +906,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
     def CreateCountAdjustmentWindow(self):
         self.countAdjustmentWindow = CountAdjustmentWindow(self)
+        self.countAdjustmentWindow.updateSignal.connect(self.RefreshTabPage2Data)
         self.countAdjustmentWindow.exec()
 
     def CreateUserInputWindow(self):

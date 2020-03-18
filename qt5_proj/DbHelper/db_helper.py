@@ -13,6 +13,7 @@ class DbHelper():
             self.db_port = 3306
             self.db_name = cfg_dict["MySQL"]["dbName"]
             self.cfg_dict = cfg_dict
+            self.lineName = cfg_dict["Line"]["name"]
         else:
             self.db_add = None
             self.db_user = None
@@ -78,8 +79,8 @@ class DbHelper():
                 sql += temp_sql + ","
             else:
                 sql += temp_sql
-        sql += "FROM history_input where DATE_FORMAT(time,'%Y%m%d') BETWEEN '{}' and '{}' GROUP BY 日期".format(
-            startDate, stopDate)
+        sql += "FROM history_input where line = '{}' and DATE_FORMAT(time,'%Y%m%d') BETWEEN '{}' and '{}' GROUP BY 日期".format(self.lineName,
+                                                                                                                              startDate, stopDate)
         results = []
         # print(sql)
         for i in range(2):
@@ -100,7 +101,8 @@ class DbHelper():
                 # print(row[1])
                 if row[1] > 0:
                     # print(str(row[1]))
-                    resultDic["回收率"] = str(round(float(defTotal) / float(row[1]) * 100, 2)) + "%"
+                    resultDic["回收率"] = str(
+                        round(float(defTotal) / float(row[1]) * 100, 2)) + "%"
                 else:
                     resultDic["回收率"] = "0.0%"
 
@@ -113,8 +115,8 @@ class DbHelper():
             sql += "sum(case when time BETWEEN '" + timeSliceItem[0].strftime(
                 "%Y-%m-%d %H:%M") + "' and '" + timeSliceItem[1].strftime("%Y-%m-%d %H:%M") + "' then qty else 0 end) as '" + timeSliceItem[0].strftime("%H:%M") + " to " + timeSliceItem[1].strftime("%H:%M") + "',"
         sql = sql[:-1]
-        sql += " from {} where defType is not null GROUP BY type".format(
-            "history_input" if isHistory else "realtime_input")
+        sql += " from {} where line = '{}'  and defType is not null GROUP BY type".format(
+            "history_input" if isHistory else "realtime_input", self.lineName)
         # print(sql)
         results = []
         for row in self.runQuerySql(sql):
@@ -125,10 +127,10 @@ class DbHelper():
 
     def GetDailyTotals(self, day, isHistory=False):
         totalDic = {}
-        sql1 = "select type as 类型, sum(qty) as 数量 from {} where defType is null and TO_DAYS({}) = TO_DAYS(time) group by type".format(
-            "history_input" if isHistory else "realtime_input", "'" + day + "'")
-        sql2 = "select sum(qty) as 不良合计 from {} where defType is not null and TO_DAYS({}) = TO_DAYS(time)".format(
-            "history_input" if isHistory else "realtime_input", "'" + day + "'")
+        sql1 = "select type as 类型, sum(qty) as 数量 from {} where defType is null and line = '{}' and TO_DAYS({}) = TO_DAYS(time) group by type".format(
+            "history_input" if isHistory else "realtime_input", self.lineName, "'" + day + "'")
+        sql2 = "select sum(qty) as 不良合计 from {} where line = '{}' and defType is not null and TO_DAYS({}) = TO_DAYS(time)".format(
+            "history_input" if isHistory else "realtime_input", self.lineName, "'" + day + "'")
         for row in self.runQuerySql(sql1):
             totalDic[str(row[0])] = str(row[1])
         for row in self.runQuerySql(sql2):
@@ -137,22 +139,24 @@ class DbHelper():
 
     def GetRealTimeDefDatas(self):
         realtimeData = {}
-        sql = "select type as '不良原因', sum(qty) as '不良数量' from realtime_input where defType is not NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type"
+        sql = "select type as '不良原因', sum(qty) as '不良数量' from realtime_input where line = '{}' and defType is not NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type".format(
+            self.lineName)
         for row in self.runQuerySql(sql):
             realtimeData[str(row[0])] = str(row[1])
         return realtimeData
 
     def GetRealTimeTotals(self):
         totalDic = {}
-        sql = """select type as 类型, sum(qty) as 数量 from realtime_input where defType is NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type
+        sql = """select type as 类型, sum(qty) as 数量 from realtime_input where line = '{}' and defType is NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type
         union
-        select '回收', sum(qty) as 数量 from realtime_input where defType is not null and TO_DAYS(time) = TO_DAYS(NOW())"""
+        select '回收', sum(qty) as 数量 from realtime_input where line = '{}' and defType is not null and TO_DAYS(time) = TO_DAYS(NOW())""".format(self.lineName, self.lineName)
         for row in self.runQuerySql(sql):
             totalDic[str(row[0])] = str(row[1])
         return totalDic
 
     def InsertDailyTargetData(self, data):
-        sql = "replace into daily_target(dep, date, target) values('{}', '{}', {})".format(data[0], data[1], data[2])
+        sql = "replace into daily_target(dep, date, target) values('{}', '{}', {})".format(
+            data[0], data[1], data[2])
         self.runNonQuerySql(sql)
 
     def GetCurrentQcDefData(self):
@@ -162,35 +166,39 @@ class DbHelper():
         sum(if(qcPos = '2', qty, 0)) as qc2数量,
         sum(if(qcPos = '3', qty, 0)) as qc3数量,
         sum(if(qcPos = '4', qty, 0)) as qc4数量
-        from realtime_input where defType is not null and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type"""
+        from realtime_input where defType is not null and line = '{}' and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type""".format(self.lineName)
         for row in self.runQuerySql(sql):
-            tempList = [str(row[0]), str(row[1]), str(row[2]), str(row[3]), str(row[4])]
+            tempList = [str(row[0]), str(row[1]), str(
+                row[2]), str(row[3]), str(row[4])]
             qcDefList.append(tempList)
         return qcDefList
-    
-    def InsertIntoConfigTableDefInfo(self,cfg_dic):
+
+    def InsertIntoConfigTableDefInfo(self, cfg_dic):
         btnPos = 3
         defTypeNo = 1
         defTypeList = list(cfg_dic["DefReasons"].values())
         # print(defTypeList)
         for qcIndex in range(4):
             for type in defTypeList:
-                sql = "REPLACE INTO config(type, def_type_no, btn_pos, qcPos) VALUES('{}', {}, '{}', {})".format(type, defTypeNo, str(btnPos).zfill(2), str(qcIndex + 1))
+                sql = "REPLACE INTO config(type, def_type_no, btn_pos, qcPos) VALUES('{}', {}, '{}', {})".format(
+                    type, defTypeNo, str(btnPos).zfill(2), str(qcIndex + 1))
                 btnPos += 1
                 defTypeNo += 1
                 # print(sql)
                 self.runNonQuerySql(sql)
-    
+
     def GetDailyTargetData(self, name):
         dataList = {}
-        sql = "select date as 日期, target as 目标量 from daily_target where dep = '{}' order by date".format(name)
+        sql = "select date as 日期, target as 目标量 from daily_target where dep = '{}' order by date".format(
+            name)
         result = self.runQuerySql(sql)
         for row in result:
             dataList[row[0]] = row[1]
         return dataList
-    
+
     def DeleteDailyTargetData(self, name, date):
-        sql = "delete from daily_target where date = '{}' and dep = '{}'".format(date, name)
+        sql = "delete from daily_target where date = '{}' and dep = '{}'".format(
+            date, name)
         self.runNonQuerySql(sql)
 
     def InsertWorkingTimeInfoToDb(self, infoList):
@@ -198,6 +206,13 @@ class DbHelper():
         values('{}', '{}', '{}', '{}', {}, {}, {}, '{}')
         """.format(*infoList)
         self.runNonQuerySql(sql)
+    
+    def InsertAdjustingDataToDb(self, data):
+        sql1 = "insert into manual_fixed_log(time, qty, type, line) values(NOW(), {}, '{}', '{}')".format(str(data[1]), str(data[0]), self.lineName)
+        sql2 = "insert into realtime_input(time, line, type, qty) values (NOW(), '{}', '{}', {})".format(self.lineName, str(data[0]), str(data[1]))
+        self.runNonQuerySql(sql1)
+        self.runNonQuerySql(sql2)
+
 
 if __name__ == '__main__':
     cfg = config_mod.CfgHelper()
