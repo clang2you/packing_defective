@@ -121,7 +121,11 @@ class DbHelper():
         results = []
         for row in self.runQuerySql(sql):
             resultList = []
-            resultList.extend(row)
+            if len(row) < 2:
+                tempList = [row[0], 0]
+                resultList.extend(tempList)
+            else:
+                resultList.extend(row)
             results.append(resultList)
         return results
 
