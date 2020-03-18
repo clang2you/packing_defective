@@ -6,8 +6,8 @@ class ExportXlsHelper():
     def __init__(self, workbook_name):
         self.workbook_name = workbook_name
 
-    def qtTableWidgetExportToXls(self, mainWindow, sheetName, isDaily=False):
-        table = mainWindow.tableWidget
+    def qtTableWidgetExportToXls(self, mainWindow, sheetName, isDaily=False, isOtherTable = False):
+        table = mainWindow if isOtherTable else mainWindow.tableWidget
         workbook = xlwt.Workbook(encoding='utf8')
         worksheet = workbook.add_sheet(sheetName)
         rowCount = table.rowCount()

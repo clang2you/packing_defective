@@ -271,6 +271,7 @@ class TargetSettingWindow(QDialog):
 
 
 class LineSettingsWindow(QDialog):
+    updateSignal = QtCore.pyqtSignal()
     def __init__(self, parent=None):
         super(LineSettingsWindow, self).__init__(parent)
         self.child = lineSettings.Ui_Dialog()
@@ -345,6 +346,7 @@ class LineSettingsWindow(QDialog):
         self.child.label_13.setFont(light_14_font)
         self.child.label_13.setText("设定保存完成")
         self.child.label_13.setStyleSheet("QLabel{color: green}")
+        self.updateSignal.emit()
 
 # 日不良统计窗口类
 
@@ -746,6 +748,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.pushButton.clicked.connect(self.CreateCountAdjustmentWindow)
         self.pushButton_7.clicked.connect(self.CreateTargetSettingWindow)
         self.tabWidget.currentChanged.connect(self.RefreshRealtimeData)
+        self.pushButton_6.clicked.connect(self.ExportQcDefsToXls)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
@@ -781,6 +784,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         if self.tabWidget.currentIndex() == 1:
             self.RefreshTabPage2Data()
         elif self.tabWidget.currentIndex() == 2:
+            self.label_13.setText("")
             self.RefreshTabPage3Data()
 
     def RefreshTabPage3Data(self):
@@ -859,6 +863,8 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             if totalInput > 0:
                 defRate = round(totalDef / totalInput * 100, 2)
                 self.label_6.setText(str(defRate) + "%")
+            else:
+                self.label_6.setText("0.00%")
             self.tableWidget.clearContents()
             realtimeData = self.dbHandler.GetRealTimeDefDatas()
             self.tableWidget.setRowCount(len(realtimeData.keys()))
@@ -883,6 +889,24 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             self.tabWidget.blockSignals(True)
             self.zeromqListener.blockSignals(True)
             self.statusBar().showMessage("数据库服务器连接异常，请关闭程序再打开，如仍然无法正常使用，请联系 IT 处理")
+    
+    def ExportQcDefsToXls(self):
+        if self.tableWidget_2.rowCount() > 0:
+                dateSectionStr = datetime.datetime.now().strftime("%y-%m-%d")
+                filename = QtWidgets.QFileDialog.getSaveFileName(
+                    self, "导出到Excel", configJson["Line"]["name"] + "日不良明细导出" + dateSectionStr + ".xls", "Excel文件(*.xls)")
+                if filename[0] != '':
+                    self.excelHandler = exportHelper.ExportXlsHelper(
+                        filename[0])
+                    self.excelHandler.qtTableWidgetExportToXls(
+                        self.tableWidget_2, configJson["Line"]["name"] + "不良明细@" + dateSectionStr, False, True)
+                    self.label_13.setStyleSheet("QLabel{color:green}")
+                    self.label_13.setText("不良明细导出成功")
+                    self.label_13.setFont(light_20_font)
+        else:
+            self.label_13.setFont(light_14_font)
+            self.label_13.setStyleSheet("QLabel{color:blue}")
+            self.label_13.setText('无数据')
 
     def Showtime(self):
         datetime = QtCore.QDateTime.currentDateTime()
@@ -890,7 +914,13 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
     def CreateLineSettingsWindow(self):
         self.lineSettingsWindow = LineSettingsWindow(self)
+        self.lineSettingsWindow.updateSignal.connect(self.ChangeLineNameEffection)
         self.lineSettingsWindow.exec()
+    
+    def ChangeLineNameEffection(self):
+        self.label_12.setText(configJson["Line"]["name"])
+        self.dbHandler.lineName = configJson["Line"]["name"]
+        self.RefreshRealtimeData()
 
     def CreateWorkRestTimeSettingWindow(self):
         self.workRestTimeSettingWindow = WorkRestTimeSettingWindow(self)
