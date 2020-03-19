@@ -60,7 +60,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -123,6 +123,13 @@
             </spacer>
            </item>
            <item>
+            <widget class="QCheckBox" name="checkBox">
+             <property name="text">
+              <string>半天依半小时区隔生成图表</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QComboBox" name="comboBox_3">
              <property name="minimumSize">
               <size>
@@ -143,12 +150,7 @@
              </item>
              <item>
               <property name="text">
-               <string>上午</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>下午</string>
+               <string>半天</string>
               </property>
              </item>
             </widget>
