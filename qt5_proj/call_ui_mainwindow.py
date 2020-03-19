@@ -1203,28 +1203,14 @@ class DrawingChart(QtCore.QObject):
     def DrawLineChart(self):
         plt.cla()
         plt.clf()
-        # plt.figure()
-        # labels = ["08:00", '09:00', '10:00', '11:00', '12: 00',
-        #           '13:00', '14:00', '15:00', '16:00', '17:00']
         # xlabels = [ x.replace('\n','') for x in self.currentTimeSliceListToLabels]
         xlabels = self.currentTimeSliceListToLabels
         colCount = len(xlabels)
         ax = self.figure.add_axes([0.1,0.1,0.85,0.8])
-        # x = np.arange(10)
-        # a = [12, 2, 5, 8, 11, 13, 16, 4, 8, 9]
-        # b = [4, 5, 11, 14, 12, 7, 10, 9, 12, 11]
-        # c = [3, 6, 7, 11, 9, 10, 12, 16, 14, 13]
-        # d = [12, 6, 4, 8, 2, 5, 4, 9, 2, 7]
-        # e = [4, 6, 7, 9, 11, 3, 7, 8, 9, 7]
-        # f = [10, 2, 3, 8, 6, 4, 7, 9, 4, 5]
-        # g = [3, 7, 6, 12, 11, 9, 10, 6, 5, 3]
+
         if colCount > 0:
-            # ax = self.figure.add_axes([0.1, 0.1, 0.8, 0.8])
-            # self.figure.set_tight_layout(True)
-            # self.figure.subplots_adjust(wspace=0.5, hspace=0.5, bottom=0)
             ax.set_title('各时段回收情况', fontsize='18', fontweight='bold',
                      color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
-            # ax.set_xlabel('时间段')
             ax.set_ylabel('回收量')
             dataList = self.currentData
             for dataItem in dataList:
