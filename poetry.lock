@@ -190,7 +190,7 @@ python-versions = ">=3.5"
 version = "1.18.1"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Core utilities for Python packages"
 name = "packaging"
 optional = false
@@ -412,11 +412,31 @@ version = "19.0.0"
 
 [[package]]
 category = "main"
+description = "A Python bindings generator for C/C++ libraries"
+name = "sip"
+optional = false
+python-versions = ">=3.5.1"
+version = "5.1.1"
+
+[package.dependencies]
+packaging = "*"
+toml = "*"
+
+[[package]]
+category = "main"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 version = "1.14.0"
+
+[[package]]
+category = "main"
+description = "Python Library for Tom's Obvious, Minimal Language"
+name = "toml"
+optional = false
+python-versions = "*"
+version = "0.10.0"
 
 [[package]]
 category = "dev"
@@ -465,7 +485,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "473154aee2da7bec2416959a196a01f1465995ed233a304a63a5d092c1e1e99e"
+content-hash = "38c7d702abba9a6cc38fe37a92bb290e88b2808b608fcda0d092f6344b62aacf"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -760,9 +780,33 @@ pyzmq = [
     {file = "pyzmq-19.0.0-pp36-pypy36_pp73-macosx_10_15_x86_64.whl", hash = "sha256:5e071b834051e9ecb224915398f474bfad802c2fff883f118ff5363ca4ae3edf"},
     {file = "pyzmq-19.0.0.tar.gz", hash = "sha256:5e1f65e576ab07aed83f444e201d86deb01cd27dcf3f37c727bc8729246a60a8"},
 ]
+sip = [
+    {file = "sip-5.1.1-cp35-cp35m-macosx_10_6_intel.whl", hash = "sha256:de370fc4048684123c78f2f6e261d9ac53b51dc005f727f362e4e671322cdbd5"},
+    {file = "sip-5.1.1-cp35-cp35m-manylinux2014_x86_64.whl", hash = "sha256:62df2afa4c872bcac15746d8082de0ff14cfff6a487d5e25c6568bff5298cb88"},
+    {file = "sip-5.1.1-cp35-cp35m-win32.whl", hash = "sha256:e896200e4a05bc8bf2ad5da3a9f733ca56f313bf0c6366a71677b39fd6a2ec2f"},
+    {file = "sip-5.1.1-cp35-cp35m-win_amd64.whl", hash = "sha256:f287bb196e3453365032bc0931b61419e0a61631729f7ffa2df1aba5c49514d7"},
+    {file = "sip-5.1.1-cp36-cp36m-macosx_10_6_intel.whl", hash = "sha256:bc9e061b16e6b3836621d4f6e6e8af0db3f2715643d54b975359ddb754896439"},
+    {file = "sip-5.1.1-cp36-cp36m-manylinux2014_x86_64.whl", hash = "sha256:1b4c78e57b5876b9848c7634dbde5f9a1eff21cc13d0c589d461b5d4370b8b09"},
+    {file = "sip-5.1.1-cp36-cp36m-win32.whl", hash = "sha256:ba4a8a75bde2e58ee5bf28cf7c1aa3e90d2f51e9386ab812b0220786d684b340"},
+    {file = "sip-5.1.1-cp36-cp36m-win_amd64.whl", hash = "sha256:b2fda76ecb78df121fc165104050890c23ac41fa91e2a7d1b9a37aa22b212550"},
+    {file = "sip-5.1.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:066654acad02685cbdc84c3741e56b45845505426e9fc3c193fd3fe09afc0738"},
+    {file = "sip-5.1.1-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:9f331f61250df2427a92acabf18dfb2383e6ca74407fc5ff05c1cb037b03b62f"},
+    {file = "sip-5.1.1-cp37-cp37m-win32.whl", hash = "sha256:eeba96ca1d1bbf8de9b262df500176a689bdfc338d0f418eca7ff432731839a4"},
+    {file = "sip-5.1.1-cp37-cp37m-win_amd64.whl", hash = "sha256:42f7d43379e8f9bb50997870e94bdd691eadfe61ca2dfd679f821144afb50f24"},
+    {file = "sip-5.1.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:fbf8f71a26a94f7e32eb780bea0e55856dbb99dbcf33a99529565ed5cd060259"},
+    {file = "sip-5.1.1-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:9193914b685d02cd9a3d562d0132ab2297bc7b518a591a4ef39a1ca59da31fdd"},
+    {file = "sip-5.1.1-cp38-cp38-win32.whl", hash = "sha256:d08f9566f9a869d390f0c70e8e514eb4f650c56e5f1bd894fbceb793b598b9f0"},
+    {file = "sip-5.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:4fe6f7e1a1f1bf38cbc6cbc5f0888934d8fc101d1478b0514477a7b44f3d41c0"},
+    {file = "sip-5.1.1.tar.gz", hash = "sha256:3b600dd1c8293bb7cf002a20dbbc736010c6a5e161241d73b16685744ffe57c2"},
+]
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
     {file = "six-1.14.0.tar.gz", hash = "sha256:236bdbdce46e6e6a3d61a337c0f8b763ca1e8717c03b369e87a7ec7ce1319c0a"},
+]
+toml = [
+    {file = "toml-0.10.0-py2.7.egg", hash = "sha256:f1db651f9657708513243e61e6cc67d101a39bad662eaa9b5546f789338e07a3"},
+    {file = "toml-0.10.0-py2.py3-none-any.whl", hash = "sha256:235682dd292d5899d361a811df37e04a8828a5b1da3115886b73cf81ebc9100e"},
+    {file = "toml-0.10.0.tar.gz", hash = "sha256:229f81c57791a41d65e399fc06bf0848bab550a9dfd5ed66df18ce5f05e73d5c"},
 ]
 typed-ast = [
     {file = "typed_ast-1.4.1-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:73d785a950fc82dd2a25897d525d003f6378d1cb23ab305578394694202a58c3"},
