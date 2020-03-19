@@ -797,7 +797,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         else:
             self.verticalLayout_5.removeWidget(self.canvas)
             sip.delete(self.canvas)
-            # sip.delete(self.figure)
+            # self.figure = plt.figure()
             self.canvas = FigureCanvas(self.figure)
             self.plot_()
             self.verticalLayout_5.addWidget(self.canvas)
@@ -988,108 +988,11 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 header_item_index, QtWidgets.QHeaderView.Stretch)
 
     def plot_(self):
-        # ax = self.figure.add_axes([0.1, 0.1, 0.8, 0.8])
-        # labels = ["08:00", '09:00', '10:00', '11:00', '12: 00',
-        #           '13:00', '14:00', '15:00', '16:00', '17:00']
-        # a = [12, 2, 5, 8, 11, 13, 16, 4, 8, 9]
-        # b = [4, 5, 11, 14, 12, 7, 10, 9, 12, 11]
-        # c = [3, 6, 7, 11, 9, 10, 12, 16, 14, 13]
-        # d = [12, 6, 4, 8, 2, 5, 4, 9, 2, 7]
-        # e = [4, 6, 7, 9, 11, 3, 7, 8, 9, 7]
-        # f = [10, 2, 3, 8, 6, 4, 7, 9, 4, 5]
-        # ax.plot(x, y, color='red', lineWidth=1,
-        # g = [3, 7, 6, 12, 11, 9, 10, 6, 5, 3]
-        #         linestyle="-", label="脱胶", marker='.')
-        # ax.plot(x, z, color="green", linewidth=1,
-        #         linestyle='-', label="高胶", marker=".")
-        # ax.plot(x, j, color="magenta", linewidth=1,
-        #         linestyle='-', label="其他", marker=".")
-        # ax.plot(x, f, color="blue", linewidth=1,
-        #         linestyle='-', label="清洁度", marker=".")
-        # ax.plot(x, g, color="purple", linewidth=1,
-        #         linestyle='-', label="不对称", marker=".")
-        # ax.plot(x, h, color="orange", linewidth=1,
-        #         linestyle='-', label="针车不良", marker=".")
-        # ax.plot(x, i, color="navy", linewidth=1,
-        #         linestyle='-', label="研磨线外露", marker=".")
-        # plt.style.use('Solarize_Light2')
-        # # plt.style.use('seaborn')
-        # plt.xlabel("时间段")
-        # plt.ylabel("回收量")
-        # ax.legend(loc=2)
-        # ax.grid()
-        # for x, y, z, f, g, h, i, j in list(zip(x, y, z, f, g, h, i, j)):
-        #     plt.annotate("%s" % y, (x, y), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % z,  (x, z), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % f,  (x, f), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % g,  (x, g), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % h,  (x, h), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % i,  (x, i), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % j,  (x, j), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        # ax.set_title('各时段回收量', fontsize='18', fontweight='bold',
-        #              color='black', loc='center')
-        # ax = self.figure.add_subplot(111)
-        # ax.set_xlabel('时间段')
-        # ax.set_ylabel('回收量')
-        # ax.set_title('各时段回收情况', bbox={'facecolor': '0.8', 'pad': 5})
-        # ax.set_xticklabels(labels)
-        # size = 10
-        # x = np.arange(size)
-        # a = np.random.random(size)
-        # b = np.random.random(size)
-        # c = np.random.random(size)
-        # d = np.random.random(size)
-        # e = np.random.random(size)
-        # f = np.random.random(size)
-        # g = np.random.random(size)
-
-        # total_width, n = 0.8, 7
-        # width = total_width / n
-        # x = x - (total_width - width) / 2
-
-        # plt.xticks(x, labels,size="small", rotation=30)
-        # plt.bar(x, a,  width=width, label='脱胶')
-        # plt.bar(x + width, b, width=width, label='高胶')
-        # plt.bar(x + 2 * width, c, width=width, label='其他')
-        # plt.bar(x + 3 * width, d, width=width, label='清洁度', tick_label=labels)
-        # plt.bar(x + 4 * width, e, width=width, label='不对称')
-        # plt.bar(x + 5 * width, f, width=width, label='针车不良')
-        # plt.bar(x + 6 * width, g, width=width, label='研磨线')
-        # for x1, a1, b1, c1, d1, e1, f1, g1 in zip(x, a, b, c, d, e, f, g):
-        #     plt.text(x1, a1+0.05, '%.0f' %
-        #              a1, ha='center', va='bottom', fontsize=7)
-        #     plt.text(x1 + 0.12, b1+0.05, '%.0f' %
-        #              b1, ha='center', va='bottom', fontsize=7)
-        #     plt.text(x1 + 0.22, c1+0.05, '%.0f' %
-        #              c1, ha='center', va='bottom', fontsize=7)
-        #     plt.text(x1 + 0.34, d1+0.05, '%.0f' %
-        #              d1, ha='center', va='bottom', fontsize=7)
-        #     plt.text(x1 + 0.46, e1+0.05, '%.0f' %
-        #              e1, ha='center', va='bottom', fontsize=7)
-        #     plt.text(x1 + 0.55, f1+0.05, '%.0f' %
-        #              f1, ha='center', va='bottom', fontsize=7)
-        #     plt.text(x1 + 0.68, g1+0.05, '%.0f' %
-        #              g1, ha='center', va='bottom', fontsize=7) [0.12, 0.22, 0.34, 0.46, 0.55, 0.68]
-        # plt.legend()
-        # plt.show()
-
-        # self.canvas.draw()
-        # try:
-        #     sip.delete(self.drawingChart)
-        #     self.drawingChart = None
-        #     self.drawingChart = DrawingChart()
-        # except:
         self.drawingChart = DrawingChart(self.figure, self.canvas)
-        self.drawingChart.GetDrawDatas(True, ['高胶','脱胶','研磨线'])
-        self.drawingChart.DrawBarChart(
-            self.drawingChart.currentTimeSliceListToLabels, self.drawingChart.currentData)
+        self.drawingChart.GetDrawDatas(True)
+        # self.drawingChart.DrawBarChart(
+        #     self.drawingChart.currentTimeSliceListToLabels, self.drawingChart.currentData)
+        self.drawingChart.DrawLineChart()
         self.canvas = self.drawingChart.canvas
 
     def AddLineChartToForm(self):
@@ -1249,21 +1152,23 @@ class DrawingChart(QtCore.QObject):
         for item in self.currentTimeSliceList:
             startTime = item[0].strftime("%H:%M")
             stopTime = item[1].strftime("%H:%M")
-            period = startTime + "\n至\n" + stopTime
+            period = startTime + "\n"  + stopTime
             self.currentTimeSliceListToLabels.append(period)
 
-    def DrawBarChart(self, labels, dataList):
+    def DrawBarChart(self):
         plt.cla()
+        plt.clf()
         xlabels = self.currentTimeSliceListToLabels
+        dataList = self.currentData
         colCount = len(xlabels)
-        print(dataList)
-        print(xlabels)
         if colCount > 0:
             ax = self.figure.add_subplot(111)
             self.figure.set_tight_layout(True)
             ax.set_ylabel('回收量')
-            ax.set_title('各时段回收情况', bbox={'facecolor': '0.8', 'pad': 5})
+            ax.set_title('各时段回收情况', fontsize='18', fontweight='bold',
+                     color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
             x = np.arange(colCount)
+            # print(x)
             widthList = [0.25, 0.25, 0.4, 0.5, 0.65, 0.75, 0.95, 1.08, 1.22]
             if colCount < 6:
                 widthList = [x * 2 for x in widthList]
@@ -1271,7 +1176,7 @@ class DrawingChart(QtCore.QObject):
             width = total_width / n
             x = x - (total_width - width) / 2
             width_times = 0
-            label_pos = 3 if colCount > 6 else 1
+            label_pos = 3 if len(dataList) > 6 else 1
             fontSize = [12, 12, 9, 8, 8, 7, 6.5, 6.5, 6.5]
             x_offset = [[0, 0.25, 0.5, 0.75, 1, 1.26, 1.5],[0, 0.13, 0.24, 0.37, 0.5, 0.63, 0.76], 
                         [0, 0.12, 0.26, 0.4, 0.52, 0.67, 0.79], [0, 0.12, 0.25, 0.37,0.5, 0.62, 0.74],
@@ -1293,11 +1198,85 @@ class DrawingChart(QtCore.QObject):
                                 b, ha='center', va='bottom', fontsize=fontSize[colCount - 1])
                 width_times += 1
             # ax.set_xticklabels(xlabels)
-            plt.legend()
+            plt.legend(loc=2)
             self.canvas.draw()
 
     def DrawLineChart(self):
-        pass
+        plt.cla()
+        plt.clf()
+        # plt.figure()
+        # labels = ["08:00", '09:00', '10:00', '11:00', '12: 00',
+        #           '13:00', '14:00', '15:00', '16:00', '17:00']
+        # xlabels = [ x.replace('\n','') for x in self.currentTimeSliceListToLabels]
+        xlabels = self.currentTimeSliceListToLabels
+        colCount = len(xlabels)
+        # x = np.arange(10)
+        # a = [12, 2, 5, 8, 11, 13, 16, 4, 8, 9]
+        # b = [4, 5, 11, 14, 12, 7, 10, 9, 12, 11]
+        # c = [3, 6, 7, 11, 9, 10, 12, 16, 14, 13]
+        # d = [12, 6, 4, 8, 2, 5, 4, 9, 2, 7]
+        # e = [4, 6, 7, 9, 11, 3, 7, 8, 9, 7]
+        # f = [10, 2, 3, 8, 6, 4, 7, 9, 4, 5]
+        # g = [3, 7, 6, 12, 11, 9, 10, 6, 5, 3]
+        if colCount > 0:
+            # ax = self.figure.add_axes([0.1, 0.1, 0.8, 0.8])
+            ax = self.figure.add_axes([0.1,0.1,0.85,0.8])
+            # self.figure.set_tight_layout(True)
+            # self.figure.subplots_adjust(wspace=0.5, hspace=0.5, bottom=0)
+            ax.set_title('各时段回收情况', fontsize='18', fontweight='bold',
+                     color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
+            # ax.set_xlabel('时间段')
+            ax.set_ylabel('回收量')
+            dataList = self.currentData
+            for dataItem in dataList:
+                countData = dataItem[1:]
+                ax.plot(xlabels, countData, lineWidth=1, lineStyle="-", label=dataItem[0], marker='.')
+                for a, b in list(zip(xlabels, dataItem[1:])):
+                    plt.annotate("%s" % b, (a, b), xytext=(-3, 13),
+                    ha='left', textcoords='offset points')
+            plt.legend(loc=2)
+            ax.grid()
+            ax.set_xticklabels(xlabels)
+
+        # ax.plot(x, a, color='red', lineWidth=1,
+        #         linestyle="-", label="脱胶", marker='.')
+        # ax.plot(x, b, color="green", linewidth=1,
+        #         linestyle='-', label="高胶", marker=".")
+        # ax.plot(x, c, color="magenta", linewidth=1,
+        #         linestyle='-', label="其他", marker=".")
+        # ax.plot(x, d, color="blue", linewidth=1,
+        #         linestyle='-', label="清洁度", marker=".")
+        # ax.plot(x, e, color="purple", linewidth=1,
+        #         linestyle='-', label="不对称", marker=".")
+        # ax.plot(x, f, color="orange", linewidth=1,
+        #         linestyle='-', label="针车不良", marker=".")
+        # ax.plot(x, g, color="navy", linewidth=1,
+        #         linestyle='-', label="研磨线外露", marker=".")
+        # plt.style.use('Solarize_Light2')
+        # plt.style.use('seaborn')
+        # plt.xlabel("时间段")
+        # plt.ylabel("回收量")
+        # self.figure.set_tight_layout(True)
+        # for x, y, z, f, g, h, i, j in list(zip(x, a, b, c, d, e, f, g)):
+        #     plt.annotate("%s" % y, (x, y), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % z,  (x, z), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % f,  (x, f), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % g,  (x, g), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % h,  (x, h), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % i,  (x, i), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        #     plt.annotate("%s" % j,  (x, j), xytext=(-10, 13),
+        #                  ha='left', textcoords='offset points')
+        # ax.set_title('各时段回收量', fontsize='18', fontweight='bold',
+        #              color='black', loc='center')
+        
+        # ax.set_xticklabels(labels)
+        self.canvas.draw()
 
 
 if __name__ == "__main__":
