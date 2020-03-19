@@ -988,6 +988,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 header_item_index, QtWidgets.QHeaderView.Stretch)
 
     def plot_(self):
+<<<<<<< HEAD
         # ax = self.figure.add_axes([0.1, 0.1, 0.8, 0.8])
         # labels = ["08:00", '09:00', '10:00', '11:00', '12: 00',
         #           '13:00', '14:00', '15:00', '16:00', '17:00']
@@ -1091,6 +1092,11 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.drawingChart.DrawBarChart(
             self.drawingChart.currentTimeSliceListToLabels, self.drawingChart.currentData)
         self.canvas = self.drawingChart.canvas
+=======
+        self.drawChartHandler = DrawingChart()
+        self.drawChartHandler.DrawBarChart()
+        self.canvas.draw()
+>>>>>>> 6d863917c1f8b08cea4c604349dbee0bf84b06fa
 
     def AddLineChartToForm(self):
         self.plot_()
@@ -1192,6 +1198,7 @@ class TimeManipulation():
     def OnCurrentTimeRanges(self, isHalfHour):
         unit = 60*30 if isHalfHour else 60*60
         timeSlice = []
+<<<<<<< HEAD
         if isHalfHour:
             self.DayHourRange(unit)
             if datetime.datetime.now() > self.pmTimeStart:
@@ -1218,6 +1225,13 @@ class TimeManipulation():
                     timeSlice.append(item)
                 else:
                     break
+=======
+        for item in self.DayHourRange(unit):
+            if item[0] < datetime.datetime.now():
+                timeSlice.append(item)
+            else:
+                break
+>>>>>>> 6d863917c1f8b08cea4c604349dbee0bf84b06fa
         return timeSlice
 
     def CalculatingTotalWorkTime(self):
@@ -1252,6 +1266,7 @@ class DrawingChart(QtCore.QObject):
             period = startTime + "\n至\n" + stopTime
             self.currentTimeSliceListToLabels.append(period)
 
+<<<<<<< HEAD
     def DrawBarChart(self, labels, dataList):
         plt.cla()
         xlabels = self.currentTimeSliceListToLabels
@@ -1295,6 +1310,75 @@ class DrawingChart(QtCore.QObject):
             # ax.set_xticklabels(xlabels)
             plt.legend()
             self.canvas.draw()
+=======
+    def DrawBarChart(self):
+        self.GetDrawDatas()
+        xlabels = self.currentTimeSliceListToLabels
+        colCount = len(xlabels)
+        ax = self.figure.add_subplot(111)
+        # ax.set_xlabel('时间段')
+        ax.set_ylabel('回收量')
+        ax.set_title('各时段回收情况', bbox={'facecolor': '0.8', 'pad': 5})
+        x = np.arange(colCount)
+        total_width, n = 0.8, colCount
+        width = 0
+        if n != 0:
+            width = total_width / n
+        x = x - (total_width - width) / 2
+        width_times = 0
+        label_pos = int(colCount / 2) - \
+            1 if colCount % 2 == 0 else int(colCount / 2)
+        x_offset = [0, 0.12, 0.22, 0.34, 0.46, 0.55, 0.68]
+        for dataItem in self.currentData:
+            data_index = self.currentData.index(dataItem)
+            labelText = dataItem.pop(0)
+            addWidth = width * width_times
+            if data_index == label_pos:
+                plt.bar(x + addWidth, dataItem, width=width,
+                        label=labelText,  tick_label=xlabels)
+            else:
+                plt.bar(x + addWidth, dataItem, width=width, label=labelText)
+                print(str(self.currentData.index(dataItem)))
+                print( + str(dataItem) + labelText)
+            for a, b in zip(x, dataItem):
+                plt.text(a + x_offset, float(b) + 0.05, '%.0f' %
+                         b, ha='center', va='bottom', fontsize=7)
+            width_times += 1
+        # labels = ["08:00", '09:00', '10:00', '11:00', '12: 00',
+        #      '13:00', '14:00', '15:00', '16:00', '17:00']
+        # a = [12, 2, 5, 8, 11, 13, 16, 4, 8, 9]
+        # b = [4, 5, 11, 14, 12, 7, 10, 9, 12, 11]
+        # c = [3, 6, 7, 11, 9, 10, 12, 16, 14, 13]
+        # d = [12, 6, 4, 8, 2, 5, 4, 9, 2, 7]
+        # e = [4, 6, 7, 9, 11, 3, 7, 8, 9, 7]
+        # f = [10, 2, 3, 8, 6, 4, 7, 9, 4, 5]
+        # g = [3, 7, 6, 12, 11, 9, 10, 6, 5, 3]
+
+        # plt.bar(x, a,  width=width, label='脱胶')
+        # plt.bar(x + width, b, width=width, label='高胶')
+        # plt.bar(x + 2 * width, c, width=width, label='其他')
+        # plt.bar(x + 3 * width, d, width=width, label='清洁度', tick_label=labels)
+        # plt.bar(x + 4 * width, e, width=width, label='不对称')
+        # plt.bar(x + 5 * width, f, width=width, label='针车不良')
+        # plt.bar(x + 6 * width, g, width=width, label='研磨线')
+        # for x1, a1, b1, c1, d1, e1, f1, g1 in zip(x, a, b, c, d, e, f, g):
+        #     plt.text(x1, a1+0.05, '%.0f' %
+        #              a1, ha='center', va='bottom', fontsize=7)
+        #     plt.text(x1 + 0.12, b1+0.05, '%.0f' %
+        #              b1, ha='center', va='bottom', fontsize=7)
+        #     plt.text(x1 + 0.22, c1+0.05, '%.0f' %
+        #              c1, ha='center', va='bottom', fontsize=7)
+        #     plt.text(x1 + 0.34, d1+0.05, '%.0f' %
+        #              d1, ha='center', va='bottom', fontsize=7)
+        #     plt.text(x1 + 0.46, e1+0.05, '%.0f' %
+        #              e1, ha='center', va='bottom', fontsize=7)
+        #     plt.text(x1 + 0.55, f1+0.05, '%.0f' %
+        #              f1, ha='center', va='bottom', fontsize=7)
+        #     plt.text(x1 + 0.68, g1+0.05, '%.0f' %
+        #              g1, ha='center', va='bottom', fontsize=7)
+        plt.legend()
+        self.canvas.draw()
+>>>>>>> 6d863917c1f8b08cea4c604349dbee0bf84b06fa
 
     def DrawLineChart(self):
         pass
