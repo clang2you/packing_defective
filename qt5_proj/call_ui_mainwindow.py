@@ -772,6 +772,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.comboBox.currentTextChanged.connect(self.ChangeComboBoxItems)
         self.comboBox_3.currentTextChanged.connect(self.ChangeComboBoxItems)
         self.checkBox.clicked.connect(self.ChangeCheckBoxChecked)
+        self.pushButton_5.clicked.connect(self.SaveChartToFile)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
@@ -793,6 +794,16 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.clockTimer = QtCore.QTimer(self)
         self.clockTimer.timeout.connect(self.Showtime)
         self.clockTimer.start(100)
+    
+    def SaveChartToFile(self):
+        dateSectionStr = datetime.datetime.now().strftime("%y-%m-%d")
+        filename = QtWidgets.QFileDialog.getSaveFileName(
+            self, "保存到文件", configJson["Line"]["name"] + "不良回收情况" + dateSectionStr + ".png", "PNG图像(*.png)")
+        if filename[0] != '':
+            plt.savefig(filename[0])
+            self.label_13.setStyleSheet("QLabel{color:green}")
+            self.label_13.setText("不良明细导出成功")
+            self.label_13.setFont(light_20_font)
     
     def ChangeComboBoxItems(self):
         global config, configJson
@@ -825,6 +836,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.thread.wait()
 
     def RefreshRealtimeData(self):
+        self.label_13.setText("")
         if self.tabWidget.currentIndex() == 1:
             self.RefreshTabPage2Data()
         elif self.tabWidget.currentIndex() == 2:
@@ -1041,6 +1053,8 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             self.drawingChart.GetDrawDatas(self.isHalfDay, self.checkBox.isChecked(),self.filterList)
         else:
             self.drawingChart.GetDrawDatas(self.isHalfDay,self.checkBox.isChecked())
+        if len(self.drawingChart.currentData) > 0:
+            self.pushButton_5.setEnabled(True)
         if self.comboBox.currentText() == "线状图":
             self.drawingChart.DrawLineChart()
         else:
