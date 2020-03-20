@@ -43,7 +43,8 @@ class ExportXlsHelper():
             headerText = table.horizontalHeaderItem(col_index).text()
             worksheet.write(headerRow, col_index,
                             label=headerText, style=style)
-        for row_index in range(rowCount -1):
+        rowCount = rowCount -1 if isDaily else rowCount
+        for row_index in range(rowCount):
             for col_index in range(colCount):
                 # if row_index == 0:
                 #     headerText = tableWidget.horizontalHeaderItem(colCount).text()

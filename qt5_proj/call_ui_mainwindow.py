@@ -142,6 +142,7 @@ class WorkingtimeSettingsWindow(QDialog):
 
 
 class SectionSettingWindow(QDialog):
+    saveSignal = QtCore.pyqtSignal()
     def __init__(self, parent=None):
         global configJson
         super(SectionSettingWindow, self).__init__(parent)
@@ -177,6 +178,7 @@ class SectionSettingWindow(QDialog):
                     configSection[section] = {no: choiceBox.currentText()}
         configJson["Section"] = configSection
         config.SaveConfigToJson(configJson)
+        self.saveSignal.emit()
         self.child.label_6.setText("设定保存完成")
         self.child.label_6.setStyleSheet("QLabel{color: green}")
         self.child.label_6.setFont(light_14_font)
@@ -801,9 +803,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             self, "保存到文件", configJson["Line"]["name"] + "不良回收情况" + dateSectionStr + ".png", "PNG图像(*.png)")
         if filename[0] != '':
             plt.savefig(filename[0])
-            self.label_13.setStyleSheet("QLabel{color:green}")
-            self.label_13.setText("不良明细导出成功")
-            self.label_13.setFont(light_20_font)
     
     def ChangeComboBoxItems(self):
         global config, configJson
@@ -1014,6 +1013,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
     def CreateSectionSettingsWindow(self):
         self.sectionSettingsWindow = SectionSettingWindow(self)
+        self.sectionSettingsWindow.saveSignal.connect(self.RefreshRealtimeData)
         self.sectionSettingsWindow.exec()
 
     def CreateDailyStasticForm(self):
