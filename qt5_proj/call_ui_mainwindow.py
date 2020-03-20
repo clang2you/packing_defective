@@ -733,9 +733,11 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             self.comboBox_3.setCurrentIndex(configJson["Chart"]["time"])
             self.comboBox_2.setCurrentIndex(configJson["Chart"]["section"])
             self.comboBox.setCurrentIndex(configJson["Chart"]["type"])
-            self.checkBox.setChecked(configJson["Chart"]["halfhour"])
+            # self.checkBox.setChecked(configJson["Chart"]["halfhour"])
+            # print(configJson["Chart"]["halfhour"])
             if configJson["Chart"]["halfhour"]:
                 self.checkBox.setEnabled(True)
+                self.checkBox.setChecked(True)
 
         self.tableWidget.verticalHeader().setSectionResizeMode(
             QtWidgets.QHeaderView.ResizeToContents)
@@ -794,7 +796,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
     
     def ChangeComboBoxItems(self):
         global config, configJson
-        if self.comboBox_3.currentText == "全天":
+        if self.comboBox_3.currentText() == "全天":
             self.checkBox.setChecked(False)
             self.checkBox.setEnabled(False)
         else:
@@ -810,6 +812,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
     def ChangeCheckBoxChecked(self):
         global config, configJson
         configJson["Chart"]["halfhour"] = self.checkBox.isChecked()
+        config.SaveConfigToJson(configJson)
         self.RefreshRealtimeData()
 
     def ZMQReceived(self, message):
@@ -1022,10 +1025,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
     def plot_(self):
         self.drawingChart = DrawingChart(self.figure, self.canvas)
-        # print(self.comboBox_3.currentText())
-        # print(self.checkBox.isChecked())
-        # print(self.comboBox_2.currentText())
-        # print(self.comboBox.currentText())
         self.filterList = []
         if self.comboBox_2.currentText() != "整线不良":
             if self.comboBox_2.currentText() == "入楦段不良":
@@ -1034,11 +1033,14 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 self.filterList = list(configJson["Section"]["baozhuang"].values())
             elif self.comboBox_2.currentText() == "贴底段不良":
                 self.filterList = list(configJson["Section"]["tiedi"].values())
-        print(self.filterList)
+        # print(self.filterList)
+        self.isHalfDay = False
+        if self.comboBox_3.currentText() == "半天":
+            self.isHalfDay = True
         if len(self.filterList) >0:
-            self.drawingChart.GetDrawDatas(self.checkBox.isChecked(),self.filterList)
+            self.drawingChart.GetDrawDatas(self.isHalfDay, self.checkBox.isChecked(),self.filterList)
         else:
-            self.drawingChart.GetDrawDatas(self.checkBox.isChecked())
+            self.drawingChart.GetDrawDatas(self.isHalfDay,self.checkBox.isChecked())
         if self.comboBox.currentText() == "线状图":
             self.drawingChart.DrawLineChart()
         else:
@@ -1142,7 +1144,7 @@ class TimeManipulation():
             timeRanges.append([f_time, t_time])
         return timeRanges
 
-    def OnCurrentTimeRanges(self, isHalfHour):
+    def OnCurrentTimeRanges(self, isHalfHour, isHalfDay= False):
         unit = 60*30 if isHalfHour else 60*60
         timeSlice = []
         if isHalfHour:
@@ -1161,6 +1163,20 @@ class TimeManipulation():
                     if item[1] - item[0] < datetime.timedelta(seconds=30*60):
                         timeSlice[-1][1] = item[1]
                         break
+                    if item[0] < datetime.datetime.now():
+                        timeSlice.append(item)
+                    else:
+                        break
+        elif isHalfDay:
+            self.DayHourRange(unit)
+            if datetime.datetime.now() < self.pmTimeStart:
+                for item in self.amTimeRanges:
+                    if item[0] < datetime.datetime.now():
+                        timeSlice.append(item)
+                    else:
+                        break
+            else:
+                for item in self.pmTimeRanges:
                     if item[0] < datetime.datetime.now():
                         timeSlice.append(item)
                     else:
@@ -1187,12 +1203,12 @@ class DrawingChart(QtCore.QObject):
         self.dbHandler = dbHelper.DbHelper(configJson)
         self.timeOpt = TimeManipulation()
 
-    def GetDrawDatas(self, isHalfHour=False, section = None):
+    def GetDrawDatas(self, isHalfDay = False, isHalfHour=False, section = None):
         try:
             self.currentTimeSliceList = self.timeOpt.OnCurrentTimeRanges(
-                isHalfHour)
+                isHalfHour) if isHalfDay == False else self.timeOpt.OnCurrentTimeRanges(isHalfHour, isHalfDay)
             self.currentData = self.dbHandler.GetDailyDataResults(
-                self.currentTimeSliceList)
+                self.currentTimeSliceList) 
             if section != None:
                 sectionData = []
                 for item in self.currentData:
