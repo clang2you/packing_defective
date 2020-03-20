@@ -68,6 +68,8 @@ class Ui_MainWindow(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.checkBox = QtWidgets.QCheckBox(self.frame_3)
+        self.checkBox.setEnabled(False)
+        self.checkBox.setMinimumSize(QtCore.QSize(0, 30))
         self.checkBox.setObjectName("checkBox")
         self.horizontalLayout_2.addWidget(self.checkBox)
         self.comboBox_3 = QtWidgets.QComboBox(self.frame_3)
@@ -435,7 +437,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "包装线回收率统计看板"))
         self.label_10.setText(_translate("MainWindow", "包装回收目视化系统"))
-        self.checkBox.setText(_translate("MainWindow", "半天依半小时区隔生成图表"))
+        self.checkBox.setText(_translate("MainWindow", "半小时间隔"))
         self.comboBox_3.setItemText(0, _translate("MainWindow", "全天"))
         self.comboBox_3.setItemText(1, _translate("MainWindow", "半天"))
         self.comboBox_2.setItemText(0, _translate("MainWindow", "整线不良"))

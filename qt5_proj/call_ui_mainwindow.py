@@ -728,6 +728,15 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.setupUi(self)
         if configJson["Line"] != None:
             self.label_12.setText(configJson["Line"]["name"])
+
+        if "Chart" in configJson:
+            self.comboBox_3.setCurrentIndex(configJson["Chart"]["time"])
+            self.comboBox_2.setCurrentIndex(configJson["Chart"]["section"])
+            self.comboBox.setCurrentIndex(configJson["Chart"]["type"])
+            self.checkBox.setChecked(configJson["Chart"]["halfhour"])
+            if configJson["Chart"]["halfhour"]:
+                self.checkBox.setEnabled(True)
+
         self.tableWidget.verticalHeader().setSectionResizeMode(
             QtWidgets.QHeaderView.ResizeToContents)
         self.label_15.setText(
@@ -757,6 +766,10 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.pushButton_7.clicked.connect(self.CreateTargetSettingWindow)
         self.tabWidget.currentChanged.connect(self.RefreshRealtimeData)
         self.pushButton_6.clicked.connect(self.ExportQcDefsToXls)
+        self.comboBox_2.currentTextChanged.connect(self.ChangeComboBoxItems)
+        self.comboBox.currentTextChanged.connect(self.ChangeComboBoxItems)
+        self.comboBox_3.currentTextChanged.connect(self.ChangeComboBoxItems)
+        self.checkBox.clicked.connect(self.ChangeCheckBoxChecked)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
@@ -778,6 +791,26 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.clockTimer = QtCore.QTimer(self)
         self.clockTimer.timeout.connect(self.Showtime)
         self.clockTimer.start(100)
+    
+    def ChangeComboBoxItems(self):
+        global config, configJson
+        if self.comboBox_3.currentText == "全天":
+            self.checkBox.setChecked(False)
+            self.checkBox.setEnabled(False)
+        else:
+            self.checkBox.setEnabled(True)
+        configJson["Chart"] = {} if "Chart" not in configJson else configJson["Chart"]
+        configJson["Chart"]["section"] = self.comboBox_2.currentIndex()
+        configJson["Chart"]["halfhour"] = self.checkBox.isChecked()
+        configJson["Chart"]["type"] = self.comboBox.currentIndex()
+        configJson["Chart"]["time"] = self.comboBox_3.currentIndex()
+        config.SaveConfigToJson(configJson)
+        self.RefreshRealtimeData()
+    
+    def ChangeCheckBoxChecked(self):
+        global config, configJson
+        configJson["Chart"]["halfhour"] = self.checkBox.isChecked()
+        self.RefreshRealtimeData()
 
     def ZMQReceived(self, message):
         self.statusbar.showMessage(message)
@@ -989,9 +1022,27 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
     def plot_(self):
         self.drawingChart = DrawingChart(self.figure, self.canvas)
-        self.drawingChart.GetDrawDatas(True)
-        self.drawingChart.DrawBarChart()
-        # self.drawingChart.DrawLineChart()
+        # print(self.comboBox_3.currentText())
+        # print(self.checkBox.isChecked())
+        # print(self.comboBox_2.currentText())
+        # print(self.comboBox.currentText())
+        self.filterList = []
+        if self.comboBox_2.currentText() != "整线不良":
+            if self.comboBox_2.currentText() == "入楦段不良":
+                self.filterList = list(configJson["Section"]["ruxuan"].values())
+            elif self.comboBox_2.currentText() == "包装段不良":
+                self.filterList = list(configJson["Section"]["baozhuang"].values())
+            elif self.comboBox_2.currentText() == "贴底段不良":
+                self.filterList = list(configJson["Section"]["tiedi"].values())
+        print(self.filterList)
+        if len(self.filterList) >0:
+            self.drawingChart.GetDrawDatas(self.checkBox.isChecked(),self.filterList)
+        else:
+            self.drawingChart.GetDrawDatas(self.checkBox.isChecked())
+        if self.comboBox.currentText() == "线状图":
+            self.drawingChart.DrawLineChart()
+        else:
+            self.drawingChart.DrawBarChart()
         self.canvas = self.drawingChart.canvas
 
     def AddLineChartToForm(self):
@@ -1137,22 +1188,27 @@ class DrawingChart(QtCore.QObject):
         self.timeOpt = TimeManipulation()
 
     def GetDrawDatas(self, isHalfHour=False, section = None):
-        self.currentTimeSliceList = self.timeOpt.OnCurrentTimeRanges(
-            isHalfHour)
-        self.currentData = self.dbHandler.GetDailyDataResults(
-            self.currentTimeSliceList)
-        if section != None:
-            sectionData = []
-            for item in self.currentData:
-                if item[0] in section:
-                    sectionData.append(item)
-            self.currentData = sectionData
-        self.currentTimeSliceListToLabels = []
-        for item in self.currentTimeSliceList:
-            startTime = item[0].strftime("%H:%M")
-            stopTime = item[1].strftime("%H:%M")
-            period = startTime + "\n"  + stopTime
-            self.currentTimeSliceListToLabels.append(period)
+        try:
+            self.currentTimeSliceList = self.timeOpt.OnCurrentTimeRanges(
+                isHalfHour)
+            self.currentData = self.dbHandler.GetDailyDataResults(
+                self.currentTimeSliceList)
+            if section != None:
+                sectionData = []
+                for item in self.currentData:
+                    if item[0] in section:
+                        sectionData.append(item)
+                self.currentData = sectionData
+            self.currentTimeSliceListToLabels = []
+            for item in self.currentTimeSliceList:
+                startTime = item[0].strftime("%H:%M")
+                stopTime = item[1].strftime("%H:%M")
+                period = startTime + "\n"  + stopTime
+                self.currentTimeSliceListToLabels.append(period)
+        except:
+            self.currentTimeSliceListToLabels = []
+            self.currentData = []
+        
 
     def DrawBarChart(self):
         plt.cla()
@@ -1168,20 +1224,31 @@ class DrawingChart(QtCore.QObject):
                      color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
             x = np.arange(colCount)
             # print(x)
-            widthList = [0.25, 0.25, 0.4, 0.5, 0.65, 0.75, 0.95, 1.08, 1.22]
-            if colCount < 6:
+            widthList = [0.25, 0.25, 0.4, 0.5, 0.65, 0.75, 0.95, 1.08, 1.22, 1.25]
+            if len(dataList) < 6:
                 widthList = [x * 2 for x in widthList]
             total_width, n = widthList[colCount -1 ], colCount
             width = total_width / n
             x = x - (total_width - width) / 2
             width_times = 0
             label_pos = 3 if len(dataList) > 6 else 1
-            fontSize = [12, 12, 9, 8, 8, 7, 6.5, 6.5, 6.5]
+            fontSize = [12, 12, 10, 9, 9, 8, 6.5, 6.5, 6.5, 6]
             x_offset = [[0, 0.25, 0.5, 0.75, 1, 1.26, 1.5],[0, 0.13, 0.24, 0.37, 0.5, 0.63, 0.76], 
                         [0, 0.12, 0.26, 0.4, 0.52, 0.67, 0.79], [0, 0.12, 0.25, 0.37,0.5, 0.62, 0.74],
                         [0, 0.12, 0.26, 0.39, 0.52, 0.64, 0.77],[0, 0.12, 0.25, 0.37, 0.5, 0.62, 0.75],
                         [0, 0.12, 0.27, 0.40, 0.54, 0.68, 0.8],[0, 0.12, 0.27, 0.40, 0.54, 0.68, 0.8], 
-                        [0, 0.12, 0.27, 0.40, 0.54, 0.68, 0.8]]
+                        [0, 0.12, 0.27, 0.40, 0.54, 0.68, 0.8],[0, 0.12, 0.25, 0.37, 0.5, 0.63, 0.75]]
+
+            col_three_x_offset = [[0, 0.5, 1.0],[0, 0.25, 0.5], 
+                        [0, 0.26, 0.52], [0, 0.25, 0.5],
+                        [0, 0.26, 0.52],[0, 0.25, 0.5],
+                        [0, 0.26, 0.52],[0, 0.25, 0.5], 
+                        [0, 0.26, 0.54],[0, 0.25, 0.5]]    
+            if len(dataList)  < 6:
+                x_offset = col_three_x_offset
+                for f_size in fontSize:
+                    if f_size < 9:
+                        fontSize[fontSize.index(f_size)] = 9
             for dataItem in dataList:
                 data_index = dataList.index(dataItem)
                 labelText = dataItem.pop(0)
@@ -1207,6 +1274,7 @@ class DrawingChart(QtCore.QObject):
         xlabels = self.currentTimeSliceListToLabels
         colCount = len(xlabels)
         ax = self.figure.add_axes([0.1,0.1,0.85,0.8])
+        self.figure.set_tight_layout(False)
 
         if colCount > 0:
             ax.set_title('各时段回收情况', fontsize='18', fontweight='bold',
@@ -1217,7 +1285,7 @@ class DrawingChart(QtCore.QObject):
                 countData = dataItem[1:]
                 ax.plot(xlabels, countData, lineWidth=1, lineStyle="-", label=dataItem[0], marker='.')
                 for a, b in list(zip(xlabels, dataItem[1:])):
-                    plt.annotate("%s" % b, (a, b), xytext=(-3, 13),
+                    plt.annotate("%s" % b, (a, b), xytext=(-3, 3),
                     ha='left', textcoords='offset points')
             plt.legend(loc=2)
             ax.grid()

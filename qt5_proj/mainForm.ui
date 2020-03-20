@@ -124,8 +124,17 @@
            </item>
            <item>
             <widget class="QCheckBox" name="checkBox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
              <property name="text">
-              <string>半天依半小时区隔生成图表</string>
+              <string>半小时间隔</string>
              </property>
             </widget>
            </item>
