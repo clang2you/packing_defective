@@ -70,7 +70,7 @@ class DbHelper():
             db_conn.close()
         return results
 
-    def GetMonthDataResult(self, startDate, stopDate):
+    def GetMonthDataResult(self, startDate, stopDate, lineName):
         sql = "SELECT DATE_FORMAT(time,'%Y-%m-%d') 日期,SUM(IF(`type`='投料',qty,0)) as '投料', SUM(IF(`type`='包装',qty,0)) as '包装',"
         defList = list(self.cfg_dict["DefReasons"].values())
         for type in defList:
@@ -79,7 +79,7 @@ class DbHelper():
                 sql += temp_sql + ","
             else:
                 sql += temp_sql
-        sql += "FROM history_input where line = '{}' and DATE_FORMAT(time,'%Y%m%d') BETWEEN '{}' and '{}' GROUP BY 日期".format(self.lineName,
+        sql += "FROM history_input where line = '{}' and DATE_FORMAT(time,'%Y%m%d') BETWEEN '{}' and '{}' GROUP BY 日期".format(lineName,
                                                                                                                               startDate, stopDate)
         results = []
         # print(sql)

@@ -86,6 +86,63 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>切换线别：</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox">
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <item>
+          <property name="text">
+           <string>NOS1A</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>NOS1B</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>NOS2A</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>NOS2B</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>ML</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>AL</string>
+          </property>
+         </item>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>

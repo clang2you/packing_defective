@@ -519,6 +519,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         self.dateEdit.setDate(datetime.datetime.now() -
                               dateutil.relativedelta.relativedelta(months=1))
         self.dateEdit_2.setDate(datetime.datetime.now())
+        self.comboBox.currentTextChanged.connect(self.ChangeLineName)
         self.pushButton.clicked.connect(self.ExportToXls)
         self.tableWidget.setEditTriggers(
             QtWidgets.QAbstractItemView.NoEditTriggers)
@@ -539,6 +540,9 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         self.pushButton_3.clicked.connect(self.close)
         self.progressBar.hide()
         self.pushButton_2.clicked.connect(self.GetDbQueryResultDic)
+    
+    def ChangeLineName(self):
+        self.label_2.setText(self.comboBox.currentText())
 
     def ExportToXls(self):
         try:
@@ -570,7 +574,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         try:
             self.tableWidget.clearContents()
             results = self.dbHandler.GetMonthDataResult(self.dateEdit.date().toString(
-                'yyyyMMdd'), self.dateEdit_2.date().toString('yyyyMMdd'))
+                'yyyyMMdd'), self.dateEdit_2.date().toString('yyyyMMdd'), self.label_2.text())
             self.tableWidget.setRowCount(len(results) + 1)
             self.tableWidget.verticalHeader().setHidden(True)
             for j in range(len(results)):
