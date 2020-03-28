@@ -150,12 +150,14 @@ class DbHelper():
         return realtimeData
 
     def GetRealTimeTotals(self):
-        totalDic = {}
+        totalDic = {"投料":"0", "包装": "0", "回收": "0"}
         sql = """select type as 类型, sum(qty) as 数量 from realtime_input where line = '{}' and defType is NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type
         union
         select '回收', sum(qty) as 数量 from realtime_input where line = '{}' and defType is not null and TO_DAYS(time) = TO_DAYS(NOW())""".format(self.lineName, self.lineName)
         for row in self.runQuerySql(sql):
-            totalDic[str(row[0])] = str(row[1])
+            for key in totalDic.keys():
+                if str(row[0]) == key:
+                    totalDic[key] = str(row[1])
         return totalDic
 
     def InsertDailyTargetData(self, data):
