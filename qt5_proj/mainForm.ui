@@ -634,6 +634,40 @@
                  <number>0</number>
                 </property>
                 <item>
+                 <widget class="QComboBox" name="comboBox_4">
+                  <item>
+                   <property name="text">
+                    <string>NOS1A</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>NOS1B</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>NOS2A</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>NOS2B</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>ML</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>AL</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QPushButton" name="pushButton_7">
                   <property name="minimumSize">
                    <size>

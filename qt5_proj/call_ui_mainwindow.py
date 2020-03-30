@@ -734,6 +734,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.setupUi(self)
         if configJson["Line"] != None:
             self.label_12.setText(configJson["Line"]["name"])
+            self.comboBox_4.setCurrentText(configJson["Line"]["name"])
 
         if "Chart" in configJson:
             self.comboBox_3.setCurrentIndex(configJson["Chart"]["time"])
@@ -779,6 +780,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.comboBox_3.currentTextChanged.connect(self.ChangeComboBoxItems)
         self.checkBox.clicked.connect(self.ChangeCheckBoxChecked)
         self.pushButton_5.clicked.connect(self.SaveChartToFile)
+        self.comboBox_4.currentTextChanged.connect(self.ChangeCurrentLineAndRefresh)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
@@ -800,6 +802,21 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.clockTimer = QtCore.QTimer(self)
         self.clockTimer.timeout.connect(self.Showtime)
         self.clockTimer.start(100)
+
+        self.changeLineClockTimer = QtCore.QTimer(self)
+        self.changeLineClockTimer.timeout.connect(self.ChangeLineClockHandler)
+        self.changeLineClockTimer.start(5000)
+    
+    def ChangeCurrentLineAndRefresh(self):
+        global config, configJson
+        configJson["Line"]["name"] = self.comboBox_4.currentText()
+        self.label_12.setText(self.comboBox_4.currentText())
+        config.SaveConfigToJson(configJson)
+        self.RefreshRealtimeData()
+    
+    def ChangeLineClockHandler(self):
+        self.RefreshRealtimeData()
+        self.statusbar.showMessage("更新@" + datetime.datetime.now().strftime("%H:%M:%S"))
     
     def SaveChartToFile(self):
         dateSectionStr = datetime.datetime.now().strftime("%y-%m-%d")
@@ -855,7 +872,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
     def RefreshTabPage3Data(self):
         try:
-            self.page3DataList = self.dbHandler.GetCurrentQcDefData()
+            self.page3DataList = self.dbHandler.GetCurrentQcDefData(configJson["Line"]["name"])
             self.tableWidget_2.setRowCount(len(self.page3DataList))
             for i in range(len(self.page3DataList)):
                 newItem = QTableWidgetItem(self.page3DataList[i][0])
@@ -915,7 +932,8 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
 
     def RefreshTabPage2Data(self):
         try:
-            self.totalDic = self.dbHandler.GetRealTimeTotals()
+            self.totalDic = self.dbHandler.GetRealTimeTotals(configJson["Line"]["name"])
+            # print(self.totalDic)
             self.label_2.setText(
                 self.totalDic["回收"] if self.totalDic["回收"] != 'None' else '0')
             self.label_4.setText(

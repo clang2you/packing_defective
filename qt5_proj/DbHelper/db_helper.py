@@ -149,11 +149,11 @@ class DbHelper():
             realtimeData[str(row[0])] = str(row[1])
         return realtimeData
 
-    def GetRealTimeTotals(self):
+    def GetRealTimeTotals(self,lineName):
         totalDic = {"投料":"0", "包装": "0", "回收": "0"}
         sql = """select type as 类型, sum(qty) as 数量 from realtime_input where line = '{}' and defType is NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type
         union
-        select '回收', sum(qty) as 数量 from realtime_input where line = '{}' and defType is not null and TO_DAYS(time) = TO_DAYS(NOW())""".format(self.lineName, self.lineName)
+        select '回收', sum(qty) as 数量 from realtime_input where line = '{}' and defType is not null and TO_DAYS(time) = TO_DAYS(NOW())""".format(lineName, lineName)
         for row in self.runQuerySql(sql):
             for key in totalDic.keys():
                 if str(row[0]) == key:
@@ -165,14 +165,14 @@ class DbHelper():
             data[0], data[1], data[2])
         self.runNonQuerySql(sql)
 
-    def GetCurrentQcDefData(self):
+    def GetCurrentQcDefData(self, lineName):
         qcDefList = []
         sql = """select type as 不良原因, 
         sum(if(qcPos = '1', qty, 0)) as qc1数量,
         sum(if(qcPos = '2', qty, 0)) as qc2数量,
         sum(if(qcPos = '3', qty, 0)) as qc3数量,
         sum(if(qcPos = '4', qty, 0)) as qc4数量
-        from realtime_input where defType is not null and line = '{}' and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type""".format(self.lineName)
+        from realtime_input where defType is not null and line = '{}' and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type""".format(lineName)
         for row in self.runQuerySql(sql):
             tempList = [str(row[0]), str(row[1]), str(
                 row[2]), str(row[3]), str(row[4])]
