@@ -71,7 +71,7 @@ class DbHelper():
         return results
 
     def GetMonthDataResult(self, startDate, stopDate, lineName):
-        sql = "SELECT DATE_FORMAT(time,'%Y-%m-%d') 日期,SUM(IF(`type`='投料',qty,0)) as '投料', SUM(IF(`type`='包装',qty,0)) as '包装',"
+        sql = "SELECT DATE_FORMAT(time,'%Y-%m-%d') 日期,SUM(IF(`type`='投料',qty,0)) as '投料', SUM(IF(`type`='包装',qty,0)) as '包装', SUM(IF(`type`='FMA',qty,0)) as 'FMA',"
         defList = list(self.cfg_dict["DefReasons"].values())
         for type in defList:
             temp_sql = "SUM(IF(`type`='%s',qty,0)) as '%s'" % (type, type)
@@ -86,16 +86,18 @@ class DbHelper():
         for i in range(2):
             if i > 0:
                 sql = sql.replace('history_input', 'realtime_input')
+            # print(sql)
             for row in self.runQuerySql(sql):
                 resultDic = {}
                 resultDic["日期"] = (datetime.datetime.strptime(
                     row[0], '%Y-%m-%d')).strftime("%m/%d")
                 resultDic["投料"] = row[1]
                 resultDic["包装"] = row[2]
+                resultDic["FMA"] = row[3]
                 defTotal = 0
                 for type in defList:
-                    resultDic[type] = row[defList.index(type) + 3]
-                    defTotal += row[defList.index(type) + 3]
+                    resultDic[type] = row[defList.index(type) + 4]
+                    defTotal += row[defList.index(type) + 4]
                 resultDic["合计"] = defTotal
                 # print(defTotal)
                 # print(row[1])
@@ -107,16 +109,21 @@ class DbHelper():
                     resultDic["回收率"] = "0.0%"
 
                 results.append(resultDic)
+                # print(results)
         return results
 
-    def GetDailyDataResults(self, timeSliceList, isHistory=False):
+    def GetDailyDataResults(self, timeSliceList, lineName,isHistory=False, fma = False):
         sql = "select type as '不良原因',"
         for timeSliceItem in timeSliceList:
             sql += "sum(case when time BETWEEN '" + timeSliceItem[0].strftime(
                 "%Y-%m-%d %H:%M") + "' and '" + timeSliceItem[1].strftime("%Y-%m-%d %H:%M") + "' then qty else 0 end) as '" + timeSliceItem[0].strftime("%H:%M") + " to " + timeSliceItem[1].strftime("%H:%M") + "',"
         sql = sql[:-1]
-        sql += " from {} where line = '{}'  and defType is not null GROUP BY type".format(
-            "history_input" if isHistory else "realtime_input", self.lineName)
+        if fma:
+            sql += " from {} where line = '{}'  and (defType is not null or type = 'FMA') GROUP BY type".format(
+                "history_input" if isHistory else "realtime_input", lineName)
+        else:
+            sql += " from {} where line = '{}'  and defType is not null GROUP BY type".format(
+                "history_input" if isHistory else "realtime_input", lineName) 
         # print(sql)
         results = []
         for row in self.runQuerySql(sql):
@@ -141,16 +148,16 @@ class DbHelper():
             totalDic["不良合计"] = str(row[0]) if row[0] is not None else "0"
         return totalDic
 
-    def GetRealTimeDefDatas(self):
+    def GetRealTimeDefDatas(self, lineName):
         realtimeData = {}
         sql = "select type as '不良原因', sum(qty) as '不良数量' from realtime_input where line = '{}' and defType is not NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type".format(
-            self.lineName)
+            lineName)
         for row in self.runQuerySql(sql):
             realtimeData[str(row[0])] = str(row[1])
         return realtimeData
 
     def GetRealTimeTotals(self,lineName):
-        totalDic = {"投料":"0", "包装": "0", "回收": "0"}
+        totalDic = {"投料":"0", "包装": "0", "回收": "0", "FMA": "0"}
         sql = """select type as 类型, sum(qty) as 数量 from realtime_input where line = '{}' and defType is NULL and TO_DAYS(time) = TO_DAYS(NOW()) GROUP BY type
         union
         select '回收', sum(qty) as 数量 from realtime_input where line = '{}' and defType is not null and TO_DAYS(time) = TO_DAYS(NOW())""".format(lineName, lineName)

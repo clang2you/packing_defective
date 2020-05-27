@@ -22,6 +22,7 @@ import qt5_proj.dbSettings as dbSettings
 import qt5_proj.adminAuthorization as adminAuthorization
 import qt5_proj.userInput as userInput
 import qt5_proj.monthlyDefStasticForm as monthlyDefStasticForm
+import qt5_proj.monthlyCharts as monthlyChartsForm
 import qt5_proj.countAdjustment as countAdjustment
 import qt5_proj.workingTimeSettings as workingTimeSettings
 import qt5_proj.targetSettings as targetSettings
@@ -54,6 +55,12 @@ light_20_font.setFamily("微软雅黑 Light")
 light_20_font.setPointSize(20)
 light_20_font.setBold(False)
 light_20_font.setWeight(50)
+
+light_10_font = QtGui.QFont()
+light_10_font.setFamily("微软雅黑 Light")
+light_10_font.setPointSize(12)
+light_10_font.setBold(False)
+light_10_font.setWeight(50)
 
 # 数据库设定窗口类
 
@@ -438,11 +445,15 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
                 self.totalDic["包装"] if "包装" in self.totalDic.keys() else "0")
             self.lineEdit_3.setText(
                 self.totalDic["不良合计"] if "不良合计" in self.totalDic.keys() else "0")
+            self.lineEdit_4.setText(
+                self.totalDic["FMA"] if "FMA" in self.totalDic.keys() else "0")
+            # if int(self.lineEdit_4.text()) != 0 and int(self.lineEdit.text()) != 0:
             dailyResult = self.dbHandler.GetDailyDataResults(
-                self.timeSliceList, self.isHistory)
+                self.timeSliceList,configJson["Line"]["name"], self.isHistory, True)
             # print(dailyResult)
             listLength = len(dailyResult)
-            self.tableWidget.setRowCount(listLength + 1)
+            # self.tableWidget.setRowCount(listLength + 1)
+            self.tableWidget.setRowCount(listLength)
             for rowIndex in range(len(dailyResult)):
                 subCount = 0
                 rowDataColumnCount = len(dailyResult[rowIndex])
@@ -462,22 +473,22 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
                 newItem = QtWidgets.QTableWidgetItem(str(subCount))
                 newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.tableWidget.setItem(rowIndex, rowDataColumnCount, newItem)
-            for i in range(self.tableWidget.columnCount()):
-                count = 0
-                if i == 0:
-                    newItem = QtWidgets.QTableWidgetItem("合计")
-                    newItem.setTextAlignment(QtCore.Qt.AlignLeft)
-                    self.tableWidget.setItem(
-                        self.tableWidget.rowCount() - 1, i, newItem)
-                else:
-                    for j in range(self.tableWidget.rowCount() - 1):
-                        cell = self.tableWidget.item(j, i)
-                        if cell != None:
-                            count = count + int(cell.text())
-                    newItem = QtWidgets.QTableWidgetItem(str(count))
-                    newItem.setTextAlignment(QtCore.Qt.AlignCenter)
-                    self.tableWidget.setItem(
-                        self.tableWidget.rowCount() - 1, i, newItem)
+            # for i in range(self.tableWidget.columnCount()):
+            #     count = 0
+            #     if i == 0:
+            #         newItem = QtWidgets.QTableWidgetItem("合计")
+            #         newItem.setTextAlignment(QtCore.Qt.AlignLeft)
+            #         self.tableWidget.setItem(
+            #             self.tableWidget.rowCount() - 1, i, newItem)
+            #     else:
+            #         for j in range(self.tableWidget.rowCount() - 1):
+            #             cell = self.tableWidget.item(j, i)
+            #             if cell != None:
+            #                 count = count + int(cell.text())
+            #         newItem = QtWidgets.QTableWidgetItem(str(count))
+            #         newItem.setTextAlignment(QtCore.Qt.AlignCenter)
+            #         self.tableWidget.setItem(
+            #             self.tableWidget.rowCount() - 1, i, newItem)
         except:
             traceback.print_exc()
             self.label_5.setFont(light_14_font)
@@ -512,6 +523,7 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
 
 class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
     def __init__(self, parent=None):
+        # global configJson
         super(MonthlyDefStasticForm, self).__init__(parent)
         self.setupUi(self)
         self.tableWidget.horizontalHeader().setStyleSheet(
@@ -519,13 +531,14 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         self.dateEdit.setDate(datetime.datetime.now() -
                               dateutil.relativedelta.relativedelta(months=1))
         self.dateEdit_2.setDate(datetime.datetime.now())
-        self.comboBox.currentTextChanged.connect(self.ChangeLineName)
         self.pushButton.clicked.connect(self.ExportToXls)
         self.tableWidget.setEditTriggers(
             QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.pushButton_4.clicked.connect(self.CreateChartsDisplay)
         if configJson["Line"] != None:
             self.label_2.setText(configJson["Line"]["name"])
             self.label_2.setStyleSheet("QLabel{color:darkblue}")
+            self.comboBox.setCurrentText(configJson["Line"]["name"])
         else:
             self.label_2.setText("未配置")
             self.label_2.setStyleSheet("QLabel{color:red}")
@@ -538,11 +551,18 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
             self.label_5.setText("配置文件未设定！")
             self.label_5.setStyleSheet("QLabel{color:red}")
         self.pushButton_3.clicked.connect(self.close)
-        self.progressBar.hide()
+        # self.progressBar.hide()
         self.pushButton_2.clicked.connect(self.GetDbQueryResultDic)
+        self.comboBox.currentTextChanged.connect(self.ChangeLineName)
     
     def ChangeLineName(self):
         self.label_2.setText(self.comboBox.currentText())
+        self.GetDbQueryResultDic()
+    
+    def CreateChartsDisplay(self):
+        if self.results != None:
+            self.chartsForm = MonthlyChartsDisplay(self, datadic=self.results)
+            self.chartsForm.exec()
 
     def ExportToXls(self):
         try:
@@ -573,16 +593,17 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         self.label_5.setText("")
         try:
             self.tableWidget.clearContents()
-            results = self.dbHandler.GetMonthDataResult(self.dateEdit.date().toString(
+            self.results = self.dbHandler.GetMonthDataResult(self.dateEdit.date().toString(
                 'yyyyMMdd'), self.dateEdit_2.date().toString('yyyyMMdd'), self.label_2.text())
-            self.tableWidget.setRowCount(len(results) + 1)
+            # print(results)
+            self.tableWidget.setRowCount(len(self.results) + 1)
             self.tableWidget.verticalHeader().setHidden(True)
-            for j in range(len(results)):
-                for keyName in results[j].keys():
+            for j in range(len(self.results)):
+                for keyName in self.results[j].keys():
                     for i in range(self.tableWidget.columnCount()):
                         if keyName == self.tableWidget.horizontalHeaderItem(i).text():
                             newItem = QTableWidgetItem(
-                                str(results[j][keyName]))
+                                str(self.results[j][keyName]))
                             newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                             self.tableWidget.setItem(j, i, newItem)
                             break
@@ -614,6 +635,8 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
                     newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                     self.tableWidget.setItem(
                         self.tableWidget.rowCount() - 1, i, newItem)
+            # print(self.results)
+            self.pushButton_4.setEnabled(True)
         except:
             traceback.print_exc()
             self.label_5.setFont(light_20_font)
@@ -621,12 +644,12 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
             self.label_5.setStyleSheet("QLabel{color:red}")
 
     def SetTableWidgetColumns(self):
-        self.tableWidget.setColumnCount(12)
+        self.tableWidget.setColumnCount(13)
         itemList = ['日期']
         for defName in list(configJson["DefReasons"].values()):
             itemList.append(defName)
-        itemList.extend(['合计', '投料', '回收率', '包装'])
-        for i in range(12):
+        itemList.extend(['合计', '投料', '回收率', '包装', 'FMA'])
+        for i in range(13):
             item = QtWidgets.QTableWidgetItem(itemList[i])
             item.setFont(light_14_font)
             self.tableWidget.setHorizontalHeaderItem(i, item)
@@ -640,6 +663,114 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
             else:
                 self.tableWidget.horizontalHeader().setSectionResizeMode(
                     header_item_index, QtWidgets.QHeaderView.ResizeToContents)
+
+# 月统计数据图表显示
+
+class MonthlyChartsDisplay(QDialog):
+    
+    def __init__(self, parent=None, datadic=None):
+        super(MonthlyChartsDisplay, self).__init__(parent)
+        self.figure = plt.figure()
+        # self.pieFigure = plt.figure()
+        self.canvas = FigureCanvas(self.figure)
+        # self.pieCanvas = FigureCanvas(self.pieFigure)
+        self.child = monthlyChartsForm.Ui_Dialog()
+        self.child.setupUi(self)
+        self.child.tabWidget.currentChanged.connect(self.RedrawCharts)
+        if datadic != None:
+            self.dataDic = datadic
+            self.SetXlabels()
+            self.CreateLineCharts()
+            self.child.horizontalLayout.addWidget(self.canvas)
+            # self.CreatePieCharts()
+            # self.child.verticalLayout_2.addWidget(self.canvas)
+            # self.CreateLineCharts()
+            # self.child.verticalLayout.addWidget(self.canvas)
+            # self.CreatePieCharts()
+            # self.SetXlabels()
+    
+    def RedrawCharts(self):
+        if self.child.tabWidget.currentIndex() == 0:
+            self.child.horizontalLayout.removeWidget(self.canvas)
+            self.CreateLineCharts()
+            self.child.horizontalLayout.addWidget(self.canvas)
+        else:
+            self.CreatePieCharts()
+            self.child.verticalLayout.addWidget(self.canvas)
+        # print(self.child.tabWidget.currentIndex)
+
+    def CreatePieCharts(self):
+        plt.cla()
+        plt.clf()
+        # plt.title('不良类型占比', fontsize='18', fontweight='bold',
+        #              color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
+        pieDataList = []
+        labels = []
+        explode = []
+        for item in self.pieData.keys():
+            labels.append(item)
+            pieDataList.append(self.pieData[item])
+            explode.append(0.04)
+        plt.pie(pieDataList,labels=labels,startangle=90, autopct = '%3.2f%%',explode= tuple(explode),pctdistance=0.9)
+        plt.axis('equal')
+        plt.legend(loc=2)
+        self.canvas.draw()
+    
+    def SetXlabels(self):
+        self.xlabels = []
+        self.data = []
+        self.pieData = {}
+        self.unexceptType = ["投料", "包装", "合计", "FMA"]
+        for dic in self.dataDic:
+            # count = 0
+            for key, value in dic.items():
+                if key == '日期':
+                    self.xlabels.append(value)
+                    continue
+                if key in self.unexceptType:
+                    continue
+                else:
+                    # if key in self.data.keys():
+                    #     self.data[key] = self.data[key] + int(value)
+                    # else:
+                    #     self.data[key] = int(value)
+                    # count += int(value)
+                    if key == "回收率":
+                        value = value[:-1]
+                        self.data.append(float(value))
+                        continue                    
+                    if key in self.pieData.keys():
+                        self.pieData[key]  = self.pieData[key] + int(value)
+                    else:
+                        self.pieData[key] = int(value)
+            # self.data.append(count)
+        print(self.data)
+        # print(self.xlabels)
+        
+
+    def CreateLineCharts(self):
+        plt.cla()
+        plt.clf()
+        # self.SetXlabels()
+        colCount = len(self.xlabels)
+        ax = self.figure.add_axes([0.1,0.1,0.85,0.8])
+        self.figure.set_tight_layout(False)
+
+        if colCount > 0:
+            ax.set_title('月回收率统计', fontsize='18', fontweight='bold',
+                     color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
+            ax.set_ylabel('回收率')
+            # countData = dataItem
+            ax.plot(self.xlabels, self.data, lineWidth=1, lineStyle="-", label="每日回收比率", marker='.')
+            for a, b in list(zip(self.xlabels, self.data)):
+                plt.annotate("%3.0f%%" % b, (a, b), xytext=(-3,3),
+                ha='left', textcoords='offset points')
+            plt.legend(loc=2)
+            plt.xticks(rotation="45")
+            # ax.grid()
+            ax.set_xticklabels(self.xlabels)
+        self.canvas.draw()
+
 
 # 数量更正窗口类
 
@@ -665,7 +796,7 @@ class CountAdjustmentWindow(QDialog):
             self.child.label_2.setText(configJson["Line"]["name"])
             self.child.label_10.setText(
                 datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            totalDic = self.dbHandler.GetRealTimeTotals()
+            totalDic = self.dbHandler.GetRealTimeTotals(configJson["Line"]["name"])
             self.child.label_4.setText(totalDic["投料"])
             self.child.label_7.setText(totalDic["包装"])
         except:
@@ -760,8 +891,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.actionSectionSet.triggered.connect(
             self.CreateSectionSettingsWindow)
         # 自定义工作时间段设定窗口，现在已根据起止时间自动分片，故取消此界面
-        # self.actionWorkingTimeSet_2.triggered.connect(
-        #     self.CreateWorkingTimeSetWindow)
         self.actionWorkRestTimeSet.triggered.connect(
             self.CreateWorkRestTimeSettingWindow)
         self.actionInfoSet.triggered.connect(self.CreateLineSettingsWindow)
@@ -769,7 +898,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.pushButton_4.clicked.connect(self.CreateDailyStasticForm)
         self.pushButton_2.clicked.connect(self.CreateMonthlyStasticForm)
         # 缴库量在现有系统上并无意义，故暂时不启用，后期如有需求取消注释即可加载缴库量输入界面
-        # self.pushButton_3.clicked.connect(self.CreateUserInputWindow)
         self.pushButton_3.hide()
         self.pushButton.clicked.connect(self.CreateCountAdjustmentWindow)
         self.pushButton_7.clicked.connect(self.CreateTargetSettingWindow)
@@ -940,6 +1068,16 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 self.totalDic["投料"] if "投料" in self.totalDic.keys() else '0')
             self.label_9.setText(
                 self.totalDic["包装"] if "包装" in self.totalDic.keys() else '0')
+            self.label_16.setText(self.totalDic["FMA"] if "FMA" in self.totalDic.keys() else '0')
+            fmaRate = 0
+            if float(self.label_16.text()) > 0:
+                fmaRate = float(self.label_16.text()) / float(self.label_4.text()) * 100
+            fmaRate = "%.2f" % fmaRate + "%"
+            # print(fmaRate)
+            # self.label_16.setText(self.label_16.text() + "  " + fmaRate)
+            # self.label_15.hide()
+            # self.label_7.hide()
+            self.label_17.setText(fmaRate)
             totalInput = float(
                 self.totalDic["投料"] if "投料" in self.totalDic.keys() else '0')
             totalDef = float(
@@ -950,7 +1088,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             else:
                 self.label_6.setText("0.00%")
             self.tableWidget.clearContents()
-            realtimeData = self.dbHandler.GetRealTimeDefDatas()
+            realtimeData = self.dbHandler.GetRealTimeDefDatas(configJson["Line"]["name"])
             self.tableWidget.setRowCount(len(realtimeData.keys()))
             for id in range(len(realtimeData.keys())):
                 newItem = QTableWidgetItem(str(id + 1))
@@ -1096,27 +1234,43 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         self.label_9.setStyleSheet("QLabel{color:green}")
         self.label_7.setStyleSheet("QLabel{color:purple}")
         self.label_15.setStyleSheet("QLabel{color:purple}")
+        self.label_16.setStyleSheet("QLabel{color:orange}")
+        self.label_17.setStyleSheet("QLabel{color:purple}")
         # 从系统分辨率中提取桌面高度
         height = QApplication.desktop().screenGeometry().height()
         # 高度小于 1000，字体及高度都修改为20, 修改 frame 宽度为 150，高度为 530
         if height <= 1000:
-            self.resize(1000, 700)
-            self.label_7.setMaximumHeight(28)
-            self.label_15.setMaximumHeight(28)
-            self.frame.setMinimumSize(QtCore.QSize(200, 500))
-            self.frame.setMaximumWidth(200)
+            self.resize(1000, 720)
+            # self.frame_7.setMaximumSize(QtCore.QSize(150,130))
+            self.frame_14.setMinimumHeight(35)
+            self.frame_14.setMaximumHeight(20)
+            self.frame_15.setMinimumHeight(32)
+            self.frame_15.setMaximumHeight(20)
+            self.frame_16.setMinimumHeight(32)
+            self.frame_16.setMaximumHeight(20)
+            self.comboBox_4.setFont(light_10_font)
+            self.pushButton.setFont(light_10_font)
+            self.pushButton_2.setFont(light_10_font)
+            self.pushButton_3.setFont(light_10_font)
+            self.pushButton_4.setFont(light_10_font)
+            self.pushButton_7.setFont(light_10_font)
+            # self.
+            # self.label_7.setMaximumHeight(23)
+            # self.label_15.setMaximumHeight(23)
+            self.frame.setMinimumSize(QtCore.QSize(270, 510))
+            # self.frame.setMaximumWidth(100)
             labels = ('label_2', 'label_4', 'label_6',
-                      'label_7', 'label_9', 'label_15')
+                      'label_7', 'label_9', 'label_15', 'label_16', 'label_17')
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
                 label.setFont(bold_20_font)
-                label.setMinimumSize(QtCore.QSize(16777215, 28))
-            labels = ('label', 'label_3', 'label_5', 'label_8')
+                label.setMinimumSize(QtCore.QSize(16777215, 30))
+            labels = ('label', 'label_3', 'label_5', 'label_8', 'label_14', 'label_18')
             # self.label_15.setVisible(False)
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
                 label.setFont(light_20_font)
-                label.setMinimumSize(QtCore.QSize(16777215, 28))
+                label.setMinimumSize(QtCore.QSize(16777215, 30))
 
 
 class TimeManipulation():
@@ -1244,7 +1398,7 @@ class DrawingChart(QtCore.QObject):
             self.currentTimeSliceList = self.timeOpt.OnCurrentTimeRanges(
                 isHalfHour) if isHalfDay == False else self.timeOpt.OnCurrentTimeRanges(isHalfHour, isHalfDay)
             self.currentData = self.dbHandler.GetDailyDataResults(
-                self.currentTimeSliceList) 
+                self.currentTimeSliceList, configJson["Line"]["name"]) 
             if section != None:
                 sectionData = []
                 for item in self.currentData:
@@ -1268,6 +1422,7 @@ class DrawingChart(QtCore.QObject):
         ax = self.figure.add_subplot(111)
         xlabels = self.currentTimeSliceListToLabels
         dataList = self.currentData
+        # print(dataList)
         colCount = len(xlabels)
         if colCount > 0:
             self.figure.set_tight_layout(True)
@@ -1296,7 +1451,7 @@ class DrawingChart(QtCore.QObject):
                         [0, 0.26, 0.52],[0, 0.25, 0.5],
                         [0, 0.26, 0.52],[0, 0.25, 0.5], 
                         [0, 0.26, 0.54],[0, 0.25, 0.5]]    
-            if len(dataList)  < 6:
+            if len(dataList)  <= 3:
                 x_offset = col_three_x_offset
                 for f_size in fontSize:
                     if f_size < 9:
@@ -1312,6 +1467,8 @@ class DrawingChart(QtCore.QObject):
                     plt.bar(x + addWidth, dataItem, width=width, label=labelText)
                 for a, b in zip(x, dataItem):
                     if b > 0:
+                        # print(colCount -1, "+", data_index)
+                        # print(x_offset)
                         plt.text(a + x_offset[colCount -1][dataList.index(dataItem)], float(b), '%.0f' %
                                 b, ha='center', va='bottom', fontsize=fontSize[colCount - 1])
                 width_times += 1
