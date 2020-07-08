@@ -1434,6 +1434,7 @@ class DrawingChart(QtCore.QObject):
             widthList = [0.25, 0.25, 0.4, 0.5, 0.65, 0.75, 0.95, 1.08, 1.22, 1.25]
             if len(dataList) < 6:
                 widthList = [x * 2 for x in widthList]
+            print(xlabels)
             total_width, n = widthList[colCount -1 ], colCount
             width = total_width / n
             x = x - (total_width - width) / 2
