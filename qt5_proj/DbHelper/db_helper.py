@@ -113,17 +113,34 @@ class DbHelper():
         return results
 
     def GetDailyDataResults(self, timeSliceList, lineName,isHistory=False, fma = False):
-        sql = "select type as '不良原因',"
+        sql = ""
+        # sql = "select type as '不良原因',"
+        # for timeSliceItem in timeSliceList:
+        #     sql += "sum(case when time BETWEEN '" + timeSliceItem[0].strftime(
+        #         "%Y-%m-%d %H:%M") + "' and '" + timeSliceItem[1].strftime("%Y-%m-%d %H:%M") + "' then qty else 0 end) as '" + timeSliceItem[0].strftime("%H:%M") + " to " + timeSliceItem[1].strftime("%H:%M") + "',"
+        # sql = sql[:-1]
+        # if fma:
+        #     sql += " from {} where line = '{}'  and (defType is not null or type = 'FMA') GROUP BY type".format(
+        #         "history_input" if isHistory else "realtime_input", lineName)
+        # else:
+        #     sql += " from {} where line = '{}'  and defType is not null GROUP BY type".format(
+        #         "history_input" if isHistory else "realtime_input", lineName) 
+        if fma:
+            sql = "select concat(type, '-QC', qcPos),"
+            for timeSliceItem in timeSliceList:
+                sql += "sum(case when time BETWEEN '" + timeSliceItem[0].strftime(
+                    "%Y-%m-%d %H:%M") + "' and '" + timeSliceItem[1].strftime("%Y-%m-%d %H:%M") + "' then qty else 0 end) as '" + timeSliceItem[0].strftime("%H:%M") + " to " + timeSliceItem[1].strftime("%H:%M") + "',"
+            sql = sql[:-1]     
+            # sql += " from {} where line = '{}'  and type = 'FMA'".format("history_input" if isHistory else "realtime_input", lineName) + " GROUP BY type, qcPos HAVING sum(qty) > 0"
+            sql += " from {} where line = '{}'  and type = 'FMA' and time between '".format("history_input" if isHistory else "realtime_input", lineName) + timeSliceList[0][0].strftime("%Y-%m-%d") + " 01:00' and '" + timeSliceList[0][0].strftime("%Y-%m-%d") + " 23:00'" + " GROUP BY type, qcPos HAVING sum(qty) > 0"
+            sql += '\nUNION ALL'
+        sql += "\nselect type as '不良原因',"
         for timeSliceItem in timeSliceList:
             sql += "sum(case when time BETWEEN '" + timeSliceItem[0].strftime(
                 "%Y-%m-%d %H:%M") + "' and '" + timeSliceItem[1].strftime("%Y-%m-%d %H:%M") + "' then qty else 0 end) as '" + timeSliceItem[0].strftime("%H:%M") + " to " + timeSliceItem[1].strftime("%H:%M") + "',"
         sql = sql[:-1]
-        if fma:
-            sql += " from {} where line = '{}'  and (defType is not null or type = 'FMA') GROUP BY type".format(
-                "history_input" if isHistory else "realtime_input", lineName)
-        else:
-            sql += " from {} where line = '{}'  and defType is not null GROUP BY type".format(
-                "history_input" if isHistory else "realtime_input", lineName) 
+        sql += " from {} where line = '{}'  and defType is not null GROUP BY type".format(
+            "history_input" if isHistory else "realtime_input", lineName) 
         # print(sql)
         results = []
         for row in self.runQuerySql(sql):

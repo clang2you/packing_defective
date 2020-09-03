@@ -58,6 +58,11 @@
              <height>30</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <family>微软雅黑</family>
+            </font>
+           </property>
            <property name="text">
             <string>服务器地址：</string>
            </property>
@@ -76,6 +81,11 @@
              <width>170</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>微软雅黑</family>
+            </font>
            </property>
            <property name="autoFillBackground">
             <bool>false</bool>
@@ -114,6 +124,11 @@
              <height>30</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <family>微软雅黑</family>
+            </font>
+           </property>
            <property name="text">
             <string>数据库用户名：</string>
            </property>
@@ -132,6 +147,11 @@
              <width>170</width>
              <height>30</height>
             </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>微软雅黑</family>
+            </font>
            </property>
            <property name="dragEnabled">
             <bool>false</bool>
@@ -167,6 +187,11 @@
              <height>30</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <family>微软雅黑</family>
+            </font>
+           </property>
            <property name="text">
             <string>用户密码：</string>
            </property>
@@ -185,6 +210,11 @@
              <width>170</width>
              <height>30</height>
             </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>微软雅黑</family>
+            </font>
            </property>
            <property name="echoMode">
             <enum>QLineEdit::Password</enum>
@@ -220,6 +250,11 @@
              <height>30</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <family>微软雅黑</family>
+            </font>
+           </property>
            <property name="text">
             <string>数据库名称：</string>
            </property>
@@ -238,6 +273,11 @@
              <width>170</width>
              <height>30</height>
             </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>微软雅黑</family>
+            </font>
            </property>
            <property name="readOnly">
             <bool>true</bool>
@@ -279,6 +319,11 @@
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QPushButton" name="pushButton_3">
+        <property name="font">
+         <font>
+          <family>微软雅黑</family>
+         </font>
+        </property>
         <property name="text">
          <string>修改设定</string>
         </property>
@@ -289,6 +334,11 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
+        <property name="font">
+         <font>
+          <family>微软雅黑</family>
+         </font>
+        </property>
         <property name="text">
          <string>保存设定</string>
         </property>
@@ -296,6 +346,11 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_2">
+        <property name="font">
+         <font>
+          <family>微软雅黑</family>
+         </font>
+        </property>
         <property name="text">
          <string>关闭</string>
         </property>

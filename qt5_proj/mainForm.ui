@@ -13,6 +13,13 @@
     <height>927</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>微软雅黑</family>
+    <weight>50</weight>
+    <bold>false</bold>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>包装线回收率统计看板</string>
   </property>
@@ -55,8 +62,10 @@
      <widget class="QTabWidget" name="tabWidget">
       <property name="font">
        <font>
-        <family>微软雅黑 Light</family>
+        <family>微软雅黑</family>
         <pointsize>14</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="currentIndex">
@@ -256,8 +265,10 @@
          <widget class="QTableWidget" name="tableWidget">
           <property name="font">
            <font>
-            <family>微软雅黑 Light</family>
+            <family>微软雅黑</family>
             <pointsize>20</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
            </font>
           </property>
           <attribute name="horizontalHeaderCascadingSectionResizes">
@@ -347,6 +358,14 @@
                <height>60</height>
               </size>
              </property>
+             <property name="font">
+              <font>
+               <family>微软雅黑</family>
+               <pointsize>14</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -370,7 +389,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>微软雅黑 Light</family>
+                  <family>微软雅黑</family>
                   <pointsize>30</pointsize>
                   <weight>50</weight>
                   <bold>false</bold>
@@ -451,7 +470,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>微软雅黑 Light</family>
+                  <family>微软雅黑</family>
                   <pointsize>30</pointsize>
                   <weight>50</weight>
                   <bold>false</bold>
@@ -532,7 +551,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>微软雅黑 Light</family>
+                  <family>微软雅黑</family>
                   <pointsize>30</pointsize>
                   <weight>50</weight>
                   <bold>false</bold>
@@ -613,7 +632,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>微软雅黑 Light</family>
+                  <family>微软雅黑</family>
                   <pointsize>30</pointsize>
                   <weight>50</weight>
                   <bold>false</bold>
@@ -688,7 +707,10 @@
                 </property>
                 <property name="font">
                  <font>
+                  <family>微软雅黑</family>
                   <pointsize>30</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="text">
@@ -748,7 +770,10 @@
                <widget class="QLabel" name="label_18">
                 <property name="font">
                  <font>
+                  <family>微软雅黑</family>
                   <pointsize>30</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="text">
@@ -904,6 +929,14 @@
                   <height>30</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <family>微软雅黑</family>
+                  <pointsize>14</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                 </font>
+                </property>
                 <item>
                  <property name="text">
                   <string>NOS1A</string>
@@ -946,8 +979,10 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>Microsoft YaHei UI Light</family>
+                  <family>微软雅黑</family>
                   <pointsize>14</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -968,8 +1003,10 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>Microsoft YaHei UI Light</family>
+                  <family>微软雅黑</family>
                   <pointsize>14</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1032,8 +1069,10 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>Microsoft YaHei UI Light</family>
+                  <family>微软雅黑</family>
                   <pointsize>14</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1090,8 +1129,10 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>Microsoft YaHei UI Light</family>
+                  <family>微软雅黑</family>
                   <pointsize>14</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1112,8 +1153,10 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>Microsoft YaHei UI Light</family>
+                  <family>微软雅黑</family>
                   <pointsize>14</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1184,7 +1227,10 @@
             <widget class="QLabel" name="label_11">
              <property name="font">
               <font>
+               <family>微软雅黑</family>
                <pointsize>20</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
               </font>
              </property>
              <property name="text">
@@ -1268,8 +1314,10 @@
             <widget class="QTableWidget" name="tableWidget_2">
              <property name="font">
               <font>
-               <family>微软雅黑 Light</family>
+               <family>微软雅黑</family>
                <pointsize>20</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
               </font>
              </property>
              <column>
@@ -1351,7 +1399,10 @@
             <widget class="QPushButton" name="pushButton_6">
              <property name="font">
               <font>
+               <family>微软雅黑</family>
                <pointsize>14</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
               </font>
              </property>
              <property name="text">
@@ -1395,7 +1446,16 @@
    <addaction name="menu"/>
    <addaction name="menu_3"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+  </widget>
   <action name="actionDbSet">
    <property name="text">
     <string>数据库服务器设置</string>

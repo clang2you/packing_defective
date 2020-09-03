@@ -13,8 +13,12 @@ qt5_proj/dbSettings.py
 qt5_proj/dbSettings.ui
 qt5_proj/lineSettings.py
 qt5_proj/lineSettings.ui
+qt5_proj/line_chart_72px_1223234_easyicon.net.ico
+qt5_proj/mainForm - backup.ui
 qt5_proj/mainForm.py
 qt5_proj/mainForm.ui
+qt5_proj/monthlyCharts.py
+qt5_proj/monthlyCharts.ui
 qt5_proj/monthlyDefStasticForm.py
 qt5_proj/monthlyDefStasticForm.ui
 qt5_proj/sectionSettings.py

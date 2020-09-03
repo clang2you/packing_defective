@@ -5,7 +5,7 @@ import dateutil
 import pandas as pd
 import numpy as np
 import traceback
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QWidget, QMessageBox
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QTableWidget, QProgressBar, QLineEdit, QComboBox, QFrame, QTableWidgetItem
 import matplotlib
@@ -18,7 +18,7 @@ import qt5_proj.mainForm as mainForm
 import qt5_proj.ConfigHelper.config_helper as config_mod
 import qt5_proj.sectionSettings as sectionSettings
 import qt5_proj.dailyDefStasticForm as dailyDefStasticForm
-import qt5_proj.dbSettings as dbSettings
+import qt5_proj.Ui_dbSettings as dbSettings
 import qt5_proj.adminAuthorization as adminAuthorization
 import qt5_proj.userInput as userInput
 import qt5_proj.monthlyDefStasticForm as monthlyDefStasticForm
@@ -30,6 +30,7 @@ import qt5_proj.workRestTimeSettings as workRestTimeSettings
 import qt5_proj.lineSettings as lineSettings
 import qt5_proj.ZMQHelper.zeromqHelper as mqHelper
 import qt5_proj.xlsHelper.xlsHelper as exportHelper
+import qt5_proj.Ui_monthlyChartSettings as monthlyChartSettings
 import sip
 
 matplotlib.use("Qt5Agg")
@@ -40,7 +41,7 @@ configJson = config.cfg_dict
 
 # 三种字体 全局
 light_14_font = QtGui.QFont()
-light_14_font.setFamily("微软雅黑 Light")
+light_14_font.setFamily("微软雅黑")
 light_14_font.setPointSize(14)
 light_14_font.setWeight(50)
 
@@ -51,13 +52,13 @@ bold_20_font.setBold(True)
 bold_20_font.setWeight(50)
 
 light_20_font = QtGui.QFont()
-light_20_font.setFamily("微软雅黑 Light")
+light_20_font.setFamily("微软雅黑")
 light_20_font.setPointSize(20)
 light_20_font.setBold(False)
 light_20_font.setWeight(50)
 
 light_10_font = QtGui.QFont()
-light_10_font.setFamily("微软雅黑 Light")
+light_10_font.setFamily("微软雅黑")
 light_10_font.setPointSize(12)
 light_10_font.setBold(False)
 light_10_font.setWeight(50)
@@ -117,7 +118,7 @@ class DbSettingsWindow(QDialog):
         self.passwordForm.child.lineEdit.editingFinished.connect(
             lambda: self.HandlePassword(self.passwordForm.child.lineEdit.text()))
         self.passwordForm.exec()
-
+    
     def HandlePassword(self, password):
         try:
             if password == configJson["Admin"]["password"]:
@@ -389,7 +390,7 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
             traceback.print_exc()
             self.label_10.setText("分割时间段出错,\n请检查工作时段配置！")
             self.label_10.setStyleSheet("QLabel{color:red}")
-            self.label_10.setFont(light_14_font)
+            # self.label_10.setFont(light_14_font)
 
     def SetTableWidgetWidth(self):
         for header_item_index in range(self.tableWidget.columnCount()):
@@ -473,25 +474,9 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
                 newItem = QtWidgets.QTableWidgetItem(str(subCount))
                 newItem.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.tableWidget.setItem(rowIndex, rowDataColumnCount, newItem)
-            # for i in range(self.tableWidget.columnCount()):
-            #     count = 0
-            #     if i == 0:
-            #         newItem = QtWidgets.QTableWidgetItem("合计")
-            #         newItem.setTextAlignment(QtCore.Qt.AlignLeft)
-            #         self.tableWidget.setItem(
-            #             self.tableWidget.rowCount() - 1, i, newItem)
-            #     else:
-            #         for j in range(self.tableWidget.rowCount() - 1):
-            #             cell = self.tableWidget.item(j, i)
-            #             if cell != None:
-            #                 count = count + int(cell.text())
-            #         newItem = QtWidgets.QTableWidgetItem(str(count))
-            #         newItem.setTextAlignment(QtCore.Qt.AlignCenter)
-            #         self.tableWidget.setItem(
-            #             self.tableWidget.rowCount() - 1, i, newItem)
         except:
             traceback.print_exc()
-            self.label_5.setFont(light_14_font)
+            # self.label_5.setFont(light_14_font)
             self.label_5.setText("出错，无法连接数据库\n请联系 IT 处理！")
             self.label_5.setStyleSheet("QLabel{color:red}")
 
@@ -508,14 +493,14 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
                         self, configJson["Line"]["name"] + "日不良统计@" + dateSectionStr, True)
                     self.label_10.setStyleSheet("QLabel{color:green}")
                     self.label_10.setText("日不良记录导出成功")
-                    self.label_10.setFont(light_20_font)
+                    # self.label_10.setFont(light_20_font)
             else:
-                self.label_10.setFont(light_14_font)
+                # self.label_10.setFont(light_14_font)
                 self.label_10.setStyleSheet("QLabel{color:blue}")
                 self.label_10.setText('无数据，请先点击“查询”\n将结果导出')
         except:
             traceback.print_exc()
-            self.label_10.setFont(light_14_font)
+            # self.label_10.setFont(light_14_font)
             self.label_10.setStyleSheet("QLabel{color:red}")
             self.label_10.setText('数据导出失败，\n请重试或联系 IT 处理')
 # 月不良统计窗口类
@@ -554,7 +539,12 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
         # self.progressBar.hide()
         self.pushButton_2.clicked.connect(self.GetDbQueryResultDic)
         self.comboBox.currentTextChanged.connect(self.ChangeLineName)
+        self.pushButton_5.clicked.connect(self.OpenMonthlyChartSettingsWindow)
     
+    def OpenMonthlyChartSettingsWindow(self):
+        monthlySettingWindow = MonthlyChartSettingsForm(self)
+        monthlySettingWindow.exec()
+
     def ChangeLineName(self):
         self.label_2.setText(self.comboBox.currentText())
         self.GetDbQueryResultDic()
@@ -680,24 +670,67 @@ class MonthlyChartsDisplay(QDialog):
         if datadic != None:
             self.dataDic = datadic
             self.SetXlabels()
+            self.GetFMAData()
             self.CreateLineCharts()
-            self.child.horizontalLayout.addWidget(self.canvas)
-            # self.CreatePieCharts()
-            # self.child.verticalLayout_2.addWidget(self.canvas)
-            # self.CreateLineCharts()
-            # self.child.verticalLayout.addWidget(self.canvas)
-            # self.CreatePieCharts()
-            # self.SetXlabels()
+            self.child.horizontalLayout_2.addWidget(self.canvas)
+            print(self.FMAData)
     
     def RedrawCharts(self):
         if self.child.tabWidget.currentIndex() == 0:
-            self.child.horizontalLayout.removeWidget(self.canvas)
+            self.child.horizontalLayout_2.removeWidget(self.canvas)
             self.CreateLineCharts()
-            self.child.horizontalLayout.addWidget(self.canvas)
-        else:
+            self.child.horizontalLayout_2.addWidget(self.canvas)
+        elif self.child.tabWidget.currentIndex() == 2:
             self.CreatePieCharts()
             self.child.verticalLayout.addWidget(self.canvas)
+        else:
+            self.CreateFMALineChart()
+            self.child.horizontalLayout_4.addWidget(self.canvas)
         # print(self.child.tabWidget.currentIndex)
+    
+    def CreateFMALineChart(self):
+        plt.cla()
+        plt.clf()
+        # self.SetXlabels()
+        colCount = len(self.xlabels)
+        self.standard_line = []
+        for x in range(colCount):
+            if x < colCount:
+                self.standard_line.append(15)
+        ax = self.figure.add_axes([0.1,0.1,0.85,0.8])
+        ax.set_ylim([5, 30])
+        self.figure.set_tight_layout(False)
+
+        if colCount > 0:
+            ax.set_title('FMA 不良月统计', fontsize='18', fontweight='bold',
+                     color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
+            ax.set_ylabel('不良率')
+            # countData = dataItem
+            ax.plot(self.xlabels, self.FMAData, lineWidth=1, lineStyle="-", label="每日 FMA 不良比率", marker='.')
+            for a, b in list(zip(self.xlabels, self.FMAData)):
+                plt.annotate("%3.0f%%" % b, (a, b), xytext=(-3,3),
+                ha='left', textcoords='offset points')
+            ax.plot(self.xlabels, self.standard_line, label="FMA 不良率目标")
+            plt.legend(loc=2)
+            plt.xticks(rotation="45")
+            # ax.grid()
+            ax.set_xticklabels(self.xlabels)
+        self.canvas.draw()
+    
+    def GetFMAData(self):
+        self.FMAData = []
+        for dic in self.dataDic:
+            fmaCount = 0
+            totalInput = 0
+            for key, value in dic.items():
+                if key == '日期':
+                    continue
+                if key == 'FMA':
+                    fmaCount = int(value)
+                if key == '投料':
+                    totalInput = int(value)
+            if fmaCount > 0 and totalInput > 0:
+                self.FMAData.append(round((float(fmaCount) / float(totalInput) * 100),2))
 
     def CreatePieCharts(self):
         plt.cla()
@@ -744,7 +777,7 @@ class MonthlyChartsDisplay(QDialog):
                     else:
                         self.pieData[key] = int(value)
             # self.data.append(count)
-        print(self.data)
+        # print(self.data)
         # print(self.xlabels)
         
 
@@ -754,22 +787,45 @@ class MonthlyChartsDisplay(QDialog):
         # self.SetXlabels()
         colCount = len(self.xlabels)
         ax = self.figure.add_axes([0.1,0.1,0.85,0.8])
+        ax.set_ylim([10, 50])
         self.figure.set_tight_layout(False)
+        self.standard_line = []
+        for x in range(colCount):
+            if x < colCount:
+                self.standard_line.append(30)
 
         if colCount > 0:
             ax.set_title('月回收率统计', fontsize='18', fontweight='bold',
                      color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
             ax.set_ylabel('回收率')
             # countData = dataItem
-            ax.plot(self.xlabels, self.data, lineWidth=1, lineStyle="-", label="每日回收比率", marker='.')
+            ax.plot(self.xlabels, self.data, lineWidth=1, lineStyle="-", label="日回收比率", marker='.')
             for a, b in list(zip(self.xlabels, self.data)):
                 plt.annotate("%3.0f%%" % b, (a, b), xytext=(-3,3),
                 ha='left', textcoords='offset points')
+            ax.plot(self.xlabels, self.standard_line, label="包装回收率目标")
             plt.legend(loc=2)
             plt.xticks(rotation="45")
             # ax.grid()
             ax.set_xticklabels(self.xlabels)
         self.canvas.draw()
+
+# 月不良图表数据设定类
+
+class MonthlyChartSettingsForm(QDialog):
+    def __init__(self, parent=None):
+        global configJson
+        super(MonthlyChartSettingsForm, self).__init__(parent)
+        self.child = monthlyChartSettings.Ui_Dialog()
+        self.child.setupUi(self)
+        chartSettings = configJson["Chart"]
+        self.child.lineEdit.setText(str(chartSettings["qc_min"]))
+        self.child.lineEdit_2.setText(str(chartSettings["qc_max"]))
+        self.child.lineEdit_3.setText(str(chartSettings["fma_min"]))
+        self.child.lineEdit_4.setText(str(chartSettings["fma_max"]))
+        self.child.lineEdit_5.setText(str(chartSettings["qc_rate_target"]))
+        self.child.lineEdit_6.setText(str(chartSettings["fma_rate_target"]))
+
 
 
 # 数量更正窗口类
@@ -788,8 +844,30 @@ class CountAdjustmentWindow(QDialog):
         self.child.lineEdit_2.textChanged.connect(
             self.ClearInputLineEditContent)
         self.child.lineEdit.textChanged.connect(self.ClearPackLineEditContent)
+        self.child.pushButton_4.clicked.connect(self.AuthorizedToChangeDailyCount)
         self.dbHandler = dbHelper.DbHelper(configJson)
         self.GetDataFillLabel()
+    
+    def AuthorizedToChangeDailyCount(self):
+        self.passwordForm = AdminAutorizationForm(self)
+        self.passwordForm.child.lineEdit.returnPressed.connect(
+            lambda: self.HandlePassword(self.passwordForm.child.lineEdit.text()))
+        self.passwordForm.exec()
+    
+    def HandlePassword(self, password):
+        try:
+            if password == configJson["Admin"]["password"]:
+                self.passwordForm.reject()
+                self.child.pushButton.setEnabled(True)
+                self.child.pushButton_2.setEnabled(True)
+                self.child.lineEdit.setReadOnly(False)
+                self.child.lineEdit_2.setReadOnly(False)
+                self.child.pushButton_4.setEnabled(False)
+            else:
+                QMessageBox.information(self, "密码错误","输入的密码不正确，不可修改当前投料/包装数据",QMessageBox.Ok,QMessageBox.Ok)
+                self.passwordForm.reject()
+        except:
+            self.passwordForm.reject()
 
     def GetDataFillLabel(self):
         try:
@@ -993,7 +1071,7 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         else:
             self.verticalLayout_5.removeWidget(self.canvas)
             sip.delete(self.canvas)
-            # self.figure = plt.figure()
+            self.figure = plt.figure()
             self.canvas = FigureCanvas(self.figure)
             self.plot_()
             self.verticalLayout_5.addWidget(self.canvas)
@@ -1073,10 +1151,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             if float(self.label_16.text()) > 0:
                 fmaRate = float(self.label_16.text()) / float(self.label_4.text()) * 100
             fmaRate = "%.2f" % fmaRate + "%"
-            # print(fmaRate)
-            # self.label_16.setText(self.label_16.text() + "  " + fmaRate)
-            # self.label_15.hide()
-            # self.label_7.hide()
             self.label_17.setText(fmaRate)
             totalInput = float(
                 self.totalDic["投料"] if "投料" in self.totalDic.keys() else '0')
@@ -1254,9 +1328,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             self.pushButton_3.setFont(light_10_font)
             self.pushButton_4.setFont(light_10_font)
             self.pushButton_7.setFont(light_10_font)
-            # self.
-            # self.label_7.setMaximumHeight(23)
-            # self.label_15.setMaximumHeight(23)
             self.frame.setMinimumSize(QtCore.QSize(270, 510))
             # self.frame.setMaximumWidth(100)
             labels = ('label_2', 'label_4', 'label_6',
@@ -1485,6 +1556,7 @@ class DrawingChart(QtCore.QObject):
         colCount = len(xlabels)
         ax = self.figure.add_axes([0.1,0.1,0.85,0.8])
         self.figure.set_tight_layout(False)
+        # ax.set_ylim([0, 100])
 
         if colCount > 0:
             ax.set_title('各时段回收情况', fontsize='18', fontweight='bold',

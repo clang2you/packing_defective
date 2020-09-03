@@ -43,6 +43,7 @@
         <widget class="QLabel" name="label">
          <property name="font">
           <font>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -55,7 +56,7 @@
         <widget class="QLabel" name="label_2">
          <property name="font">
           <font>
-           <family>Microsoft YaHei UI</family>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
            <weight>75</weight>
            <bold>true</bold>
@@ -80,16 +81,10 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QLabel" name="label_6">
          <property name="font">
           <font>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -108,6 +103,7 @@
          </property>
          <property name="font">
           <font>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -150,11 +146,40 @@
          </property>
          <property name="font">
           <font>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
           </font>
          </property>
          <property name="text">
           <string>生成图表</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_5">
+         <property name="font">
+          <font>
+           <family>微软雅黑</family>
+           <pointsize>20</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>图表设定</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox">
+         <property name="font">
+          <font>
+           <family>微软雅黑</family>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>双月</string>
          </property>
         </widget>
        </item>
@@ -169,6 +194,11 @@
         <height>50</height>
        </size>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+       </font>
+      </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -180,6 +210,7 @@
         <widget class="QLabel" name="label_4">
          <property name="font">
           <font>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -192,6 +223,7 @@
         <widget class="QDateEdit" name="dateEdit">
          <property name="font">
           <font>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -214,6 +246,7 @@
         <widget class="QLabel" name="label_3">
          <property name="font">
           <font>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -226,6 +259,7 @@
         <widget class="QDateEdit" name="dateEdit_2">
          <property name="font">
           <font>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -261,9 +295,17 @@
         </spacer>
        </item>
        <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="pushButton">
          <property name="font">
           <font>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -276,6 +318,7 @@
         <widget class="QPushButton" name="pushButton_2">
          <property name="font">
           <font>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -288,6 +331,7 @@
         <widget class="QPushButton" name="pushButton_3">
          <property name="font">
           <font>
+           <family>微软雅黑</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -324,7 +368,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Microsoft YaHei UI Light</family>
+           <family>微软雅黑</family>
            <pointsize>14</pointsize>
           </font>
          </property>

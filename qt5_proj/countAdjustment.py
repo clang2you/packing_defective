@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\countAdjustment.ui'
+# Form implementation generated from reading ui file 'countAdjustment.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.2
 #
@@ -46,6 +46,9 @@ class Ui_Dialog(object):
         self.label_11.setText("")
         self.label_11.setObjectName("label_11")
         self.horizontalLayout.addWidget(self.label_11)
+        self.pushButton_4 = QtWidgets.QPushButton(self.frame)
+        self.pushButton_4.setObjectName("pushButton_4")
+        self.horizontalLayout.addWidget(self.pushButton_4)
         self.verticalLayout.addWidget(self.frame)
         self.frame_2 = QtWidgets.QFrame(Dialog)
         self.frame_2.setMinimumSize(QtCore.QSize(0, 50))
@@ -71,9 +74,11 @@ class Ui_Dialog(object):
         self.horizontalLayout_2.addWidget(self.label_5)
         self.lineEdit = QtWidgets.QLineEdit(self.frame_2)
         self.lineEdit.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.lineEdit.setReadOnly(True)
         self.lineEdit.setObjectName("lineEdit")
         self.horizontalLayout_2.addWidget(self.lineEdit)
         self.pushButton = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton.setEnabled(False)
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout_2.addWidget(self.pushButton)
         self.verticalLayout.addWidget(self.frame_2)
@@ -101,9 +106,11 @@ class Ui_Dialog(object):
         self.horizontalLayout_3.addWidget(self.label_6)
         self.lineEdit_2 = QtWidgets.QLineEdit(self.frame_3)
         self.lineEdit_2.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.lineEdit_2.setReadOnly(True)
         self.lineEdit_2.setObjectName("lineEdit_2")
         self.horizontalLayout_3.addWidget(self.lineEdit_2)
         self.pushButton_2 = QtWidgets.QPushButton(self.frame_3)
+        self.pushButton_2.setEnabled(False)
         self.pushButton_2.setObjectName("pushButton_2")
         self.horizontalLayout_3.addWidget(self.pushButton_2)
         self.verticalLayout.addWidget(self.frame_3)
@@ -137,6 +144,7 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "投料 / 包装数量更正"))
         self.label.setText(_translate("Dialog", "当前线别："))
         self.label_2.setText(_translate("Dialog", "NOS1A"))
+        self.pushButton_4.setText(_translate("Dialog", "授权"))
         self.label_3.setText(_translate("Dialog", "加工投料："))
         self.label_5.setText(_translate("Dialog", "更正："))
         self.pushButton.setText(_translate("Dialog", "保存"))

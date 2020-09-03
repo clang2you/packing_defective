@@ -18,7 +18,7 @@
     <widget class="QTabWidget" name="tabWidget">
      <property name="font">
       <font>
-       <family>微软雅黑 Light</family>
+       <family>微软雅黑</family>
        <pointsize>14</pointsize>
       </font>
      </property>
@@ -29,9 +29,19 @@
       <attribute name="title">
        <string>月回收状况</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout"/>
+        <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>FMA 不良月统计</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4"/>
        </item>
       </layout>
      </widget>
