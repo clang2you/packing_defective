@@ -112,6 +112,49 @@ class DbHelper():
                 # print(results)
         return results
 
+    # 取上月对应时间段数据（For 图表使用)
+    def GetLastMonthDataResult(self, date, lineName, num):
+        sql = "SELECT DATE_FORMAT(time,'%Y-%m-%d') 日期,SUM(IF(`type`='投料',qty,0)) as '投料', SUM(IF(`type`='包装',qty,0)) as '包装', SUM(IF(`type`='FMA',qty,0)) as 'FMA',"
+        defList = list(self.cfg_dict["DefReasons"].values())
+        for type in defList:
+            temp_sql = "SUM(IF(`type`='%s',qty,0)) as '%s'" % (type, type)
+            if defList.index(type) != len(defList) - 1:
+                sql += temp_sql + ","
+            else:
+                sql += temp_sql
+        sql += "FROM history_input where line = '{}' and DATE_FORMAT(time,'%Y%m%d') < '{}' GROUP BY 日期 ORDER BY 日期 DESC LIMIT 0, {}".format(lineName,
+                                                                                                                              date, num)
+        results = []
+        # print(sql)
+        for i in range(2):
+            if i > 0:
+                sql = sql.replace('history_input', 'realtime_input')
+            # print(sql)
+            for row in self.runQuerySql(sql):
+                resultDic = {}
+                resultDic["日期"] = (datetime.datetime.strptime(
+                    row[0], '%Y-%m-%d')).strftime("%m/%d")
+                resultDic["投料"] = row[1]
+                resultDic["包装"] = row[2]
+                resultDic["FMA"] = row[3]
+                defTotal = 0
+                for type in defList:
+                    resultDic[type] = row[defList.index(type) + 4]
+                    defTotal += row[defList.index(type) + 4]
+                resultDic["合计"] = defTotal
+                # print(defTotal)
+                # print(row[1])
+                if row[1] > 0:
+                    # print(str(row[1]))
+                    resultDic["回收率"] = str(
+                        round(float(defTotal) / float(row[1]) * 100, 2)) + "%"
+                else:
+                    resultDic["回收率"] = "0.0%"
+
+                results.append(resultDic)
+                # print(results)
+        return results
+
     def GetDailyDataResults(self, timeSliceList, lineName,isHistory=False, fma = False):
         sql = ""
         # sql = "select type as '不良原因',"

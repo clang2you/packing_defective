@@ -503,6 +503,7 @@ class DailyDefStasticForm(QMainWindow, dailyDefStasticForm.Ui_MainWindow):
             # self.label_10.setFont(light_14_font)
             self.label_10.setStyleSheet("QLabel{color:red}")
             self.label_10.setText('数据导出失败，\n请重试或联系 IT 处理')
+
 # 月不良统计窗口类
 
 
@@ -515,7 +516,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
             "QHeaderView::section{background-color:lightblue;color: black;padding-left: 4px;border: 1px solid#6c6c6c;}")
         self.dateEdit.setDate(datetime.datetime.now() -
                               dateutil.relativedelta.relativedelta(months=1))
-        self.dateEdit_2.setDate(datetime.datetime.now())
+        self.dateEdit_2.setDate(datetime.datetime.now() - dateutil.relativedelta.relativedelta(days=1))
         self.pushButton.clicked.connect(self.ExportToXls)
         self.tableWidget.setEditTriggers(
             QtWidgets.QAbstractItemView.NoEditTriggers)
@@ -536,10 +537,42 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
             self.label_5.setText("配置文件未设定！")
             self.label_5.setStyleSheet("QLabel{color:red}")
         self.pushButton_3.clicked.connect(self.close)
+        if str(configJson["Chart"]["double_month"]) == "True":
+            self.checkBox.setChecked(True)
+        else:
+            self.checkBox.setChecked(False)
         # self.progressBar.hide()
         self.pushButton_2.clicked.connect(self.GetDbQueryResultDic)
         self.comboBox.currentTextChanged.connect(self.ChangeLineName)
         self.pushButton_5.clicked.connect(self.OpenMonthlyChartSettingsWindow)
+        self.dateEdit.dateChanged.connect(self.ChangeTwoMonthCheckBoxStatus)
+        self.dateEdit_2.dateChanged.connect(self.ChangeTwoMonthCheckBoxStatus)
+        self.checkBox.stateChanged.connect(self.ChangeTwoMonthCheckBoxStatus)
+        self.checkBox.stateChanged.connect(self.ChangeConfigJsonDoubleMonthParameter)
+        self.ChangeTwoMonthCheckBoxStatus()
+    
+    def ChangeTwoMonthCheckBoxStatus(self):
+        global configJson
+        if self.dateEdit_2.date().toPyDate() == datetime.datetime.now().date() or self.dateEdit_2.date().toPyDate() > datetime.datetime.now().date():
+            self.dateEdit_2.setDate(datetime.datetime.now() - dateutil.relativedelta.relativedelta(days=1))
+        dayRange = (self.dateEdit_2.date().toPyDate() - self.dateEdit.date().toPyDate()).days 
+        if dayRange > 1 and dayRange <= 31:
+            self.checkBox.setDisabled(False)
+            if self.checkBox.isChecked():
+                # print("2 set true")
+                configJson["Chart"]["double_month"] = True
+        else:
+            self.checkBox.setDisabled(True)
+            configJson["Chart"]["double_month"] = False
+    
+    def ChangeConfigJsonDoubleMonthParameter(self):
+        global config, configJson
+        if self.checkBox.isChecked():
+            configJson["Chart"]["double_month"] = True
+            config.SaveConfigToJson(configJson)
+        else:
+            configJson["Chart"]["double_month"] = False
+            config.SaveConfigToJson(configJson)
     
     def OpenMonthlyChartSettingsWindow(self):
         monthlySettingWindow = MonthlyChartSettingsForm(self)
@@ -551,7 +584,7 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
     
     def CreateChartsDisplay(self):
         if self.results != None:
-            self.chartsForm = MonthlyChartsDisplay(self, datadic=self.results)
+            self.chartsForm = MonthlyChartsDisplay(parent=self, datadic=self.results, startDate=self.dateEdit.date().toString('yyyyMMdd'),lineName=self.label_2.text())
             self.chartsForm.exec()
 
     def ExportToXls(self):
@@ -560,12 +593,12 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
                 dateSectionStr = self.dateEdit.date().toPyDate().strftime("%y-%m-%d") + "~" + \
                     self.dateEdit_2.date().toPyDate().strftime("%y-%m-%d")
                 filename = QtWidgets.QFileDialog.getSaveFileName(
-                    self, "导出到Excel", configJson["Line"]["name"] + "包装回收数据导出" + dateSectionStr + ".xls", "Excel文件(*.xls)")
+                    self, "导出到Excel", self.label_2.text() + "包装回收数据导出" + dateSectionStr + ".xls", "Excel文件(*.xls)")
                 if filename[0] != '':
                     self.excelHandler = exportHelper.ExportXlsHelper(
                         filename[0])
                     self.excelHandler.qtTableWidgetExportToXls(
-                        self, configJson["Line"]["name"] + "不良统计@" + dateSectionStr)
+                        self, self.label_2.text() + "不良统计@" + dateSectionStr)
                     self.label_5.setStyleSheet("QLabel{color:green}")
                     self.label_5.setText("月不良记录导出成功")
                     self.label_5.setFont(light_20_font)
@@ -658,22 +691,26 @@ class MonthlyDefStasticForm(QMainWindow, monthlyDefStasticForm.Ui_MainWindow):
 
 class MonthlyChartsDisplay(QDialog):
     
-    def __init__(self, parent=None, datadic=None):
+    def __init__(self, parent=None, datadic=None, startDate=None, lineName=None):
+        global configJson
         super(MonthlyChartsDisplay, self).__init__(parent)
         self.figure = plt.figure()
-        # self.pieFigure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
-        # self.pieCanvas = FigureCanvas(self.pieFigure)
         self.child = monthlyChartsForm.Ui_Dialog()
         self.child.setupUi(self)
         self.child.tabWidget.currentChanged.connect(self.RedrawCharts)
+        self.dbHandler = dbHelper.DbHelper(configJson)
         if datadic != None:
             self.dataDic = datadic
             self.SetXlabels()
             self.GetFMAData()
+            # print(configJson["Chart"]["double_month"])
+            if str(configJson["Chart"]["double_month"]) == "True":
+                self.last_month_results = self.dbHandler.GetLastMonthDataResult(startDate,  lineName, len(datadic))
+                self.ConvertLastMonthDataToDic()
+                print(self.lastMonthData)
             self.CreateLineCharts()
             self.child.horizontalLayout_2.addWidget(self.canvas)
-            print(self.FMAData)
     
     def RedrawCharts(self):
         if self.child.tabWidget.currentIndex() == 0:
@@ -686,34 +723,38 @@ class MonthlyChartsDisplay(QDialog):
         else:
             self.CreateFMALineChart()
             self.child.horizontalLayout_4.addWidget(self.canvas)
-        # print(self.child.tabWidget.currentIndex)
     
     def CreateFMALineChart(self):
+        global configJson
         plt.cla()
         plt.clf()
-        # self.SetXlabels()
         colCount = len(self.xlabels)
         self.standard_line = []
         for x in range(colCount):
             if x < colCount:
-                self.standard_line.append(15)
+                self.standard_line.append(configJson["Chart"]["fma_rate_target"])
         ax = self.figure.add_axes([0.1,0.1,0.85,0.8])
-        ax.set_ylim([5, 30])
+        ax.set_ylim([configJson["Chart"]["fma_min"], configJson["Chart"]["fma_max"]])
         self.figure.set_tight_layout(False)
 
         if colCount > 0:
             ax.set_title('FMA 不良月统计', fontsize='18', fontweight='bold',
                      color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
             ax.set_ylabel('不良率')
-            # countData = dataItem
+            print(self.FMAData)
             ax.plot(self.xlabels, self.FMAData, lineWidth=1, lineStyle="-", label="每日 FMA 不良比率", marker='.')
             for a, b in list(zip(self.xlabels, self.FMAData)):
                 plt.annotate("%3.0f%%" % b, (a, b), xytext=(-3,3),
                 ha='left', textcoords='offset points')
-            ax.plot(self.xlabels, self.standard_line, label="FMA 不良率目标")
+            ax.plot(self.xlabels, self.standard_line, color="green", label="FMA 不良率目标")
+            if hasattr(self, 'lastMonthFMAData') and self.lastMonthFMAData != None:
+                if len(self.lastMonthFMAData) > 0:
+                    ax.plot(self.xlabels, self.lastMonthFMAData, color="red", label="上月 FMA 不良比率", marker='.')
+                    for a, b in list(zip(self.xlabels, self.lastMonthFMAData)):
+                        plt.annotate("%3.0f%%" % b, (a, b), xytext=(-3,3),
+                        ha='left', textcoords='offset points')
             plt.legend(loc=2)
             plt.xticks(rotation="45")
-            # ax.grid()
             ax.set_xticklabels(self.xlabels)
         self.canvas.draw()
     
@@ -735,8 +776,6 @@ class MonthlyChartsDisplay(QDialog):
     def CreatePieCharts(self):
         plt.cla()
         plt.clf()
-        # plt.title('不良类型占比', fontsize='18', fontweight='bold',
-        #              color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
         pieDataList = []
         labels = []
         explode = []
@@ -755,7 +794,6 @@ class MonthlyChartsDisplay(QDialog):
         self.pieData = {}
         self.unexceptType = ["投料", "包装", "合计", "FMA"]
         for dic in self.dataDic:
-            # count = 0
             for key, value in dic.items():
                 if key == '日期':
                     self.xlabels.append(value)
@@ -763,11 +801,6 @@ class MonthlyChartsDisplay(QDialog):
                 if key in self.unexceptType:
                     continue
                 else:
-                    # if key in self.data.keys():
-                    #     self.data[key] = self.data[key] + int(value)
-                    # else:
-                    #     self.data[key] = int(value)
-                    # count += int(value)
                     if key == "回收率":
                         value = value[:-1]
                         self.data.append(float(value))
@@ -776,37 +809,58 @@ class MonthlyChartsDisplay(QDialog):
                         self.pieData[key]  = self.pieData[key] + int(value)
                     else:
                         self.pieData[key] = int(value)
-            # self.data.append(count)
-        # print(self.data)
-        # print(self.xlabels)
-        
+ 
+    def ConvertLastMonthDataToDic(self):
+        self.lastMonthData = []
+        self.lastMonthFMAData = []
+        self.exceptType = ["投料", "回收率", "FMA"]
+        for dic in self.last_month_results:
+            fmaCount = 0
+            totalInput = 0
+            for key, value in dic.items():
+                if key not in self.exceptType:
+                    continue
+                if key == "回收率":
+                    value = value[:-1]
+                    self.lastMonthData.append(float(value))
+                if key == "FMA":
+                    fmaCount = int(value)
+                if key == '投料':
+                    totalInput = int(value)  
+            if fmaCount > 0 and totalInput > 0:
+                self.lastMonthFMAData.append(round((float(fmaCount) / float(totalInput) * 100),2))     
+        self.lastMonthData.reverse()
+        self.lastMonthFMAData.reverse()           
 
     def CreateLineCharts(self):
+        global configJson
         plt.cla()
         plt.clf()
-        # self.SetXlabels()
         colCount = len(self.xlabels)
         ax = self.figure.add_axes([0.1,0.1,0.85,0.8])
-        ax.set_ylim([10, 50])
+        ax.set_ylim([configJson["Chart"]["qc_min"], configJson["Chart"]["qc_max"]])
         self.figure.set_tight_layout(False)
         self.standard_line = []
         for x in range(colCount):
             if x < colCount:
-                self.standard_line.append(30)
+                self.standard_line.append(configJson["Chart"]["qc_rate_target"])
 
         if colCount > 0:
             ax.set_title('月回收率统计', fontsize='18', fontweight='bold',
                      color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
             ax.set_ylabel('回收率')
-            # countData = dataItem
             ax.plot(self.xlabels, self.data, lineWidth=1, lineStyle="-", label="日回收比率", marker='.')
             for a, b in list(zip(self.xlabels, self.data)):
                 plt.annotate("%3.0f%%" % b, (a, b), xytext=(-3,3),
                 ha='left', textcoords='offset points')
-            ax.plot(self.xlabels, self.standard_line, label="包装回收率目标")
+            ax.plot(self.xlabels, self.standard_line, color="green", label="包装回收基准")
+            if hasattr(self, 'lastMonthData') and self.lastMonthData != None:
+                ax.plot(self.xlabels, self.lastMonthData, color = "red", label="上月回收比率", marker='.')
+                for a, b in list(zip(self.xlabels, self.lastMonthData)):
+                    plt.annotate("%3.0f%%" % b, (a, b), xytext=(-3,3),
+                    ha='left', textcoords='offset points')   
             plt.legend(loc=2)
             plt.xticks(rotation="45")
-            # ax.grid()
             ax.set_xticklabels(self.xlabels)
         self.canvas.draw()
 
@@ -818,14 +872,26 @@ class MonthlyChartSettingsForm(QDialog):
         super(MonthlyChartSettingsForm, self).__init__(parent)
         self.child = monthlyChartSettings.Ui_Dialog()
         self.child.setupUi(self)
-        chartSettings = configJson["Chart"]
-        self.child.lineEdit.setText(str(chartSettings["qc_min"]))
-        self.child.lineEdit_2.setText(str(chartSettings["qc_max"]))
-        self.child.lineEdit_3.setText(str(chartSettings["fma_min"]))
-        self.child.lineEdit_4.setText(str(chartSettings["fma_max"]))
-        self.child.lineEdit_5.setText(str(chartSettings["qc_rate_target"]))
-        self.child.lineEdit_6.setText(str(chartSettings["fma_rate_target"]))
-
+        self.chartSettings = configJson["Chart"]
+        self.child.spinBox.setValue(self.chartSettings["qc_min"])
+        self.child.spinBox_2.setValue(self.chartSettings["qc_max"])
+        self.child.spinBox_3.setValue(self.chartSettings["fma_min"])
+        self.child.spinBox_4.setValue(self.chartSettings["fma_max"])
+        self.child.spinBox_5.setValue(self.chartSettings["qc_rate_target"])
+        self.child.spinBox_6.setValue(self.chartSettings["fma_rate_target"])
+        self.child.pushButton.clicked.connect(self.SaveMonthlyChartSettingToConfigJson)
+    
+    def SaveMonthlyChartSettingToConfigJson(self):
+        global config, configJson
+        self.chartSettings["qc_min"] = self.child.spinBox.value()
+        self.chartSettings["qc_max"] = self.child.spinBox_2.value()
+        self.chartSettings["fma_min"] = self.child.spinBox_3.value()
+        self.chartSettings["fma_max"] = self.child.spinBox_4.value()
+        self.chartSettings["qc_rate_target"] = self.child.spinBox_5.value()
+        self.chartSettings["fma_rate_target"] = self.child.spinBox_6.value()
+        configJson["Chart"] = self.chartSettings
+        config.SaveConfigToJson(configJson)
+        self.reject()
 
 
 # 数量更正窗口类
@@ -949,8 +1015,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             self.comboBox_3.setCurrentIndex(configJson["Chart"]["time"])
             self.comboBox_2.setCurrentIndex(configJson["Chart"]["section"])
             self.comboBox.setCurrentIndex(configJson["Chart"]["type"])
-            # self.checkBox.setChecked(configJson["Chart"]["halfhour"])
-            # print(configJson["Chart"]["halfhour"])
             if configJson["Chart"]["halfhour"]:
                 self.checkBox.setEnabled(True)
                 self.checkBox.setChecked(True)
@@ -1279,7 +1343,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 self.filterList = list(configJson["Section"]["baozhuang"].values())
             elif self.comboBox_2.currentText() == "贴底段不良":
                 self.filterList = list(configJson["Section"]["tiedi"].values())
-        # print(self.filterList)
         self.isHalfDay = False
         if self.comboBox_3.currentText() == "半天":
             self.isHalfDay = True
@@ -1315,7 +1378,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
         # 高度小于 1000，字体及高度都修改为20, 修改 frame 宽度为 150，高度为 530
         if height <= 1000:
             self.resize(1000, 720)
-            # self.frame_7.setMaximumSize(QtCore.QSize(150,130))
             self.frame_14.setMinimumHeight(35)
             self.frame_14.setMaximumHeight(20)
             self.frame_15.setMinimumHeight(32)
@@ -1329,7 +1391,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
             self.pushButton_4.setFont(light_10_font)
             self.pushButton_7.setFont(light_10_font)
             self.frame.setMinimumSize(QtCore.QSize(270, 510))
-            # self.frame.setMaximumWidth(100)
             labels = ('label_2', 'label_4', 'label_6',
                       'label_7', 'label_9', 'label_15', 'label_16', 'label_17')
             for label_name in labels:
@@ -1337,7 +1398,6 @@ class MyMainForm(QMainWindow, mainForm.Ui_MainWindow):
                 label.setFont(bold_20_font)
                 label.setMinimumSize(QtCore.QSize(16777215, 30))
             labels = ('label', 'label_3', 'label_5', 'label_8', 'label_14', 'label_18')
-            # self.label_15.setVisible(False)
             for label_name in labels:
                 label = self.frame.findChild((QtWidgets.QLabel), label_name)
                 label.setFont(light_20_font)
@@ -1493,7 +1553,6 @@ class DrawingChart(QtCore.QObject):
         ax = self.figure.add_subplot(111)
         xlabels = self.currentTimeSliceListToLabels
         dataList = self.currentData
-        # print(dataList)
         colCount = len(xlabels)
         if colCount > 0:
             self.figure.set_tight_layout(True)
@@ -1501,7 +1560,6 @@ class DrawingChart(QtCore.QObject):
             ax.set_title('各时段回收情况', fontsize='18', fontweight='bold',
                      color='black', loc='center',bbox={'facecolor': '0.8', 'pad': 5})
             x = np.arange(colCount)
-            # print(x)
             widthList = [0.25, 0.25, 0.4, 0.5, 0.65, 0.75, 0.95, 1.08, 1.22, 1.25]
             if len(dataList) < 6:
                 widthList = [x * 2 for x in widthList]
@@ -1539,24 +1597,19 @@ class DrawingChart(QtCore.QObject):
                     plt.bar(x + addWidth, dataItem, width=width, label=labelText)
                 for a, b in zip(x, dataItem):
                     if b > 0:
-                        # print(colCount -1, "+", data_index)
-                        # print(x_offset)
                         plt.text(a + x_offset[colCount -1][dataList.index(dataItem)], float(b), '%.0f' %
                                 b, ha='center', va='bottom', fontsize=fontSize[colCount - 1])
                 width_times += 1
-            # ax.set_xticklabels(xlabels)
             plt.legend(loc=2)
             self.canvas.draw()
 
     def DrawLineChart(self):
         plt.cla()
         plt.clf()
-        # xlabels = [ x.replace('\n','') for x in self.currentTimeSliceListToLabels]
         xlabels = self.currentTimeSliceListToLabels
         colCount = len(xlabels)
         ax = self.figure.add_axes([0.1,0.1,0.85,0.8])
         self.figure.set_tight_layout(False)
-        # ax.set_ylim([0, 100])
 
         if colCount > 0:
             ax.set_title('各时段回收情况', fontsize='18', fontweight='bold',
@@ -1572,54 +1625,12 @@ class DrawingChart(QtCore.QObject):
             plt.legend(loc=2)
             ax.grid()
             ax.set_xticklabels(xlabels)
-
-        # ax.plot(x, a, color='red', lineWidth=1,
-        #         linestyle="-", label="脱胶", marker='.')
-        # ax.plot(x, b, color="green", linewidth=1,
-        #         linestyle='-', label="高胶", marker=".")
-        # ax.plot(x, c, color="magenta", linewidth=1,
-        #         linestyle='-', label="其他", marker=".")
-        # ax.plot(x, d, color="blue", linewidth=1,
-        #         linestyle='-', label="清洁度", marker=".")
-        # ax.plot(x, e, color="purple", linewidth=1,
-        #         linestyle='-', label="不对称", marker=".")
-        # ax.plot(x, f, color="orange", linewidth=1,
-        #         linestyle='-', label="针车不良", marker=".")
-        # ax.plot(x, g, color="navy", linewidth=1,
-        #         linestyle='-', label="研磨线外露", marker=".")
-        # plt.style.use('Solarize_Light2')
-        # plt.style.use('seaborn')
-        # plt.xlabel("时间段")
-        # plt.ylabel("回收量")
-        # self.figure.set_tight_layout(True)
-        # for x, y, z, f, g, h, i, j in list(zip(x, a, b, c, d, e, f, g)):
-        #     plt.annotate("%s" % y, (x, y), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % z,  (x, z), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % f,  (x, f), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % g,  (x, g), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % h,  (x, h), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % i,  (x, i), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        #     plt.annotate("%s" % j,  (x, j), xytext=(-10, 13),
-        #                  ha='left', textcoords='offset points')
-        # ax.set_title('各时段回收量', fontsize='18', fontweight='bold',
-        #              color='black', loc='center')
-        
-        # ax.set_xticklabels(labels)
         self.canvas.draw()
 
 
 if __name__ == "__main__":
     if configJson["Admin"] == None:
         configJson["Admin"] = {"password": "sysadmin"}
-
-    # test = DrawingChart()
-    # test.GetDrawDatas()
 
     app = QApplication(sys.argv)
     mywin = MyMainForm()
