@@ -14,7 +14,7 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import qt5_proj.DbHelper.db_helper as dbHelper
 # pyinstaller 打包不支持自定义模块 from xxx import xxx 的引用方式，仅能使用 import 来导入所需的包
-import qt5_proj.mainForm as mainForm
+import qt5_proj.Ui_mainForm as mainForm
 import qt5_proj.ConfigHelper.config_helper as config_mod
 import qt5_proj.sectionSettings as sectionSettings
 import qt5_proj.dailyDefStasticForm as dailyDefStasticForm
